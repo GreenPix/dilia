@@ -1,0 +1,29 @@
+{
+  "name": "editor-renaissance",
+  "version": "0.1.0",
+  "description": "Editor for assets used by Sarosa and Lycan",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "postinstall": "tsd",
+    "build": "webpack"
+  },
+  "author": "Nemikolh <joan.varvenne@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "css-loader": "^0.17.0",
+    "json-loader": "^0.5.2",
+    "raw-loader": "^0.5.1",
+    "ts-loader": "^0.5.3",
+    "tsd": "^0.6.4",
+    "typescript": "^1.7.0-dev.20150904",
+    "webpack": "^1.12.1",
+    "webpack-dev-server": "^1.10.1"
+  },
+  "dependencies": {
+    "angular2": "^2.0.0-alpha.36",
+    "reflect-metadata": "^0.1.1",
+    "rx": "^3.1.2",
+    "zone.js": "^0.5.4"
+  }
+}

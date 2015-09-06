@@ -1,0 +1,41 @@
+{
+    "version": "1.6.0-beta",
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "sourceMap": true,
+        "outDir": "build/",
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "compileOnSave": false,
+    "filesGlob": [
+        "./editor/**/*.ts",
+        "./server.ts",
+        "./index.ts",
+        "./typings/**/*.ts",
+        "./custom_typings/**/*.ts",
+        "./editor/**/*.tsx",
+        "!./node_modules/**/*"
+    ],
+    "files": [
+        "./editor/map/models.ts",
+        "./server.ts",
+        "./index.ts",
+        "./typings/angular2/angular2.d.ts",
+        "./typings/angular2/router.d.ts",
+        "./typings/es6-promise/es6-promise.d.ts",
+        "./typings/rx/rx-lite.d.ts",
+        "./typings/rx/rx.d.ts",
+        "./typings/tsd.d.ts",
+        "./custom_typings/webpack.d.ts"
+    ]
+}
