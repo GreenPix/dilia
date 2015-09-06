@@ -33,7 +33,7 @@ module.exports = {
             'angular2/di'
         ],
         'index': [
-            './index.ts'
+            './editor/index.ts'
         ]
     },
     output: {
