@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "postinstall": "tsd",
-    "build": "webpack"
+    "postinstall": "tsd && cd server/ && tsd && cd ..",
+    "build": "webpack",
+    "server": "node ./server/build/server.js",
+    "build-server": "cd server/ && tsc && cd .."
   },
   "author": "Nemikolh <joan.varvenne@gmail.com>",
   "license": "MIT",
@@ -22,8 +24,15 @@
   },
   "dependencies": {
     "angular2": "^2.0.0-alpha.36",
+    "body-parser": "^1.13.3",
+    "cookie-parser": "^1.3.5",
+    "express": "^4.13.3",
+    "express-session": "^1.11.3",
+    "passport": "^0.3.0",
+    "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.1",
     "rx": "^3.1.2",
+    "serve-static": "^1.10.0",
     "zone.js": "^0.5.4"
   }
 }
