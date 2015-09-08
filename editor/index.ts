@@ -1,6 +1,6 @@
 
 import {Component, View, bootstrap} from 'angular2/angular2';
-import {Map} from './editor/map/models';
+import {Map} from './map/models';
 
 @Component({
     selector: 'app'

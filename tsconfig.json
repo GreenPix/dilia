@@ -26,9 +26,9 @@
         "!./node_modules/**/*"
     ],
     "files": [
+        "./editor/index.ts",
         "./editor/login/form.ts",
         "./editor/map/models.ts",
-        "./index.ts",
         "./typings/angular2/angular2.d.ts",
         "./typings/angular2/router.d.ts",
         "./typings/es6-promise/es6-promise.d.ts",
