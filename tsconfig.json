@@ -28,8 +28,11 @@
     "files": [
         "./editor/index.ts",
         "./editor/login/form.ts",
-        "./editor/map/models.ts",
+        "./editor/map/editor.ts",
+        "./editor/models/user.ts",
+        "./editor/services/LoggedInService.ts",
         "./typings/angular2/angular2.d.ts",
+        "./typings/angular2/http.d.ts",
         "./typings/angular2/router.d.ts",
         "./typings/es6-promise/es6-promise.d.ts",
         "./typings/rx/rx-lite.d.ts",

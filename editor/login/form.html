@@ -1,9 +1,23 @@
-<form (^submit)="doLogin($event)" [control-group]="loginForm">
+<form (submit)="doLogin($event)" [ng-form-model]="loginForm" novalidate>
   <div>
-    <input control="login" placeholder="Username">
+    <input ng-control="login" placeholder="Username">
+    <span class="error-message" *ng-if="
+      loginForm.controls?.login?.errors?.required &&
+      loginForm.dirty &&
+      loginForm.controls?.login?.touched
+    ">
+      Login is required
+    </span>
   </div>
   <div>
-    <input control="password" type="password" placeholder="Password">
+    <input ng-control="password" type="password" placeholder="Password">
+    <span class="error-message" *ng-if="
+      loginForm.controls?.password?.errors?.required &&
+      loginForm.dirty &&
+      loginForm.controls?.password?.touched
+    ">
+      Password is required
+    </span>
   </div>
   <button type="submit">Log in</button>
 </form>

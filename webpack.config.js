@@ -52,7 +52,7 @@ module.exports = {
 
             { test: /\.json$/,  loader: 'json' },
             { test: /\.css$/,   loader: 'raw' },
-            { test: /\.html$/,  loader: 'raw' },
+            { test: /\.html$/,  loader: 'url' },
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader'
