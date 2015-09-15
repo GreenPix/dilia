@@ -1,4 +1,4 @@
-# Editor
+# Dilia - Game Editor for Renaissance
 
 ## Development
 
