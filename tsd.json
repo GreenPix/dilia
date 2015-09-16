@@ -22,6 +22,9 @@
     },
     "angular2/http.d.ts": {
       "commit": "a461a243e2e09b213bc49d12650f80d81047576d"
+    },
+    "ace/ace.d.ts": {
+      "commit": "52b0ea5c9719831eecf6ba7436660e30061a4b3c"
     }
   }
 }
