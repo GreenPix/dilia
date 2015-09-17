@@ -1,7 +1,7 @@
 import {Component, View} from 'angular2/angular2';
 import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup} from 'angular2/angular2';
 import {CORE_DIRECTIVES} from 'angular2/angular2';
-import LoggedInService = require('../services/LoggedInService');
+import {LoggedInService} from './service';
 
 let template = require<string>('./form.html');
 let style = require<string>('./form.css');
@@ -17,13 +17,13 @@ class HasLoginDetails extends ControlGroup {
 
 
 @Component({
-  selector: 'login',
-  viewBindings: [FormBuilder]
+    selector: 'login',
+    viewBindings: [FormBuilder]
 })
 @View({
-  templateUrl: template,
-  styles: [style],
-  directives: [CORE_DIRECTIVES, FORM_DIRECTIVES]
+    templateUrl: template,
+    styles: [style],
+    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES]
 })
 export class LoginForm {
     loginForm: HasLoginDetails;

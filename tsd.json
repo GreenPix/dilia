@@ -25,6 +25,9 @@
     },
     "ace/ace.d.ts": {
       "commit": "52b0ea5c9719831eecf6ba7436660e30061a4b3c"
+    },
+    "lodash/lodash.d.ts": {
+      "commit": "4356af494c045299110677b21e62000957e7a72e"
     }
   }
 }
