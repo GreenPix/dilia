@@ -32,8 +32,10 @@
         "./editor/login/service.ts",
         "./editor/map/editor.ts",
         "./editor/models/user.ts",
+        "./editor/rules/ace.ts",
         "./editor/rules/editor.ts",
         "./editor/services/mod.ts",
+        "./editor/util/interfaces.ts",
         "./typings/ace/ace.d.ts",
         "./typings/angular2/angular2.d.ts",
         "./typings/angular2/http.d.ts",
@@ -43,6 +45,7 @@
         "./typings/rx/rx-lite.d.ts",
         "./typings/rx/rx.d.ts",
         "./typings/tsd.d.ts",
+        "./custom_typings/ace-custom.d.ts",
         "./custom_typings/webpack.d.ts"
     ]
 }
