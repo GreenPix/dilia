@@ -26,6 +26,7 @@
         "!./node_modules/**/*"
     ],
     "files": [
+        "./editor/app.ts",
         "./editor/index.ts",
         "./editor/login/form.ts",
         "./editor/login/router-outlet.ts",
@@ -35,6 +36,7 @@
         "./editor/rules/ace.ts",
         "./editor/rules/editor.ts",
         "./editor/services/mod.ts",
+        "./editor/util/injector.ts",
         "./editor/util/interfaces.ts",
         "./typings/ace/ace.d.ts",
         "./typings/angular2/angular2.d.ts",
