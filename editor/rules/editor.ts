@@ -25,9 +25,15 @@ export class RuleEditor implements AfterViewInit {
 
     afterViewInit(): void {
         this.editor = ace.edit(this.id);
-        this.editor.getSession().setMode(new AaribaScriptTextMode());
+
+        this.editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: false,
+            enableLiveAutocompletion: false
+        });
         this.editor.setFontSize(`${this.settings.fontSize || 24}px`);
         this.editor.setShowInvisibles(this.settings.showInvisibles);
+        this.editor.getSession().setMode(new AaribaScriptTextMode());
         this.editor.getSession().setTabSize(2);
         this.editor.getSession().setUseSoftTabs(true);
     }

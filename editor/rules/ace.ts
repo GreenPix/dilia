@@ -1,11 +1,19 @@
 import {IsHighlightRules, IsTextMode, IsType, Any, AceFoldMode} from '../util/interfaces';
+import {AaribaScriptCompleter} from './autocompleter';
 import {injectCss} from '../util/injector';
 
 let TextMode: IsTextMode = ace.require("ace/mode/text").Mode;
 let TextHighlightRules: IsHighlightRules = ace.require("ace/mode/text_highlight_rules").TextHighlightRules;
 let Range: IsType<AceAjax.Range> = ace.require("ace/range").Range;
 let FoldMode: IsType<AceFoldMode> = ace.require("ace/mode/folding/fold_mode").FoldMode;
+
+// Autocompletion configuration
+let langTools = ace.require('ace/ext/language_tools');
+langTools.setCompleters([]);
+langTools.addCompleter(new AaribaScriptCompleter());
+
 let aceCss = require<string>('./ace.css');
+
 
 interface HighlightToken {
     token: string | Array<string> | Function;
@@ -27,9 +35,9 @@ class AaribaScriptHighlightRules extends TextHighlightRules
 
         injectCss(aceCss);
 
-        let identRe = /[a-zA-Z_\u00a1-\uffff][a-zA-Z\d\._\u00a1-\uffff]*\b/;
-        let globalIdenRe = /\$[a-zA-Z\d\._\u00a1-\uffff]*\b/;
-        let numericRe = /[+-]?\d+(?:(?:\.\d*)?(?:[eE][+-]?\d+)?)?\b/;
+        let identRe = /[a-zA-Z_\u00a1-\uffff][a-zA-Z\d\._\u00a1-\uffff]*/;
+        let globalIdenRe = /\$[a-zA-Z\d\._\u00a1-\uffff]*/;
+        let numericRe = /[+-]?\d+(?:(?:\.\d*)?(?:[eE][+-]?\d+)?)?/;
         let funcRe = /sin|cos|max|min|rand\b/;
 
         this.$rules = {

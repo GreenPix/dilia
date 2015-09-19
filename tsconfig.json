@@ -34,6 +34,7 @@
         "./editor/map/editor.ts",
         "./editor/models/user.ts",
         "./editor/rules/ace.ts",
+        "./editor/rules/autocompleter.ts",
         "./editor/rules/editor.ts",
         "./editor/services/mod.ts",
         "./editor/util/injector.ts",
