@@ -37,13 +37,14 @@ class AaribaScriptHighlightRules extends TextHighlightRules
 
         let identRe = /[a-zA-Z_\u00a1-\uffff][a-zA-Z\d\._\u00a1-\uffff]*/;
         let globalIdenRe = /\$[a-zA-Z\d\._\u00a1-\uffff]*/;
-        let numericRe = /[+-]?\d+(?:(?:\.\d*)?(?:[eE][+-]?\d+)?)?/;
+        let numericRe = /[-]?\d+(?:(?:\.\d*)?(?:[eE][+-]?\d+)?)?/;
         let funcRe = /sin|cos|max|min|rand\b/;
 
+        // TODO: add support for comments
         this.$rules = {
             "start": [
-                { token: "if", regex: /if/, next: "if_cond" },
-                { token: "function", regex: funcRe },
+                { token: "keyword.if", regex: /if/, next: "if_cond" },
+                { token: "keyword.function", regex: funcRe },
                 { token: "variable.global", regex: globalIdenRe },
                 { token: "variable.local", regex: identRe },
                 { token: "numeric", regex: numericRe }

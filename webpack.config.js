@@ -50,9 +50,10 @@ module.exports = {
     module: {
         loaders: [
 
-            { test: /\.json$/,  loader: 'json' },
-            { test: /\.css$/,   loader: 'raw' },
-            { test: /\.html$/,  loader: 'url' },
+            { test: /\.json$/,  loader: 'json'  },
+            { test: /\.css$/,   loader: 'raw'   },
+            { test: /\.html$/,  loader: 'url'   },
+            { test: /\.pegjs$/, loader: 'pegjs' },
             {
                 test: /\.tsx?$/,
                 loader: 'ts-loader'

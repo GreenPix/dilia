@@ -6,8 +6,7 @@
   color: #EC913B;
 }
 
-.ace_editor .ace_function,
-.ace_editor .ace_if {
+.ace_editor .ace_keyword {
   color: #61afef;
 }
 

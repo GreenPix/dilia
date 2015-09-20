@@ -3,6 +3,7 @@ import {Component, View, AfterViewInit} from 'angular2/angular2';
 import {UniqueId} from '../services/mod';
 import {AaribaScriptSettings} from '../models/user';
 import {AaribaScriptTextMode} from './ace';
+import {AaribaInterpreter} from './parser';
 
 let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<string>('./editor.css');
@@ -36,5 +37,14 @@ export class RuleEditor implements AfterViewInit {
         this.editor.getSession().setMode(new AaribaScriptTextMode());
         this.editor.getSession().setTabSize(2);
         this.editor.getSession().setUseSoftTabs(true);
+        let interpreter = new AaribaInterpreter();
+        this.editor.addEventListener('change', (action, editor) => {
+            try {
+                interpreter.reset();
+                interpreter.execute(editor.getValue());
+            } catch (e) {
+                console.error(e.name, e.message);
+            }
+        });
     }
 }

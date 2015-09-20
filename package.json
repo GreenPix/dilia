@@ -22,6 +22,7 @@
     "gulp-help": "^1.6.1",
     "gulp-load-plugins": "^0.10.0",
     "json-loader": "^0.5.2",
+    "pegjs-loader": "^0.1.1",
     "raw-loader": "^0.5.1",
     "ts-loader": "^0.5.3",
     "tsd": "^0.6.4",

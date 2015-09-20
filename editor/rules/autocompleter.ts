@@ -10,7 +10,6 @@ let globals = {
     }
 }
 
-
 export class AaribaScriptCompleter {
 
     // TODO: collect local variables and propose completion for them
