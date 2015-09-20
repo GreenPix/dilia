@@ -1,7 +1,6 @@
 import {Component, View} from 'angular2/angular2';
 import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup} from 'angular2/angular2';
 import {CORE_DIRECTIVES} from 'angular2/angular2';
-import {LoggedInService} from './service';
 
 let template = require<string>('./form.html');
 let style = require<string>('./form.css');
@@ -28,7 +27,7 @@ class HasLoginDetails extends ControlGroup {
 export class LoginForm {
     loginForm: HasLoginDetails;
 
-    constructor(builder: FormBuilder, private loggedInService: LoggedInService) {
+    constructor(builder: FormBuilder) {
         this.loginForm = builder.group(<LoginDetails>{
             login: ["", Validators.required],
             password: ["", Validators.required]
@@ -39,7 +38,6 @@ export class LoginForm {
         if (this.loginForm.valid) {
             console.log(this.loginForm.value.login);
             console.log(this.loginForm.value.password);
-            this.loggedInService.isUserLoggedIn = true;
         }
     }
 }
