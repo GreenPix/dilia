@@ -6,6 +6,14 @@ interface VariableStore {
     [name: string]: number;
 }
 
+export interface AaribaScriptError {
+    column: number;
+    line: number;
+    offset: number;
+    message: string;
+    name: string;
+}
+
 export class AaribaInterpreter {
 
     private globals: VariableStore;

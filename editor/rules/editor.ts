@@ -3,7 +3,7 @@ import {Component, View, AfterViewInit, NgStyle} from 'angular2/angular2';
 import {UniqueId} from '../services/mod';
 import {AaribaScriptSettings} from '../models/user';
 import {AaribaScriptTextMode} from './ace';
-import {AaribaInterpreter} from './parser';
+import {AaribaInterpreter, AaribaScriptError} from './parser';
 
 let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<string>('./editor.css');
@@ -47,10 +47,19 @@ export class RuleEditor implements AfterViewInit {
         let interpreter = new AaribaInterpreter();
         this.editor.addEventListener('change', (action, editor) => {
             try {
+                this.editor.getSession().clearAnnotations();
                 interpreter.reset();
                 interpreter.execute(editor.getValue());
             } catch (e) {
-                console.error(e);
+                let error: AaribaScriptError = e;
+                this.editor.getSession().setAnnotations([
+                    {
+                        row: error.line - 1,
+                        column: error.column - 1,
+                        text: `${error.name}: ${error.message}`,
+                        type: "error",
+                    }
+                ]);
             }
         });
     }
