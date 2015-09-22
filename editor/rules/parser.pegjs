@@ -114,15 +114,15 @@
 /// PEG Grammar for AaribaScript
 ///
 
-Program "aariba script"
+Program
   = InstructionList {
     return locals.stack;
   }
 
-InstructionList "list of instructions"
+InstructionList
   = ins_list:(_ Instruction _)*
 
-Instruction "instruction"
+Instruction
   = Comment
   / Assignment
   / IfStatement
@@ -130,7 +130,7 @@ Instruction "instruction"
 Comment "single line comment"
   = "//" [^\n\r]* [\n\r]?
 
-Assignment "assignment"
+Assignment
   = ident:LocalIdent _ "=" _ expr:Expression ";" {
     if (should_exec()) {
       set_local(ident, expr);
@@ -142,12 +142,12 @@ Assignment "assignment"
     }
   }
 
-IfStatement "if statement"
+IfStatement
   = "if" _ ident:GlobalIdent _ "{" ! { push_scope(is_gdef(ident)); }
       InstructionList
   "}" ! { pop_scope(); }
 
-Expression "expression"
+Expression
   = first:Term rest:(_ ("+" / "-") _ Term)* {
       return combine(first, rest, {
         "+": function(left, right) { return left + right; },
@@ -175,7 +175,7 @@ LocalIdent "ident"
     return text();
   }
 
-GlobalIdent "globalIdent"
+GlobalIdent "global ident"
   = [\$][a-zA-Z_\u00a1-\uffff\d][\.\da-zA-Z_\u00a1-\uffff]* {
     return text().substring(1);
   }
