@@ -50,7 +50,7 @@ export class RuleEditor implements AfterViewInit {
                 interpreter.reset();
                 interpreter.execute(editor.getValue());
             } catch (e) {
-                console.error(e.name, e.message);
+                console.error(e);
             }
         });
     }
