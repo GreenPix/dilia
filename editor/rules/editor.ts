@@ -1,5 +1,5 @@
 
-import {Component, View, AfterViewInit} from 'angular2/angular2';
+import {Component, View, AfterViewInit, NgStyle} from 'angular2/angular2';
 import {UniqueId} from '../services/mod';
 import {AaribaScriptSettings} from '../models/user';
 import {AaribaScriptTextMode} from './ace';
@@ -13,15 +13,22 @@ let ruleEditorCss = require<string>('./editor.css');
 })
 @View({
     styles: [ruleEditorCss],
+    directives: [NgStyle],
     templateUrl: ruleEditorTemplate
 })
 export class RuleEditor implements AfterViewInit {
 
     id: string;
+    filename: string;
+    text_area_width: number;
+    text_area_height: number;
     editor: AceAjax.Editor;
 
     constructor(id: UniqueId, private settings: AaribaScriptSettings) {
         this.id = id.get();
+        this.filename = "hello_world.as";
+        this.text_area_width = 500;
+        this.text_area_height = 400;
     }
 
     afterViewInit(): void {

@@ -1,1 +1,7 @@
-<div id="{{id}}" class="rule-editor"></div>
+
+<div class="rule-editor">
+  <div class="rule-editor--tab">{{filename}}</div>
+  <div class="rule-editor--wrapper" [ng-style]="{ 'width': text_area_width, 'height': text_area_height }">
+    <div id="{{id}}" class="rule-editor--content" [ng-style]="{ 'width': text_area_width, 'height': text_area_height }"></div>
+  </div>
+</div>
