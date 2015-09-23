@@ -1,9 +1,9 @@
 
 import {Component, View, AfterViewInit, NgStyle} from 'angular2/angular2';
-import {UniqueId} from '../services/mod';
-import {AaribaScriptSettings} from '../models/user';
+import {UniqueId} from '../../services/mod';
+import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
-import {AaribaInterpreter, AaribaScriptError} from './parser';
+import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';
 
 let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<string>('./editor.css');

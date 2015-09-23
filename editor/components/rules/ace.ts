@@ -1,6 +1,6 @@
-import {IsHighlightRules, IsTextMode, IsType, Any, AceFoldMode} from '../util/interfaces';
+import {IsHighlightRules, IsTextMode, IsType, Any, AceFoldMode} from '../../rules/interfaces';
 import {AaribaScriptCompleter} from './autocompleter';
-import {injectCss} from '../util/injector';
+import {injectCss} from '../../util/injector';
 
 let TextMode: IsTextMode = ace.require("ace/mode/text").Mode;
 let TextHighlightRules: IsHighlightRules = ace.require("ace/mode/text_highlight_rules").TextHighlightRules;

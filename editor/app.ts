@@ -1,8 +1,8 @@
 import {Component, View} from 'angular2/angular2';
 import {RouteConfig, RouterOutlet, Router, Location} from 'angular2/router';
-import {MapEditor} from './map/editor';
-import {LoginForm} from './login/form';
-import {RuleEditor} from './rules/editor';
+import {MapEditor} from './components/map/editor';
+import {LoginForm} from './components/login/form';
+import {RuleEditor} from './components/rules/editor';
 
 
 let appTemplate = require<string>('./app.html');
