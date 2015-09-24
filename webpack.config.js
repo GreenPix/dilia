@@ -34,6 +34,9 @@ module.exports = {
         ],
         'index': [
             './editor/index.ts'
+        ],
+        'libs-free': [
+            './editor/libs-free.ts'
         ]
     },
     output: {

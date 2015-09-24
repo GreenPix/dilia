@@ -38,6 +38,7 @@
         "./editor/components/rules/globals.ts",
         "./editor/components/rules/toolbar.ts",
         "./editor/index.ts",
+        "./editor/libs-free.ts",
         "./editor/models/rules_editor.ts",
         "./editor/models/user.ts",
         "./editor/rules/interfaces.ts",

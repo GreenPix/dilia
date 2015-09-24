@@ -5,8 +5,6 @@ import {UniqueId} from './services/mod';
 import {App} from './app';
 import {User, AaribaScriptSettings} from './models/user';
 
-require('style!css!normalize.css');
-
 bootstrap(App, [
     ROUTER_BINDINGS,
     HTTP_BINDINGS,
