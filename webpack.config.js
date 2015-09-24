@@ -51,7 +51,7 @@ module.exports = {
         loaders: [
 
             { test: /\.json$/,  loader: 'json'  },
-            { test: /\.css$/,   loader: 'raw'   },
+            { test: /\b(?!normalize)\w+\.css$/,   loader: 'raw'   },
             { test: /\.html$/,  loader: 'url'   },
             { test: /\.pegjs$/, loader: 'pegjs' },
             {
