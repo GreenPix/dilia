@@ -52,14 +52,18 @@ export class RuleEditor implements AfterViewInit {
                 interpreter.execute(editor.getValue());
             } catch (e) {
                 let error: AaribaScriptError = e;
-                this.editor.getSession().setAnnotations([
-                    {
-                        row: error.line - 1,
-                        column: error.column - 1,
-                        text: `${error.name}: ${error.message}`,
-                        type: "error",
-                    }
-                ]);
+                if (error.line && error.column) {
+                  this.editor.getSession().setAnnotations([
+                      {
+                          row: error.line - 1,
+                          column: error.column - 1,
+                          text: `${error.name}: ${error.message}`,
+                          type: "error",
+                      }
+                  ]);
+                } else {
+                  console.error(error);
+                }
             }
         });
     }
