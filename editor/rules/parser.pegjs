@@ -176,18 +176,20 @@ Expression
     }
 
 Term
-  = first:Factor rest:(_ ("*" / "/" / "^") _ Factor)* {
+  = first:Factor rest:(_ ("*" / "/" / "^" / "%") _ Factor)* {
       return combine(first, rest, {
         "*": function(left, right) { return left * right; },
         "/": function(left, right) { return left / right; },
-        "^": function(left, right) { return Math.pow(left, right); }
+        "^": function(left, right) { return Math.pow(left, right); },
+        "%": function(left, right) { return left % right; }
       });
     }
 
 Factor
   = "(" _ expr:Expression _ ")" { return expr; }
-  / ident:LocalIdent            { return get_local(ident); }
+  / res:Function                { return res; }
   / gident:GlobalIdent          { return get_global(gident); }
+  / ident:LocalIdent            { return get_local(ident); }
   / Number
 
 LocalIdent "local variable"
@@ -200,6 +202,13 @@ GlobalIdent "global variable"
     return text().substring(1);
   }
 
+Function "function"
+  = "sin"  _ "(" _ expr:Expression _ ")" { return Math.sin(expr); }
+  / "cos"  _ "(" _ expr:Expression _ ")" { return Math.cos(expr); }
+  / "tan"  _ "(" _ expr:Expression _ ")" { return Math.tan(expr); }
+  / "rand" _ "(" _ expr:Expression? _ ")" { return expr ? Math.random() * expr: Math.random(); }
+  / "max"  _ "(" _ a:Expression _ "," _ b:Expression _ ")" { return Math.max(a, b); }
+  / "min"  _ "(" _ a:Expression _ "," _ b:Expression _ ")" { return Math.min(a, b); }
 
 Number "number"
   = Minus? Int Frac? Exp? { return parseFloat(text()); }
