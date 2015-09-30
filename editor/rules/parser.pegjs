@@ -191,12 +191,12 @@ Factor
   / Number
 
 LocalIdent "local variable"
-  = [a-zA-Z_\u00a1-\uffff][\.\da-zA-Z_\u00a1-\uffff]* {
+  = [a-zA-Z_\u00a1-\uffff][\.0-9a-zA-Z_\u00a1-\uffff]* {
     return text();
   }
 
 GlobalIdent "global variable"
-  = [\$][a-zA-Z_\u00a1-\uffff\d][\.\da-zA-Z_\u00a1-\uffff]* {
+  = [\$][a-zA-Z_\u00a1-\uffff\d][\.0-9a-zA-Z_\u00a1-\uffff]* {
     return text().substring(1);
   }
 
