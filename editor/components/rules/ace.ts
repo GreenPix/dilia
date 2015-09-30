@@ -43,6 +43,7 @@ class AaribaScriptHighlightRules extends TextHighlightRules
         // TODO: add support for comments
         this.$rules = {
             "start": [
+                { token: "keyword.else", regex: /else/ },
                 { token: "keyword.if", regex: /if/, next: "if_cond" },
                 { token: "keyword.function", regex: funcRe },
                 { token: "variable.global", regex: globalIdenRe },
