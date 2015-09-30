@@ -51,17 +51,21 @@ module.exports = {
     },
     context: __dirname,
     module: {
-        loaders: [
-
-            { test: /\.json$/,  loader: 'json'  },
-            { test: /\b(?!normalize)\w+\.css$/,   loader: 'raw'   },
-            { test: /\.html$/,  loader: 'url'   },
-            { test: /\.pegjs$/, loader: 'pegjs' },
-            {
-                test: /\.tsx?$/,
-                loader: 'ts-loader'
-            }
-        ]
+      loaders: [
+        // Sass / css / fonts
+        { test: /\.scss$/,  loader: 'style!css?sourceMap!sass?sourceMap' },
+        { test: /\.eot/, loader: 'url?limit=100000&mimetype=application/vnd.ms-fontobject' },
+        { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=100000&mimetype=application/font-woff2' },
+        { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=100000&mimetype=application/font-woff' },
+        { test: /\.ttf(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=100000&mimetype=application/font-ttf' },
+        { test: /\.svg(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=10000&mimetype=application/svg' },
+        { test: /\b(?!normalize)\w+\.css$/,   loader: 'raw'   },
+        // Json / html / pegjs / ts
+        { test: /\.json$/,  loader: 'json'  },
+        { test: /\.html$/,  loader: 'url'   },
+        { test: /\.pegjs$/, loader: 'pegjs' },
+        { test: /\.tsx?$/,  loader: 'ts' }
+      ]
     },
     noParse: [
         /rtts_assert\/src\/rtts_assert/,
