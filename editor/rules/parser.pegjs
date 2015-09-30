@@ -42,6 +42,17 @@
     this.should_exec = function () {
       return !this.skipInstruction[this.skipInstruction.length - 1]
     }
+    this.flip_instruction_skip_mode = function () {
+      // Flip only if the parent scope is not skipped:
+      if (this.skipInstruction.length > 1) {
+        this.skipInstruction[this.skipInstruction.length - 1] =
+          !this.skipInstruction[this.skipInstruction.length - 1] ||
+           this.skipInstruction[this.skipInstruction.length - 2];
+      } else {
+        this.skipInstruction[this.skipInstruction.length - 1] =
+          !this.skipInstruction[this.skipInstruction.length - 1];
+      }
+    }
   }
   //////////////////////////////////////////////////////////////////
   /// Scopes
@@ -54,6 +65,9 @@
   }
   function should_exec() {
     return locals.should_exec();
+  }
+  function flip_instruction_skip_mode() {
+    locals.flip_instruction_skip_mode();
   }
 
   //////////////////////////////////////////////////////////////////
@@ -144,6 +158,12 @@ Assignment
 
 IfStatement
   = "if" _ ident:GlobalIdent _ "{" ! { push_scope(is_gdef(ident)); }
+      _? InstructionList
+  ( "}" _ Else
+  / "}" ! { pop_scope(); } )
+
+Else
+  = "else" _ "{" ! { flip_instruction_skip_mode(); }
       _? InstructionList
   "}" ! { pop_scope(); }
 
