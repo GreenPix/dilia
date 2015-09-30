@@ -127,7 +127,7 @@ Instruction
   / Assignment
   / IfStatement
 
-Comment "single line comment"
+Comment "comment"
   = "//" [^\n\r]* [\n\r]?
 
 Assignment
@@ -144,7 +144,7 @@ Assignment
 
 IfStatement
   = "if" _ ident:GlobalIdent _ "{" ! { push_scope(is_gdef(ident)); }
-      InstructionList
+      _? InstructionList
   "}" ! { pop_scope(); }
 
 Expression
@@ -170,12 +170,12 @@ Factor
   / gident:GlobalIdent          { return get_global(gident); }
   / Number
 
-LocalIdent "ident"
+LocalIdent "local variable"
   = [a-zA-Z_\u00a1-\uffff][\.\da-zA-Z_\u00a1-\uffff]* {
     return text();
   }
 
-GlobalIdent "global ident"
+GlobalIdent "global variable"
   = [\$][a-zA-Z_\u00a1-\uffff\d][\.\da-zA-Z_\u00a1-\uffff]* {
     return text().substring(1);
   }
