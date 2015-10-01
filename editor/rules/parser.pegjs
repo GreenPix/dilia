@@ -2,6 +2,8 @@
 {
   var globals = arguments[1];
   var locals = new Locals();
+  var errors = [];
+  var lastErrorLength = 0;
 
   function combine(first, rest, combiners) {
     var result = first, i;
@@ -74,7 +76,7 @@
   /// Setters/Getters for stores
   ///
   function get_local(ident)  { return should_exec() ? locals.get(ident): 0;     }
-  function get_global(ident) { return should_exec() ? __get(ident, globals): 0; }
+  function get_global(ident) { return should_exec() ? __get(ident, globals, '$' + ident): 0; }
   function set_local(ident, expr)   { locals.set(ident, expr); }
   function set_global(ident, expr)  {
     if (ident in globals) {
@@ -85,11 +87,11 @@
   }
   function is_gdef(ident)          { return __defined(ident, globals); }
   function __defined(ident, store) { return ident in store; }
-  function __get(ident, store) {
+  function __get(ident, store, ident_name) {
     if (__defined(ident, store)) {
       return store[ident];
     }
-    gen_error(ident);
+    gen_error(ident_name || ident);
   }
 
   //////////////////////////////////////////////////////////////////
@@ -98,14 +100,14 @@
   function gen_error(ident) {
     var pos = peg$reportedPos;
     var posDetails = peg$computePosDetails(pos);
-    throw new IllFormedError(
+    errors.push(new IllFormedError(
       "`" + ident + "` doesn't exists.",
       "",
       "",
       pos,
       posDetails.line,
       posDetails.column
-    )
+    ));
   }
   function IllFormedError(message, expected, found, offset, line, column) {
     this.message  = message;
@@ -130,6 +132,9 @@
 
 Program
   = InstructionList {
+    if (errors.length > 0) {
+      throw errors[0];
+    }
     return locals.stack;
   }
 
@@ -144,18 +149,6 @@ Instruction
 Comment "comment"
   = "//" [^\n\r]* [\n\r]?
 
-Assignment
-  = ident:LocalIdent _ "=" _ expr:Expression ";" {
-    if (should_exec()) {
-      set_local(ident, expr);
-    }
-  }
-  / ident:GlobalIdent _ "=" _ expr:Expression ";" {
-    if (should_exec()) {
-      set_global(ident, expr);
-    }
-  }
-
 IfStatement
   = "if" _ ident:GlobalIdent _ "{" ! { push_scope(is_gdef(ident)); }
       _? InstructionList
@@ -166,6 +159,29 @@ Else
   = "else" _ "{" ! { flip_instruction_skip_mode(); }
       _? InstructionList
   "}" ! { pop_scope(); }
+
+Assignment
+  = ident:LocalIdent _ expr:LValue ";" {
+    if (should_exec()) {
+      set_local(ident, expr);
+    }
+  }
+  / ident:GlobalIdent _ expr:LValue ";" {
+    if (should_exec()) {
+      set_global(ident, expr);
+    }
+  }
+
+LValue
+  = "=" ! { lastErrorLength = errors.length; } _ expr:Expression _ "?"? _ or:Expression? {
+    if (lastErrorLength == errors.length) { return expr; }
+    if (typeof or === 'number') {
+      errors = errors.slice(0, lastErrorLength).concat(errors.slice(lastErrorLength + 1));
+      if (lastErrorLength === errors.length - 1) {
+        return or;
+      }
+    }
+  }
 
 Expression
   = first:Term rest:(_ ("+" / "-") _ Term)* {
@@ -202,7 +218,7 @@ GlobalIdent "global variable"
     return text().substring(1);
   }
 
-Function "function"
+Function
   = "sin"  _ "(" _ expr:Expression _ ")" { return Math.sin(expr); }
   / "cos"  _ "(" _ expr:Expression _ ")" { return Math.cos(expr); }
   / "tan"  _ "(" _ expr:Expression _ ")" { return Math.tan(expr); }
