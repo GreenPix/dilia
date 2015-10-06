@@ -1,5 +1,6 @@
-import {IsHighlightRules, IsTextMode, IsType, Any, AceFoldMode} from '../../rules/interfaces';
+import {IsHighlightRules, IsTextMode, IsType, Any, AceFoldMode} from './interfaces';
 import {AaribaScriptCompleter} from './autocompleter';
+import {AaribaBehaviour} from './behaviour';
 import {injectCss} from '../../util/injector';
 
 let TextMode: IsTextMode = ace.require("ace/mode/text").Mode;
@@ -43,6 +44,8 @@ class AaribaScriptHighlightRules extends TextHighlightRules
         // TODO: add support for comments
         this.$rules = {
             "start": [
+                { token: "paren.lparen", regex : "[[({]" },
+                { token: "paren.rparen", regex : "[\\])}]" },
                 { token: "comment", regex: /\/\/.*$/ },
                 { token: "keyword.else", regex: /else/ },
                 { token: "keyword.if", regex: /if/, next: "if_cond" },
@@ -206,6 +209,7 @@ export class AaribaScriptTextMode extends TextMode
     constructor() {
         super();
         this.foldingRules = new AaribaFoldMode();
+        this.$behaviour = new AaribaBehaviour();
     }
 
     getNextLineIndent(state, line, tab): string {
