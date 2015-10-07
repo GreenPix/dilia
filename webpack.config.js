@@ -57,7 +57,7 @@ module.exports = {
     module: {
       loaders: [
         // Sass / css / fonts
-        { test: /\.scss$/,  loader: 'style!css?sourceMap!sass?sourceMap' },
+        { test: /\.scss$/,  loader: 'css?sourceMap!sass?sourceMap' },
         { test: /\.eot/, loader: 'url?limit=100000&mimetype=application/vnd.ms-fontobject' },
         { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=100000&mimetype=application/font-woff2' },
         { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=100000&mimetype=application/font-woff' },

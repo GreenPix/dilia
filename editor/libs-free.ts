@@ -1,3 +1,3 @@
 
 require('style!css!normalize.css');
-require('./style.scss');
+require('style!./style.scss');
