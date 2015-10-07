@@ -39,4 +39,16 @@ Vagrant.configure(2) do |config|
     s.path = "deploy.sh"
     s.privileged = false
   end
+
+  # If you are behind a proxy, instanll the plugin vagrant-proxyconf
+  # by executing the following command:
+  #
+  #     vagrant plugin install vagrant-proxyconf
+  #
+  if Vagrant.has_plugin?("vagrant-proxyconf")
+    config.proxy.http     = ENV['HTTP_PROXY']
+    config.proxy.https    = ENV['HTTPS_PROXY']
+    config.proxy.no_proxy = "localhost,127.0.0.1"
+  end
+
 end
