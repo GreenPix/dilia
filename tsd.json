@@ -5,29 +5,23 @@
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
   "installed": {
-    "es6-promise/es6-promise.d.ts": {
-      "commit": "a461a243e2e09b213bc49d12650f80d81047576d"
-    },
-    "rx/rx-lite.d.ts": {
-      "commit": "a461a243e2e09b213bc49d12650f80d81047576d"
-    },
-    "rx/rx.d.ts": {
-      "commit": "a461a243e2e09b213bc49d12650f80d81047576d"
-    },
-    "angular2/angular2.d.ts": {
-      "commit": "a461a243e2e09b213bc49d12650f80d81047576d"
-    },
-    "angular2/router.d.ts": {
-      "commit": "a461a243e2e09b213bc49d12650f80d81047576d"
-    },
-    "angular2/http.d.ts": {
-      "commit": "a461a243e2e09b213bc49d12650f80d81047576d"
-    },
     "ace/ace.d.ts": {
       "commit": "52b0ea5c9719831eecf6ba7436660e30061a4b3c"
     },
     "lodash/lodash.d.ts": {
       "commit": "4356af494c045299110677b21e62000957e7a72e"
+    },
+    "es6-shim/es6-shim.d.ts": {
+      "commit": "1c7dc757837b1c2089b7d2c2c6fabdeba77587ab"
+    },
+    "angular2/router.d.ts": {
+      "commit": "1c7dc757837b1c2089b7d2c2c6fabdeba77587ab"
+    },
+    "angular2/angular2.d.ts": {
+      "commit": "1c7dc757837b1c2089b7d2c2c6fabdeba77587ab"
+    },
+    "angular2/http.d.ts": {
+      "commit": "1c7dc757837b1c2089b7d2c2c6fabdeba77587ab"
     }
   }
 }

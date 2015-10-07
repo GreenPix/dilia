@@ -1,5 +1,5 @@
 import {Component, View} from 'angular2/angular2';
-import {RouteConfig, RouterOutlet, Router, Location} from 'angular2/router';
+import {RouteConfig, ROUTER_DIRECTIVES, Router, Location} from 'angular2/router';
 import {MapEditor} from './components/map/editor';
 import {LoginForm} from './components/login/form';
 import {RuleEditor} from './components/rules/editor';
@@ -12,13 +12,13 @@ let appTemplate = require<string>('./app.html');
 })
 @View({
     templateUrl: appTemplate,
-    directives: [RouterOutlet]
+    directives: [ROUTER_DIRECTIVES]
 })
 @RouteConfig([
-    { path: '/login', component: LoginForm, as: 'login' },
-    { path: '/map-editor', component: MapEditor, as: 'map-editor' },
-    { path: '/rule-editor', component: RuleEditor, as: 'rule-editor' },
-    { path: '/', redirectTo: 'login', as: 'home' }
+    { path: '/login', component: LoginForm, as: 'Login' },
+    { path: '/map-editor', component: MapEditor, as: 'MapEditor' },
+    { path: '/rule-editor', component: RuleEditor, as: 'RuleEditor' },
+    { path: '/', redirectTo: 'Login', as: 'Home' }
 ])
 export class App {
     router: Router;

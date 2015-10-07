@@ -29,7 +29,6 @@
     "files": [
         "./editor/app.ts",
         "./editor/components/login/form.ts",
-        "./editor/components/login/router-outlet.ts",
         "./editor/components/map/editor.ts",
         "./editor/components/rules/ace.ts",
         "./editor/components/rules/autocompleter.ts",
@@ -50,10 +49,8 @@
         "./typings/angular2/angular2.d.ts",
         "./typings/angular2/http.d.ts",
         "./typings/angular2/router.d.ts",
-        "./typings/es6-promise/es6-promise.d.ts",
+        "./typings/es6-shim/es6-shim.d.ts",
         "./typings/lodash/lodash.d.ts",
-        "./typings/rx/rx-lite.d.ts",
-        "./typings/rx/rx.d.ts",
         "./typings/tsd.d.ts",
         "./custom_typings/ace-custom.d.ts",
         "./custom_typings/webpack.d.ts"
