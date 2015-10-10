@@ -2,14 +2,4 @@
 node_modules/
 typings/
 build/
-public/js/*.svg
-public/js/*.ttf
-public/js/libs-free.js
-public/js/libs-free.map.js
-public/js/index.js
-public/js/index.map.js
-public/js/libs.js
-public/js/libs.map.js
-public/js/common.js
-public/js/common.map.js
-public/js/ace-min.js
+public/js/
