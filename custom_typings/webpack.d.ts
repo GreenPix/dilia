@@ -8,4 +8,6 @@ declare module Webpack {
     interface ToStr {
         toString(): string;
     }
+
+    interface Scss extends ToStr {}
 }
