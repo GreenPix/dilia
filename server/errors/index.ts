@@ -1,5 +1,5 @@
 
-class BadRequestError extends Error {
+export class BadRequestError extends Error {
 
     constructor(message?: string) {
         super();
@@ -7,5 +7,3 @@ class BadRequestError extends Error {
         this.message = message;
     }
 }
-
-export = BadRequestError;
