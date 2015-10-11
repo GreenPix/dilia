@@ -11,6 +11,7 @@
     "build": "npm run build-client && npm run build-server",
     "build-client": "webpack",
     "server": "node ./server/build/server.js",
+    "debug-server": "node --debug-brk ./server/build/server.js",
     "build-server": "cd server/ && tsc && cd .."
   },
   "author": "Nemikolh <joan.varvenne@gmail.com>",

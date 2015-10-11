@@ -2,7 +2,7 @@
 export var port = 3000;
 
 let configDev: Config = {
-    mongodb: 'mongodb://localhost/dilia',
+    mongodb: 'mongodb://localhost/diliaDev',
     github: {
       clientID: process.env.GITHUB_CLIENTID,
       clientSecret: process.env.GITHUB_SECRET,

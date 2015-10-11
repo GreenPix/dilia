@@ -4,6 +4,7 @@ sudo apt-get install -y mongodb-server
 sudo apt-get install -y curl
 sudo apt-get install -y libkrb5-dev
 sudo apt-get install -y git
+sudo apt-get install -y g++
 
 # Setting up node via nvm
 export NVM_DIR="$HOME/.nvm"
@@ -20,8 +21,15 @@ cd /vagrant
 
 # Setting up npm
 if ! type "npm" > /dev/null; then
+
+  # Install node / npm
   nvm install stable
   nvm alias default stable
+
+  # Install dev-tools
+  npm install -g mongo-express
+  npm install -g node-inspector
+
 else
   echo "npm already installed"
 fi
@@ -34,6 +42,12 @@ else
   npm run copy
   echo "node_modules folder is already present"
 fi
+
+# Copy mongo express config
+node_ver=`eval node --version`
+cp -v ./mongo-express-config.js ~/.nvm/versions/node/$node_ver/lib/node_modules/mongo-express/config.js
+echo "alias mongo-express='node ~/.nvm/versions/node/'$node_ver'/lib/node_modules/mongo-express/app.js'" >> ~/.bashrc
+
 echo ""
 echo "###################################"
 echo "        building the client"
