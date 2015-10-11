@@ -29,8 +29,7 @@ passportUse(new LocalStrategy({
         .exec((err, user) => {
             if (err) return done(err)
             if (!user || !user.authenticate(password)) {
-                // return done(new BadRequestError('Wrong username or password.'));
-                return done(null, false, { message: 'Wrong username or password.' });
+                return done(null, false, { message: 'wrong username or password' });
             }
             return done(null, user);
         });
@@ -58,7 +57,7 @@ passportUse(new GoogleStrategy({
                     return done(err, user);
                 });
             } else {
-                return done(err, user);
+                return done(null, user);
             }
         });
 }));

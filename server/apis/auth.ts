@@ -1,11 +1,15 @@
 import {app} from '../config/express';
 import {authenticate} from 'passport';
+import {logRequest} from '../logger/helpers';
+import {User} from '../db/schemas/users';
 
 require('../config/passport');
 
 // Local auth
-app.post('/api/login', authenticate('local'), (req, res) => res.sendStatus(200));
-app.post('/api/logout', (req, res) => { req.logout(); res.sendStatus(200) });
+app.post('/api/login', authenticate('local'), logRequest('has logged in.'),
+    (req, res) => res.sendStatus(200));
+app.post('/api/logout', logRequest('has logged out.'),
+    (req, res) => { User.logout(req.user); req.logout(); res.sendStatus(200) });
 
 // Google auth
 app.get('/api/auth/google', authenticate('google', {

@@ -22,6 +22,7 @@
         "!./node_modules/**/*"
     ],
     "files": [
+        "apis/aariba.ts",
         "apis/auth.ts",
         "apis/index.ts",
         "apis/middlewares.ts",
@@ -36,6 +37,7 @@
         "db/schemas/aariba.ts",
         "db/schemas/users.ts",
         "errors/index.ts",
+        "logger/helpers.ts",
         "server.ts",
         "typings/body-parser/body-parser.d.ts",
         "typings/cookie-parser/cookie-parser.d.ts",

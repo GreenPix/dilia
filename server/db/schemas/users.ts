@@ -1,4 +1,6 @@
-import {Schema, model, Document} from 'mongoose';
+import {Schema, model, Document, Model} from 'mongoose';
+import {error as werror} from 'winston';
+import {AaribaScript} from './aariba';
 import crypto = require('crypto');
 
 let mongooseUserSchema = new Schema({
@@ -44,7 +46,20 @@ mongooseUserSchema.virtual('password')
 mongooseUserSchema.path('username').validate(function (username) {
     if (this.skipValidation()) return true;
     return username.length;
-}, "User name cannot be empty.");
+}, "User name cannot be empty");
+
+mongooseUserSchema.path('username').validate(function (username, cb) {
+    if (this.skipValidation()) cb(true);
+
+    // Check only when it is a new user or when email field is modified
+    if (this.isNew || this.isModified('username')) {
+        User.find({ username: username }).exec((err, users) => {
+            cb(!err && users.length === 0);
+        });
+    } else {
+        cb(true);
+    }
+}, "User name already exists");
 
 mongooseUserSchema.path('email').validate(function (email) {
     if (this.skipValidation()) return true;
@@ -109,8 +124,21 @@ mongooseUserSchema.method({
     }
 });
 
+mongooseUserSchema.static('logout', (user: UserDocument) => {
+    AaribaScript.find({ locked_by: user._id }).exec((err, scripts) => {
+        for (var script of scripts) {
+            script.locked_by = null;
+            script.save((err) => {
+                if (err) werror(`Couldn't unlock ${script.name} !`);
+            });
+        }
+    });
+})
 
 interface UserDocument extends Document, UserSchema {}
+interface UserModel {
+    logout(user: UserDocument): void;
+}
 
-export var User =
+export var User = <Model<UserDocument> & UserModel>
     model<UserDocument>('UserSchema', mongooseUserSchema);
