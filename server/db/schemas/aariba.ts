@@ -2,7 +2,7 @@ import {Schema, model, Document, Types} from 'mongoose';
 import {User} from './users';
 import _ = require('lodash');
 
-/// Schemas:
+/// Schema:
 let mongooseAaribaScriptSchema = new Schema({
     name: String,
     created_on: { type: Date, default: Date.now },
@@ -11,7 +11,7 @@ let mongooseAaribaScriptSchema = new Schema({
     locked_by: Schema.Types.ObjectId,
 });
 
-/// Schemas (Typescript equivalent)
+/// Schema (Typescript equivalent)
 export interface AaribaScriptSchema {
     name: string;
     created_on: Date;
@@ -47,7 +47,7 @@ mongooseAaribaScriptSchema.method({
 });
 
 /// Document interface for more type-checking
-interface AaribaScriptDocument extends Document, AaribaScriptSchema {}
+export interface AaribaScriptDocument extends Document, AaribaScriptSchema {}
 
 /// Model<T> exported for convenience.
 export var AaribaScript =

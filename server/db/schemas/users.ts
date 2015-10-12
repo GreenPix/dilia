@@ -135,7 +135,7 @@ mongooseUserSchema.static('logout', (user: UserDocument) => {
     });
 })
 
-interface UserDocument extends Document, UserSchema {}
+export interface UserDocument extends Document, UserSchema {}
 interface UserModel {
     logout(user: UserDocument): void;
 }
