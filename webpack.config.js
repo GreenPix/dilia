@@ -20,7 +20,10 @@ module.exports = {
         historyApiFallback: true,
         contentBase: 'public/',
         publicPath: '/js/',
-        port: 8001
+        port: 8001,
+        proxy: {
+          '/api/*': 'http://localhost:3000/'
+        }
     },
     entry: {
         'libs': [
