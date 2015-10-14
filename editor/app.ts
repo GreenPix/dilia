@@ -18,7 +18,7 @@ let appTemplate = require<string>('./app.html');
     { path: '/login', component: LoginForm, as: 'Login' },
     { path: '/map-editor', component: MapEditor, as: 'MapEditor' },
     { path: '/rule-editor', component: RuleEditor, as: 'RuleEditor' },
-    { path: '/', redirectTo: 'Login', as: 'Home' }
+    { path: '/', redirectTo: '/login', as: 'Home' }
 ])
 export class App {
     router: Router;
