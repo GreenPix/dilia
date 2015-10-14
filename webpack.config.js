@@ -19,7 +19,8 @@ module.exports = {
         colors: true,
         historyApiFallback: true,
         contentBase: 'public/',
-        publicPath: '/js/'
+        publicPath: '/js/',
+        port: 8001
     },
     entry: {
         'libs': [
