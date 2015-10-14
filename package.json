@@ -39,7 +39,7 @@
   "dependencies": {
     "@reactivex/rxjs": "0.0.0-prealpha.3",
     "ace-builds": "ajaxorg/ace-builds#0982db4",
-    "angular2": "2.0.0-alpha.39",
+    "angular2": "2.0.0-alpha.42",
     "body-parser": "^1.13.3",
     "compression": "^1.6.0",
     "connect-mongo": "^0.8.2",

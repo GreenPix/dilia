@@ -1,14 +1,13 @@
-import {HTTP_BINDINGS} from 'angular2/http';
+import {HTTP_PROVIDERS} from 'angular2/http';
 import {bootstrap, bind} from 'angular2/angular2';
-import {ROUTER_BINDINGS, routerBindings, LocationStrategy, HashLocationStrategy} from 'angular2/router';
+import {ROUTER_PROVIDERS, LocationStrategy, HashLocationStrategy} from 'angular2/router';
 import {UniqueId} from './services/mod';
 import {App} from './app';
 import {User, AaribaScriptSettings} from './models/user';
 
 bootstrap(App, [
-    ROUTER_BINDINGS,
-    HTTP_BINDINGS,
-    routerBindings(App),
+    ROUTER_PROVIDERS,
+    HTTP_PROVIDERS,
     bind(User).toValue(User.default()),
     bind(AaribaScriptSettings).toFactory(user => user.aaribaScriptSettings, [User]),
     bind(UniqueId).toFactory(() => new UniqueId()),
