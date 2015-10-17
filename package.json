@@ -14,6 +14,10 @@
     "debug-server": "node --debug-brk ./server/build/server.js",
     "build-server": "cd server/ && tsc && cd .."
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GreenPix/dilia.git"
+  },
   "author": "Nemikolh <joan.varvenne@gmail.com>",
   "license": "MIT",
   "devDependencies": {
@@ -39,7 +43,7 @@
   "dependencies": {
     "@reactivex/rxjs": "0.0.0-prealpha.3",
     "ace-builds": "ajaxorg/ace-builds#0982db4",
-    "angular2": "2.0.0-alpha.42",
+    "angular2": "2.0.0-alpha.44",
     "body-parser": "^1.13.3",
     "compression": "^1.6.0",
     "connect-mongo": "^0.8.2",
