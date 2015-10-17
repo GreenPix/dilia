@@ -1,6 +1,6 @@
 
 import {Component, View, AfterViewInit, NgStyle} from 'angular2/angular2';
-import {UniqueId} from '../../services/mod';
+import {UniqueId} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
 import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';

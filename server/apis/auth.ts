@@ -5,6 +5,11 @@ import {User} from '../db/schemas/users';
 
 require('../config/passport');
 
+// Verify
+app.post('/api/verify', (req, res) => res.json({
+    authenticated: req.isAuthenticated()
+}));
+
 // Local auth
 app.post('/api/login', authenticate('local'), logRequest('has logged in.'),
     (req, res) => res.sendStatus(200));
