@@ -34,6 +34,7 @@ passportUse(new LocalStrategy({
             return done(null, user);
         });
 }));
+
 // Google Strategy
 passportUse(new GoogleStrategy({
         clientID: config.google.clientID,

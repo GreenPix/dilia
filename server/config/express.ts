@@ -1,5 +1,8 @@
 import {Request, Response} from 'express';
 import {config} from './index';
+import {wrap} from './socket.io';
+import {authorize as passSocketIOAuth} from 'passport.socketio';
+import {createServer} from 'http';
 import express = require('express');
 import cookieParser = require('cookie-parser');
 import compression = require('compression');
@@ -10,28 +13,55 @@ import serveStatic = require('serve-static');
 import passport = require('passport');
 import csrf = require('csurf');
 import winston = require('winston');
+import socket_io = require('socket.io');
 
-export var app = express();
+
+var expressApp = express();
+export var server = createServer(expressApp);
+export var io = socket_io(server);
+export var app = wrap(expressApp, io);
 
 let MongoStore = connectMongo(session);
+let cookieParserM = cookieParser();
 
-// Express configuration
-app.use(compression());
-app.use(serveStatic('public'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(session({
+let sessionOptions = {
     secret: 'TODO: handle session secret with a better solution',
+    key:    'dilia.session-id',
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({
         url: config().mongodb,
         collection: 'sessions',
     })
-}));
+};
+
+// Express configuration
+app.use(compression());
+app.use(serveStatic('public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParserM);
+app.use(session(sessionOptions));
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Socket.io auth
+io.use(passSocketIOAuth({
+    cookieParser: cookieParserM,
+    key: sessionOptions.key,
+    secret: sessionOptions.secret,
+    store: sessionOptions.store,
+    success: (data, accept) => {
+        winston.info(`Successful connection to socket.io!`);
+        accept();
+    },
+    fail: (data, message, error, accept) => {
+        winston.info(`Failed connection to socket.io: ${message}`);
+        if (error) {
+            accept(new Error(message));
+        }
+    },
+}));
 
 // Error handler
 app.use((err: any, req: Request, res: Response, next: Function) => {

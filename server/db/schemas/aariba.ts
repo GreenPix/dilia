@@ -1,5 +1,4 @@
 import {Schema, model, Document, Types} from 'mongoose';
-import {User} from './users';
 import _ = require('lodash');
 
 /// Schema:
@@ -76,7 +75,9 @@ mongooseAaribaScriptSchema.path('name').validate(function (name, cb) {
 }, 'Name already exists');
 
 mongooseAaribaScriptSchema.method({
+
     toJsonResponse: function (): any {
+
         let self: AaribaScriptSchema = this;
         let res =  _.pick<any, AaribaScriptSchema>(self,
             ['name', 'created_on']
@@ -96,7 +97,7 @@ mongooseAaribaScriptSchema.method({
 
     getRevision: function (id: number): any {
         let self: AaribaScriptSchema = this;
-        return self.revisions[id];
+        return _.pick(self.revisions[id], ['author', 'content', 'comment', 'date']);
     },
 
     commitRevision: function (rev: Revision, cb: (err: any) => void): void {

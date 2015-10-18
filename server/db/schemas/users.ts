@@ -1,6 +1,5 @@
-import {Schema, model, Document, Model} from 'mongoose';
+import {Schema, model, Document, Model, Types} from 'mongoose';
 import {error as werror} from 'winston';
-import {AaribaScript} from './aariba';
 import crypto = require('crypto');
 
 let mongooseUserSchema = new Schema({
@@ -12,6 +11,7 @@ let mongooseUserSchema = new Schema({
     authToken: { type: String, default: '' },
     github: {},
     google: {},
+    lastUsedResources: [{ assocSchema: String, id: Schema.Types.ObjectId }],
 });
 
 export interface UserSchema {
@@ -23,6 +23,7 @@ export interface UserSchema {
     authToken?: string;
     google?: any;
     github?: any;
+    lastUsedResources: Array<{ assocSchema: string; id: Types.ObjectId }>;
 
     // Need to be in sync with 'method' call
     authenticate(password: string): boolean;
@@ -124,20 +125,38 @@ mongooseUserSchema.method({
     }
 });
 
-mongooseUserSchema.static('logout', (user: UserDocument) => {
-    AaribaScript.find({ locked_by: user._id }).exec((err, scripts) => {
-        for (var script of scripts) {
-            script.locked_by = null;
-            script.save((err) => {
-                if (err) werror(`Couldn't unlock ${script.name} !`);
-            });
+class AuthorMap {
+
+    cache: { [index: string]: string };
+
+    constructor() {
+        this.cache = {};
+    }
+
+    get(author: Types.ObjectId): string {
+        return this.cache[author.toHexString()];
+    }
+}
+
+mongooseUserSchema.static('findAll', (authors: Types.ObjectId[], cb: (err:any, authors: AuthorMap) => void) => {
+
+    User.find({
+        _id: {
+            $in: authors.map(a => a.toHexString())
         }
+    }).select('username').exec((err, users) => {
+        if (err) return cb(err, null);
+        let authorMap = new AuthorMap();
+        for (let user of users) {
+            authorMap.cache[user.id] = user.username;
+        }
+        cb(null, authorMap);
     });
-})
+});
 
 export interface UserDocument extends Document, UserSchema {}
 interface UserModel {
-    logout(user: UserDocument): void;
+    findAll(authors: Types.ObjectId[], cb: (err: any, authors: AuthorMap) => void): void;
 }
 
 export var User = <Model<UserDocument> & UserModel>

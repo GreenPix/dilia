@@ -14,7 +14,7 @@ app.post('/api/verify', (req, res) => res.json({
 app.post('/api/login', authenticate('local'), logRequest('has logged in.'),
     (req, res) => res.sendStatus(200));
 app.post('/api/logout', logRequest('has logged out.'),
-    (req, res) => { User.logout(req.user); req.logout(); res.sendStatus(200) });
+    (req, res) => { req.logout(); res.sendStatus(200) });
 
 // Google auth
 app.get('/api/auth/google', authenticate('google', {
