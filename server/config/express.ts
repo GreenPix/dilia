@@ -47,7 +47,7 @@ app.use(passport.session());
 
 // Socket.io auth
 io.use(passSocketIOAuth({
-    cookieParser: cookieParserM,
+    cookieParser: cookieParser,
     key: sessionOptions.key,
     secret: sessionOptions.secret,
     store: sessionOptions.store,
