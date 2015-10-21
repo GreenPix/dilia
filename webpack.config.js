@@ -10,7 +10,7 @@ var DedupePlugin   = webpack.optimize.DedupePlugin;
 var DefinePlugin   = webpack.DefinePlugin;
 
 
-var outputDir = path.join(__dirname, '/public/js/');
+var outputDir = path.join(__dirname, '/public/');
 
 module.exports = {
     devtool: 'source-map',
@@ -19,7 +19,7 @@ module.exports = {
         colors: true,
         historyApiFallback: true,
         contentBase: 'public/',
-        publicPath: '/js/',
+        publicPath: '/',
         port: 8001,
         proxy: {
           '/api/*': 'http://localhost:3000/'
@@ -46,9 +46,9 @@ module.exports = {
     },
     output: {
         path: outputDir,
-        filename: '[name].js',
-        chunkFilename: '[id].chunk.js',
-        sourceMapFilename: '[name].map.js'
+        filename: 'js/[name].js',
+        chunkFilename: 'js/[id].chunk.js',
+        sourceMapFilename: 'js/[name].map.js'
     },
     resolve: {
         root: __dirname,
@@ -61,12 +61,13 @@ module.exports = {
     module: {
       loaders: [
         // Sass / css / fonts
-        { test: /\.scss$/,  loader: 'css?sourceMap!sass?sourceMap' },
-        { test: /\.eot/, loader: 'url?limit=100000&mimetype=application/vnd.ms-fontobject' },
-        { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=100000&mimetype=application/font-woff2' },
-        { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=100000&mimetype=application/font-woff' },
-        { test: /\.ttf(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=100000&mimetype=application/font-ttf' },
-        { test: /\.svg(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'url?limit=10000&mimetype=application/svg' },
+        { test: /\b(?!style)\w+\.scss$/,  loader: 'css?sourceMap!sass?sourceMap' },
+        { test: /\.eot(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file?name=fonts/[hash].[ext]' },
+        { test: /\.otf$/, loader: 'file?name=fonts/[hash].[ext]' },
+        { test: /\.woff2(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file?name=fonts/[hash].[ext]' },
+        { test: /\.woff(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file?name=fonts/[hash].[ext]' },
+        { test: /\.ttf(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file?name=fonts/[hash].[ext]' },
+        { test: /\.svg(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: 'file?name=fonts/[hash].[ext]' },
         { test: /\b(?!normalize)\w+\.css$/,   loader: 'raw'   },
         // Json / html / pegjs / ts
         { test: /\.json$/,  loader: 'json'  },
@@ -85,11 +86,11 @@ module.exports = {
         new CommonsChunkPlugin({
             name: 'libs',
             minChunks: Infinity,
-            filename: 'libs.js'
+            filename: 'js/libs.js'
         }),
         new CommonsChunkPlugin({
             name: 'common',
-            filename: 'common.js'
+            filename: 'js/common.js'
         })
     ]
 }
