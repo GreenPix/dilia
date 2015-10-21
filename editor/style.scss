@@ -1,2 +1,40 @@
 $fa-font-path: "~font-awesome/fonts";
 @import "~font-awesome/scss/font-awesome";
+$icon-font-path: "~/bootstrap-sass/assets/fonts";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 300;
+    src: local("Source Sans Pro Light"), local("SourceSansPro-Light"),
+      url("/fonts/source-sans-pro/SourceSansPro-Light.otf") format("opentype");
+}
+@font-face {
+   font-family: 'Source Sans Pro';
+   font-style: normal;
+   font-weight: 400;
+   src: local("Source Sans Pro"), local("SourceSansPro-Regular"),
+     url("/fonts/source-sans-pro/SourceSansPro-Regular.otf") format('opentype');
+}
+@font-face {
+   font-family: 'Source Sans Pro';
+   font-style: normal;
+   font-weight: 600;
+   src: local("Source Sans Pro Semibold"), local("SourceSansPro-Semibold"),
+     url("/fonts/source-sans-pro/SourceSansPro-Semibold.otf") format('opentype');
+}
+@font-face {
+   font-family: 'Source Sans Pro';
+   font-style: normal;
+   font-weight: 700;
+   src: local("Source Sans Pro Bold"), local("SourceSansPro-Bold"),
+     url("/fonts/source-sans-pro/SourceSansPro-Bold.otf") format('opentype');
+}
+
+body {
+  font-family: 'Source Sans Pro';
+  font-weight: normal;
+  font-style: normal;
+}
