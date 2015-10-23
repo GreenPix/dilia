@@ -3,6 +3,7 @@ import {RouteConfig, ROUTER_DIRECTIVES, Router, Location} from 'angular2/router'
 import {MapEditor} from './components/map/editor';
 import {LoginForm} from './components/login/form';
 import {RuleEditor} from './components/rules/editor';
+import {RuleEditorToolbar} from './components/toolbar/toolbar';
 
 
 let appTemplate = require<string>('./app.html');
@@ -12,7 +13,7 @@ let appTemplate = require<string>('./app.html');
 })
 @View({
     templateUrl: appTemplate,
-    directives: [ROUTER_DIRECTIVES]
+    directives: [ROUTER_DIRECTIVES, RuleEditorToolbar]
 })
 @RouteConfig([
     { path: '/login', component: LoginForm, as: 'Login' },

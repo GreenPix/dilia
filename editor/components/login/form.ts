@@ -5,7 +5,7 @@ import {Router, OnActivate, ComponentInstruction} from 'angular2/router';
 import {HttpService} from '../../services/index';
 
 let template = require<string>('./form.html');
-let style = require<string>('./form.css');
+let style = require<Webpack.Scss>('./form.scss');
 
 interface LoginDetails {
     login: any;
@@ -23,7 +23,7 @@ class HasLoginDetails extends ControlGroup {
 })
 @View({
     templateUrl: template,
-    styles: [style],
+    styles: [style.toString()],
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES]
 })
 export class LoginForm implements OnActivate {
@@ -34,6 +34,26 @@ export class LoginForm implements OnActivate {
             login: ["", Validators.required],
             password: ["", Validators.required]
         });
+    }
+
+    isLoginInvalid(): boolean {
+        return (this.loginForm.controls["login"].errors &&
+            this.loginForm.controls["login"].errors["required"]);
+    }
+
+    isLoginValid(): boolean {
+        return !(this.loginForm.controls["login"].errors &&
+            this.loginForm.controls["login"].errors["required"]);
+    }
+
+    isPasswordInvalid(): boolean {
+        return (this.loginForm.controls["password"].errors &&
+            this.loginForm.controls["password"].errors["required"]);
+    }
+
+    isPasswordValid(): boolean {
+        return !(this.loginForm.controls["password"].errors &&
+            this.loginForm.controls["password"].errors["required"]);
     }
 
     doLogin(event: Event) {

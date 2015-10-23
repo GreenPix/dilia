@@ -4,8 +4,6 @@ import {UniqueId} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
 import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';
-
-import {RuleEditorToolbar} from './toolbar';
 import {RuleEditorGlobals} from './globals';
 import {RuleEditorExec} from './exec';
 
@@ -17,7 +15,7 @@ let ruleEditorCss = require<string>('./editor.css');
 })
 @View({
     styles: [ruleEditorCss],
-    directives: [NgStyle, RuleEditorExec, RuleEditorToolbar, RuleEditorGlobals],
+    directives: [NgStyle, RuleEditorExec, RuleEditorGlobals],
     templateUrl: ruleEditorTemplate
 })
 export class RuleEditor implements AfterViewInit {
