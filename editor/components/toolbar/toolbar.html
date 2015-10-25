@@ -1,11 +1,14 @@
 
 <header class="navbar navbar-fixed-top navbar-empty">
-  <div class="container">
-    <div class="logo" [ng-class]="{ 
-        'center-logo': isLoginPage(),
-        'left-logo': !isLoginPage()
-      }">
+  <div class="container-fluid">
+    <div class="logo center-logo">
       <img src="/img/logo.png"/></img>
+    </div>
+    <div class="toolbar" *ng-if="!isLoginPage()">
+      <div class="toolbar-options">
+        <button class="btn btn-default fa fa-user"></button>
+        <button (click)="logout()" class="btn btn-default fa fa-sign-out"></button>
+      </div>
     </div>
   </div>
 </header>

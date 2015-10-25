@@ -64,7 +64,7 @@ export class LoginForm implements OnActivate {
                 username: this.loginForm.value.login,
                 password: this.loginForm.value.password
             })
-            .subscribe((res) => {
+            .subscribe(res => {
                 if (res.status === 200) {
                     this.router.navigate(["/RuleEditor"]);
                 } else {
