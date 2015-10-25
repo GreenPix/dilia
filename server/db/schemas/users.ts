@@ -11,7 +11,10 @@ let mongooseUserSchema = new Schema({
     authToken: { type: String, default: '' },
     github: {},
     google: {},
-    lastUsedResources: [{ assocSchema: String, id: Schema.Types.ObjectId }],
+    lastUsedResources: {
+        type: [{ assocSchema: String, id: Schema.Types.ObjectId }],
+        default: [],
+    },
 });
 
 export interface UserSchema {
@@ -122,7 +125,7 @@ mongooseUserSchema.method({
     skipValidation: function(): boolean {
         // Validation is not required if using OAuth
         return this.provider === 'github' || this.provider === 'google';
-    }
+    },
 });
 
 class AuthorMap {
