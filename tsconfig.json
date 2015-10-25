@@ -46,6 +46,7 @@
         "editor/util/injector.ts",
         "typings/ace/ace.d.ts",
         "typings/lodash/lodash.d.ts",
+        "typings/socket.io-client/socket.io-client.d.ts",
         "typings/tsd.d.ts",
         "custom_typings/ace-custom.d.ts",
         "custom_typings/webpack.d.ts"

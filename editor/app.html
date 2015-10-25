@@ -1,2 +1,4 @@
 <rule-editor-toolbar></rule-editor-toolbar>
-<router-outlet></router-outlet>
+<div class="container nav-less" [ng-class]="{ 'limit-width': shouldLimitWidth() }">
+  <router-outlet></router-outlet>
+</div>

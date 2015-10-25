@@ -1,6 +1,7 @@
 
-import {Component, View, AfterViewInit, NgStyle} from 'angular2/angular2';
-import {UniqueId} from '../../services/index';
+import {Component, View, AfterViewInit, CORE_DIRECTIVES} from 'angular2/angular2';
+import {ROUTER_DIRECTIVES, RouteConfig} from 'angular2/router';
+import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
 import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';
@@ -15,27 +16,41 @@ let ruleEditorCss = require<string>('./editor.css');
 })
 @View({
     styles: [ruleEditorCss],
-    directives: [NgStyle, RuleEditorExec, RuleEditorGlobals],
+    directives: [CORE_DIRECTIVES, ROUTER_DIRECTIVES, RuleEditorExec, RuleEditorGlobals],
     templateUrl: ruleEditorTemplate
 })
 export class RuleEditor implements AfterViewInit {
 
     id: string;
-    filename: string;
+    file_list: Array<{ name: string, active: boolean }>;
     text_area_width: number;
     text_area_height: number;
     editor: AceAjax.Editor;
 
-    constructor(id: UniqueId, private settings: AaribaScriptSettings) {
+    constructor(
+        id: UniqueId,
+        private settings: AaribaScriptSettings,
+        private http: HttpService,
+        private socket: SocketIOService)
+    {
         this.id = id.get();
-        this.filename = "hello_world.as";
+        this.file_list = [
+            { name: "test", active: true },
+            { name: "hello world", active: false },
+            { name: "foobar", active: false }
+        ];
         this.text_area_width = 500;
         this.text_area_height = 400;
     }
 
+    open(event: Event, filename: string) {
+        event.preventDefault();
+        console.log(filename);
+    }
+
     afterViewInit(): void {
         this.editor = ace.edit(this.id);
-
+        this.editor.setReadOnly(true);
         this.editor.setOptions({
             enableBasicAutocompletion: true,
             enableSnippets: false,
@@ -46,6 +61,18 @@ export class RuleEditor implements AfterViewInit {
         this.editor.getSession().setMode(new AaribaScriptTextMode());
         this.editor.getSession().setTabSize(2);
         this.editor.getSession().setUseSoftTabs(true);
+        // this.getLastUsedResources();
+    }
+
+    private getLastUsedResources(): void {
+        this.http.get('/api/user/lastusedresources')
+            .map(res => <any>res.json())
+            .subscribe(res => {
+
+            });
+    }
+
+    private listenToChange(): void {
         let interpreter = new AaribaInterpreter();
         this.editor.addEventListener('change', (action, editor) => {
             try {

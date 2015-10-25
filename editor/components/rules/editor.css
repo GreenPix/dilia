@@ -1,11 +1,13 @@
 .rule-editor {
+    margin-top: 15px;
 }
 
 .rule-editor--wrapper {
     position: relative;
-}
-.rule-editor--tab {
-
+    width: 100%;
+    border-left: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #ddd;
 }
 
 .rule-editor--content {

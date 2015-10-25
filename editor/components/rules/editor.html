@@ -1,6 +1,10 @@
 <div class="rule-editor">
-  <div class="rule-editor--tab">{{filename}}</div>
-  <div class="rule-editor--wrapper" [ng-style]="{ 'width': text_area_width, 'height': text_area_height }">
+  <ul class="nav nav-tabs">
+    <li *ng-for="#file of file_list" role="presentation" [ng-class]="{ 'active': file.active }">
+      <a href="#" (click)="open($event, file.name)">File: {{file.name}}</a>
+    </li>
+  </ul>
+  <div class="rule-editor--wrapper" [ng-style]="{ 'height': text_area_height+1 }">
     <div id="{{id}}" class="rule-editor--content" [ng-style]="{ 'width': text_area_width, 'height': text_area_height }"></div>
   </div>
 </div>

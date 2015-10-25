@@ -1,6 +1,7 @@
 import _ = require('lodash');
 import {Injectable} from 'angular2/angular2';
 import {Http, Response, Headers} from 'angular2/http';
+import * as io from 'socket.io-client';
 
 export class UniqueId {
     private id: string;
@@ -30,5 +31,31 @@ export class HttpService {
         return this.http.post(path, JSON.stringify(json || {}), {
             headers: headers
         });
+    }
+
+    get(path: string): RxObservable<Response> {
+        let headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        return this.http.get(path, {
+            headers: headers
+        });
+    }
+}
+
+@Injectable()
+export class SocketIOService {
+
+    private socket: SocketIOClient.Socket;
+
+    constructor() {
+        this.socket = io();
+    }
+
+    emit(event: string, ...args: any[]) {
+        this.socket.emit(event, ...args);
+    }
+
+    on(event: string, cb: Function) {
+        this.socket.on(event, cb);
     }
 }

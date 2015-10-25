@@ -1,4 +1,4 @@
-import {Component, View} from 'angular2/angular2';
+import {Component, View, CORE_DIRECTIVES} from 'angular2/angular2';
 import {RouteConfig, ROUTER_DIRECTIVES, Router, Location} from 'angular2/router';
 import {MapEditor} from './components/map/editor';
 import {LoginForm} from './components/login/form';
@@ -7,13 +7,15 @@ import {RuleEditorToolbar} from './components/toolbar/toolbar';
 
 
 let appTemplate = require<string>('./app.html');
+let appCss = require<Webpack.Scss>('./app.scss');
 
 @Component({
     selector: 'app'
 })
 @View({
     templateUrl: appTemplate,
-    directives: [ROUTER_DIRECTIVES, RuleEditorToolbar]
+    styles: [appCss.toString()],
+    directives: [CORE_DIRECTIVES, ROUTER_DIRECTIVES, RuleEditorToolbar]
 })
 @RouteConfig([
     { path: '/login', component: LoginForm, as: 'Login' },
@@ -28,5 +30,9 @@ export class App {
     constructor(router: Router, location: Location) {
         this.router = router;
         this.location = location;
+    }
+
+    shouldLimitWidth(): boolean {
+        return this.location.path() === "/login";
     }
 }
