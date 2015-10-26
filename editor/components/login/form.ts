@@ -3,6 +3,7 @@ import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup} from 'angular2/a
 import {CORE_DIRECTIVES} from 'angular2/angular2';
 import {Router, OnActivate, ComponentInstruction} from 'angular2/router';
 import {HttpService} from '../../services/index';
+import {SERVICE_DIRECTIVES} from '../../services/directives';
 
 let template = require<string>('./form.html');
 let style = require<Webpack.Scss>('./form.scss');
@@ -24,7 +25,7 @@ class HasLoginDetails extends ControlGroup {
 @View({
     templateUrl: template,
     styles: [style.toString()],
-    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES]
+    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SERVICE_DIRECTIVES]
 })
 export class LoginForm implements OnActivate {
     loginForm: HasLoginDetails;

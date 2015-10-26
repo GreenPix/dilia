@@ -42,6 +42,11 @@ body {
     padding-top: 58px;
 }
 
+.fade-in {
+    transition: 0.5s opacity;
+    opacity: 0;
+}
+
 header.navbar-empty {
     background: $navbar-background-color;
     border-bottom: 1px solid $navbar-border-bottom-color;
