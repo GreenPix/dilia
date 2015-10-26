@@ -5,19 +5,12 @@ import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
 import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';
+import {FileManager, FileTab} from '../../models/scripting';
 import {RuleEditorGlobals} from './globals';
 import {RuleEditorExec} from './exec';
 
 let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<string>('./editor.css');
-
-interface FileTab {
-    index: number;
-    content: string;
-    name: string;
-    active: boolean;
-    readonly: boolean;
-}
 
 @Component({
     selector: 'rule-editor'
@@ -30,8 +23,6 @@ interface FileTab {
 export class RuleEditor implements AfterViewInit {
 
     id: string;
-    file_list: Array<FileTab>;
-    current_file: number;
     text_area_width: number;
     text_area_height: number;
     editor: AceAjax.Editor;
@@ -41,15 +32,10 @@ export class RuleEditor implements AfterViewInit {
         id: UniqueId,
         private settings: AaribaScriptSettings,
         private http: HttpService,
-        private socket: SocketIOService)
+        private socket: SocketIOService,
+        private file_manager: FileManager)
     {
         this.id = id.get();
-        this.current_file = 0;
-        this.file_list = [
-            { index: 0, name: "test", active: true, readonly: true, content: "" },
-            { index: 1, name: "hello world", active: false, readonly: true, content: "" },
-            { index: 2, name: "foobar", active: false, readonly: false, content: "" }
-        ];
         this.text_area_width = 500;
         this.text_area_height = 400;
         this.interpreter = new AaribaInterpreter();
@@ -58,21 +44,23 @@ export class RuleEditor implements AfterViewInit {
     open(event: Event, next_file: FileTab) {
         event.preventDefault();
 
-        // Set the previous_file content
-        let previous_file = this.file_list[this.current_file];
-        previous_file.active = false;
-        previous_file.content = this.editor.getValue();
-
-        // Open the next file
-        next_file.active = true;
-        this.current_file = next_file.index;
+        this.file_manager.open(next_file, this.editor.getValue());
         this.setFile(next_file);
 
         console.log(next_file.name);
     }
 
     currentFile(): FileTab {
-        return this.file_list[this.current_file];
+        return this.file_manager.currentFile();
+    }
+
+    createNewFile(): void {
+        let new_file = this.file_manager.createNewFile();
+        this.setFile(new_file);
+    }
+
+    fileList(): Array<FileTab> {
+        return this.file_manager.file_list;
     }
 
     afterViewInit(): void {
@@ -92,7 +80,7 @@ export class RuleEditor implements AfterViewInit {
         });
 
         // TODO: remove this
-        this.setFile(this.file_list[this.current_file]);
+        this.setFile(this.currentFile());
         // TODO: and use this instead:
         //this.getLastUsedResources();
     }

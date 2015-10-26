@@ -4,12 +4,14 @@ import {ROUTER_PROVIDERS, LocationStrategy, HashLocationStrategy} from 'angular2
 import {UniqueId, HttpService, SocketIOService} from './services/index';
 import {App} from './app';
 import {User, AaribaScriptSettings} from './models/user';
+import {FileManager} from './models/scripting';
 
 bootstrap(App, [
     ROUTER_PROVIDERS,
     HTTP_PROVIDERS,
     HttpService,
     SocketIOService,
+    bind(FileManager).toValue(new FileManager()),
     bind(User).toValue(User.default()),
     bind(AaribaScriptSettings).toFactory(user => user.aaribaScriptSettings, [User]),
     bind(UniqueId).toFactory(() => new UniqueId()),

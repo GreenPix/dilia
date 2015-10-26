@@ -39,7 +39,7 @@
         "editor/components/toolbar/toolbar.ts",
         "editor/index.ts",
         "editor/libs-free.ts",
-        "editor/models/rules_editor.ts",
+        "editor/models/scripting.ts",
         "editor/models/user.ts",
         "editor/rules/parser.ts",
         "editor/services/index.ts",

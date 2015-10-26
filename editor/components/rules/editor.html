@@ -16,18 +16,21 @@
   <div class="nav navbar-nav navbar-right nav-option">
     <button class="btn btn-success" [ng-class]="{
       'disabled': currentFile().readonly }">Commit</button>
-    <button class="btn btn-primary"><span class="fa fa-plus"></span> Create new</button>
+    <button class="btn btn-primary" (click)="createNewFile()">
+      <span class="fa fa-plus"></span> Create new
+    </button>
   </div>
 </nav>
 <!-- <div class="alert alert-warning|success|danger|info" role="alert">Alert!</div> -->
 <div>
   <ul class="nav nav-tabs">
-    <li *ng-for="#file of file_list" role="presentation" [ng-class]="{ 'active': file.active }">
-      <a href="#" (click)="open($event, file)">
+    <li *ng-for="#file of fileList()" role="presentation" [ng-class]="{ 'active': file.active }">
+      <a href="#" (click)="open($event, file)" [ng-switch]="file.name">
         <span class="fa" [ng-class]="{
           'fa-pencil': !file.readonly,
           'fa-lock': file.readonly }"></span>
-        File: {{file.name}}
+        <template ng-switch-when="">New file*</template>
+        <template ng-switch-default>File: {{file.name}}</template>
       </a>
     </li>
   </ul>
