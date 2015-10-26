@@ -1,6 +1,8 @@
 import {Component, View, CORE_DIRECTIVES} from 'angular2/angular2';
-import {Location, Router} from 'angular2/router';
+import {Location, Router, RouterLink} from 'angular2/router';
 import {HttpService} from '../../services/index';
+import {SERVICE_DIRECTIVES} from '../../services/directives';
+
 
 let toolbarTemplate = require<string>('./toolbar.html');
 let toolbarCss = require<Webpack.Scss>('./toolbar.scss');
@@ -11,7 +13,7 @@ let toolbarCss = require<Webpack.Scss>('./toolbar.scss');
 @View({
     templateUrl: toolbarTemplate,
     styles: [toolbarCss.toString()],
-    directives: [CORE_DIRECTIVES]
+    directives: [CORE_DIRECTIVES, SERVICE_DIRECTIVES, RouterLink]
 })
 export class RuleEditorToolbar {
 

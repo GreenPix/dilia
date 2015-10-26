@@ -6,8 +6,12 @@
     </div>
     <div class="toolbar" *ng-if="!isLoginPage()">
       <div class="toolbar-options">
-        <button class="btn btn-default fa fa-user"></button>
-        <button (click)="logout()" class="btn btn-default fa fa-sign-out"></button>
+          <button [router-link]="['./ScriptEditor']"
+                class="btn btn-default fa fa-code" tooltip="Script editor"></button>
+          <button [router-link]="['./Profile']"
+                class="btn btn-default fa fa-user" tooltip="Profile"></button>
+          <button (click)="logout()" class="btn btn-default fa fa-sign-out"
+            tooltip="Sign out"></button>
       </div>
     </div>
   </div>

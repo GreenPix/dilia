@@ -3,6 +3,7 @@ import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup} from 'angular2/a
 import {CORE_DIRECTIVES} from 'angular2/angular2';
 import {Router, OnActivate, ComponentInstruction} from 'angular2/router';
 import {HttpService} from '../../services/index';
+import {User} from '../../models/user';
 import {SERVICE_DIRECTIVES} from '../../services/directives';
 
 let template = require<string>('./form.html');
@@ -30,7 +31,11 @@ class HasLoginDetails extends ControlGroup {
 export class LoginForm implements OnActivate {
     loginForm: HasLoginDetails;
 
-    constructor(builder: FormBuilder, private router: Router, private http: HttpService) {
+    constructor(
+        builder: FormBuilder,
+        private router: Router,
+        private http: HttpService,
+        private user: User) {
         this.loginForm = builder.group(<LoginDetails>{
             login: ["", Validators.required],
             password: ["", Validators.required]
@@ -67,7 +72,8 @@ export class LoginForm implements OnActivate {
             })
             .subscribe(res => {
                 if (res.status === 200) {
-                    this.router.navigate(["/RuleEditor"]);
+                    this.user.username = this.loginForm.value.login;
+                    this.router.navigate(["/ScriptEditor"]);
                 } else {
 
                 }
@@ -81,7 +87,7 @@ export class LoginForm implements OnActivate {
                 .map(res => res.json())
                 .subscribe((res:any) => {
                     if (res.authenticated) {
-                        this.router.navigate(["/RuleEditor"]);
+                        this.router.navigate(["/ScriptEditor"]);
                     }
                     resolve();
                 })

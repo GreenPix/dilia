@@ -12,7 +12,7 @@ export class User {
 
     static default(): User {
         let user = new User();
-        user.username = "test";
+        user.username = "Ooops!!";
         user.aaribaScriptSettings = AaribaScriptSettings.default();
         return user;
     }
