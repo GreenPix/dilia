@@ -23,11 +23,11 @@ export class FileManager {
         this.current_file = 0;
     }
 
-    open(file: FileTab, previous_content?: string) {
+    open(file: FileTab, previous_content: string) {
         // Set the previous_file content
         let previous_file = this.file_list[this.current_file];
         previous_file.active = false;
-        previous_file.content = previous_content ? previous_content : previous_file.content;
+        previous_file.content = previous_content;
 
         // Open the next file
         file.active = true;
@@ -38,7 +38,7 @@ export class FileManager {
         return this.file_list[this.current_file];
     }
 
-    createNewFile(): FileTab {
+    createNewFile(previous_content: string): FileTab {
         let new_file: FileTab = {
             index: this.file_list.length,
             content: '',
@@ -47,7 +47,7 @@ export class FileManager {
             readonly: false,
         };
         this.file_list.push(new_file);
-        this.open(new_file);
+        this.open(new_file, previous_content);
         return new_file;
     }
 }

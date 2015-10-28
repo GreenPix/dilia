@@ -44,10 +44,9 @@ export class RuleEditor implements AfterViewInit {
     open(event: Event, next_file: FileTab) {
         event.preventDefault();
 
-        this.file_manager.open(next_file, this.editor.getValue());
+        let content = this.editor.getSession().getValue();
+        this.file_manager.open(next_file, content);
         this.setFile(next_file);
-
-        console.log(next_file.name);
     }
 
     currentFile(): FileTab {
@@ -55,7 +54,8 @@ export class RuleEditor implements AfterViewInit {
     }
 
     createNewFile(): void {
-        let new_file = this.file_manager.createNewFile();
+        let previous_content = this.editor.getSession().getValue();
+        let new_file = this.file_manager.createNewFile(previous_content);
         this.setFile(new_file);
     }
 
