@@ -33,15 +33,15 @@
     "raw-loader": "^0.5.1",
     "sass-loader": "^3.0.0",
     "style-loader": "^0.12.4",
-    "ts-loader": "^0.5.6",
+    "ts-loader": "0.6.0",
     "tsd": "^0.6.4",
-    "typescript": "1.7.0-dev.20151014",
+    "typescript": "1.8.0-dev.20151027",
     "url-loader": "^0.5.6",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.12.0"
   },
   "dependencies": {
-    "@reactivex/rxjs": "0.0.0-prealpha.3",
+    "@reactivex/rxjs": "5.0.0-alpha.6",
     "ace-builds": "ajaxorg/ace-builds#0982db4",
     "angular2": "2.0.0-alpha.44",
     "body-parser": "^1.13.3",
