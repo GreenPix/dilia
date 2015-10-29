@@ -1,3 +1,5 @@
+<commit-modal></commit-modal>
+
 <nav class="navbar rule-editor">
   <div class="nav navbar-nav nav-option open-search-file" role="search">
       <div class="input-group">
@@ -15,7 +17,7 @@
   </div> -->
   <div class="nav navbar-nav navbar-right nav-option">
     <button class="btn btn-success" [ng-class]="{
-      'disabled': currentFile().readonly }">Commit</button>
+      'disabled': currentFile().readonly }" (click)="commit()">Commit</button>
     <button class="btn btn-primary" (click)="createNewFile()">
       <span class="fa fa-plus"></span> Create new
     </button>

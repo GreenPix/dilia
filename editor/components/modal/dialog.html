@@ -1,0 +1,24 @@
+<div class="modal fade"
+    [ng-class]="{ 'in': is_shown }"
+    (click)="hide($event)"
+    [ng-style]="{ 'display': is_visible? 'block': 'none' }"
+    role="dialog"
+>
+    <div class="modal-dialog" role="document" (click)="$event.preventDefault()">
+    <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            (click)="hide($event)"
+            ><span class="close-glyph glyphicon glyphicon-remove" aria-hidden="true"></span>
+        <!--<span aria-hidden="true">×</span>--></button>
+          <h4 class="modal-title"><ng-content select="dialog-header" /></h4>
+        </div>
+        <div class="modal-body">
+            <ng-content select="dialog-body" />
+        </div>
+        <div class="modal-footer">
+            <ng-content select="dialog-footer" />
+        </div>
+    </div>
+    </div>
+</div>

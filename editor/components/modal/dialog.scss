@@ -1,0 +1,16 @@
+@import "theme/constants";
+
+.modal.in {
+
+    &.fade {
+        background-color: $overlay-background-color;
+    }
+
+    .modal-dialog {
+        transform: translate(0, 50%);
+    }
+}
+
+.close-glyph {
+    font-size: 13px;
+}

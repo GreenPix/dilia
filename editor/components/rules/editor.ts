@@ -1,5 +1,6 @@
 
 import {Component, View, AfterViewInit, CORE_DIRECTIVES} from 'angular2/angular2';
+import {ViewChild} from 'angular2/angular2';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
 import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
@@ -8,6 +9,7 @@ import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';
 import {FileManager, FileTab} from '../../models/scripting';
 import {RuleEditorGlobals} from './globals';
 import {RuleEditorExec} from './exec';
+import {CommitModal} from './commit';
 
 let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<string>('./editor.css');
@@ -17,7 +19,7 @@ let ruleEditorCss = require<string>('./editor.css');
 })
 @View({
     styles: [ruleEditorCss],
-    directives: [CORE_DIRECTIVES, ROUTER_DIRECTIVES, RuleEditorExec, RuleEditorGlobals],
+    directives: [CORE_DIRECTIVES, CommitModal, ROUTER_DIRECTIVES, RuleEditorExec, RuleEditorGlobals],
     templateUrl: ruleEditorTemplate
 })
 export class RuleEditor implements AfterViewInit {
@@ -27,6 +29,9 @@ export class RuleEditor implements AfterViewInit {
     text_area_height: number;
     editor: AceAjax.Editor;
     interpreter: AaribaInterpreter;
+
+    @ViewChild(CommitModal)
+    commit_modal: CommitModal;
 
     constructor(
         id: UniqueId,
@@ -47,6 +52,10 @@ export class RuleEditor implements AfterViewInit {
         let content = this.editor.getSession().getValue();
         this.file_manager.open(next_file, content);
         this.setFile(next_file);
+    }
+
+    commit(): void {
+        this.commit_modal.show(this.currentFile().name);
     }
 
     currentFile(): FileTab {
