@@ -23,13 +23,13 @@ export class RuleEditorToolbar {
         private http: HttpService) {}
 
     isLoginPage(): boolean {
-        return this.location.path() === "/login";
+        return this.location.path() === '/login';
     }
 
     logout(): void {
         this.http.post('/api/logout')
             .subscribe(res => {
-                this.router.navigate(["/Login"])
+                this.router.navigate(['/Login']);
             });
     }
 }

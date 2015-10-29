@@ -1,6 +1,6 @@
 import {Component, View} from 'angular2/angular2';
 
-let execTemplate = require<string>('./exec.html')
+let execTemplate = require<string>('./exec.html');
 let execCss = require<string>('./exec.css');
 
 @Component({

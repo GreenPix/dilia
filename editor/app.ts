@@ -35,6 +35,6 @@ export class App {
     }
 
     shouldLimitWidth(): boolean {
-        return this.location.path() === "/login";
+        return this.location.path() === '/login';
     }
 }

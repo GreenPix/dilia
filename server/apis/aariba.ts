@@ -1,10 +1,9 @@
 import {User, UserDocument} from '../db/schemas/users';
 import {AaribaScript, AaribaScriptProperties} from '../db/schemas/aariba';
 import {app} from '../config/express';
-import {authenticate} from 'passport';
 import {reqAuth} from './middlewares';
 import {errorToJson} from '../db/error_helpers';
-import {info as winfo, debug as wdebug, error as werror} from 'winston';
+import {info as winfo, error as werror} from 'winston';
 import {warn as wwarn} from 'winston';
 import {resourceManager, ResourceKind as RK} from '../resources';
 import _ = require('lodash');
@@ -49,7 +48,7 @@ app.get('/api/aariba/:name', reqAuth, (req, res) => {
                         author: authors.get(r.author),
                         date: r.date,
                         comment: r.comment,
-                    }
+                    };
                 });
                 res.status(200).json(script_reduced);
             });
@@ -112,7 +111,7 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
             });
         }
     });
-})
+});
 
 // Create a new script aariba
 app.post('/api/aariba/new', reqAuth, (req, res, next) =>  {

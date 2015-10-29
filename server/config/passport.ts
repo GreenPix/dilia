@@ -1,4 +1,3 @@
-import {BadRequestError} from '../errors/index';
 import {use as passportUse, deserializeUser, serializeUser} from 'passport';
 import {Strategy as LocalStrategy} from 'passport-local';
 import {OAuth2Strategy as GoogleStrategy} from 'passport-google-oauth';
@@ -11,7 +10,7 @@ let config = getConfig();
 // Passport configuration
 serializeUser((user, done) => {
     done(null, user.id);
-})
+});
 deserializeUser((id, done) => {
     User.findOne({ _id: id })
         .select('username')
@@ -27,7 +26,7 @@ passportUse(new LocalStrategy({
         User.findOne({ username: username })
         .select('username email hashed_password salt')
         .exec((err, user) => {
-            if (err) return done(err)
+            if (err) return done(err);
             if (!user || !user.authenticate(password)) {
                 return done(null, false, { message: 'wrong username or password' });
             }

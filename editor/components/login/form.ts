@@ -37,29 +37,29 @@ export class LoginForm implements OnActivate {
         private http: HttpService,
         private user: User) {
         this.loginForm = builder.group(<LoginDetails>{
-            login: ["", Validators.required],
-            password: ["", Validators.required]
+            login: ['', Validators.required],
+            password: ['', Validators.required]
         });
     }
 
     isLoginInvalid(): boolean {
-        return (this.loginForm.controls["login"].errors &&
-            this.loginForm.controls["login"].errors["required"]);
+        return (this.loginForm.controls['login'].errors &&
+            this.loginForm.controls['login'].errors['required']);
     }
 
     isLoginValid(): boolean {
-        return !(this.loginForm.controls["login"].errors &&
-            this.loginForm.controls["login"].errors["required"]);
+        return !(this.loginForm.controls['login'].errors &&
+            this.loginForm.controls['login'].errors['required']);
     }
 
     isPasswordInvalid(): boolean {
-        return (this.loginForm.controls["password"].errors &&
-            this.loginForm.controls["password"].errors["required"]);
+        return (this.loginForm.controls['password'].errors &&
+            this.loginForm.controls['password'].errors['required']);
     }
 
     isPasswordValid(): boolean {
-        return !(this.loginForm.controls["password"].errors &&
-            this.loginForm.controls["password"].errors["required"]);
+        return !(this.loginForm.controls['password'].errors &&
+            this.loginForm.controls['password'].errors['required']);
     }
 
     doLogin(event: Event) {
@@ -73,7 +73,7 @@ export class LoginForm implements OnActivate {
             .subscribe(res => {
                 if (res.status === 200) {
                     this.user.username = this.loginForm.value.login;
-                    this.router.navigate(["/ScriptEditor"]);
+                    this.router.navigate(['/ScriptEditor']);
                 } else {
 
                 }
@@ -87,10 +87,10 @@ export class LoginForm implements OnActivate {
                 .map(res => res.json())
                 .subscribe((res:any) => {
                     if (res.authenticated) {
-                        this.router.navigate(["/ScriptEditor"]);
+                        this.router.navigate(['/ScriptEditor']);
                     }
                     resolve();
-                })
+                });
         });
         return promise;
     }

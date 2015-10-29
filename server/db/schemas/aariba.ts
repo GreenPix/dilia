@@ -62,7 +62,7 @@ mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Array
 
 mongooseAaribaScriptSchema.path('name').validate(function (name) {
     return name.length;
-}, 'Name cannot be empty')
+}, 'Name cannot be empty');
 
 mongooseAaribaScriptSchema.path('name').validate(function (name, cb) {
     if (this.isNew || this.isModified('name')) {

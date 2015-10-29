@@ -1,6 +1,6 @@
 
 import {Component, View, AfterViewInit, CORE_DIRECTIVES} from 'angular2/angular2';
-import {ROUTER_DIRECTIVES, RouteConfig} from 'angular2/router';
+import {ROUTER_DIRECTIVES} from 'angular2/router';
 import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
@@ -112,7 +112,7 @@ export class RuleEditor implements AfterViewInit {
                       row: error.line - 1,
                       column: error.column - 1,
                       text: `${error.name}: ${error.message}`,
-                      type: "error",
+                      type: 'error',
                   }
               ]);
             } else {

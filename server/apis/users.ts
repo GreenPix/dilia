@@ -6,7 +6,7 @@ import {errorToJson} from '../db/error_helpers';
 
 app.post('/api/users', reqAdmin, logRequest('tries to add a user.'),
     (req, res) => {
-        var user = new User(req.body);
+        let user = new User(req.body);
         user.provider = 'local';
         user.save((err) => {
             if (err) {

@@ -1,6 +1,6 @@
 
-import {Directive, ElementRef, Attribute} from 'angular2/angular2'
-import {Component, View, NgStyle} from 'angular2/angular2'
+import {Directive, ElementRef} from 'angular2/angular2';
+import {Component, View, NgStyle} from 'angular2/angular2';
 
 
 @Directive({

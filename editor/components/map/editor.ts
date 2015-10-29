@@ -9,7 +9,7 @@ let mapEditorTemplate = require<string>('./editor.html');
 @View({
     templateUrl: mapEditorTemplate
 })
-// @CanActivate(() => , )
+@CanActivate(() => false)
 export class MapEditor {
 
 }

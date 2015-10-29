@@ -41,5 +41,5 @@ io.on('connection', (socket) => {
 
     socket.on('disconnected', () => {
         winston.info(`Client disconnected: ${socket.client}`);
-    })
-})
+    });
+});

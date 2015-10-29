@@ -1,4 +1,4 @@
-import {UserDocument, User} from '../db/schemas/users';
+import {User} from '../db/schemas/users';
 import {app} from '../config/express';
 import {reqAuth} from './middlewares';
 

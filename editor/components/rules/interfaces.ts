@@ -21,9 +21,9 @@ export interface TextUpdate {
 }
 
 export interface BehaviourAction {
-    (state: string, action: "insertion", editor: AceAjax.Editor,
+    (state: string, action: 'insertion', editor: AceAjax.Editor,
      session: AceAjax.IEditSession, range: AceAjax.Range): TextUpdate;
-    (state: string, action: "deletion", editor: AceAjax.Editor,
+    (state: string, action: 'deletion', editor: AceAjax.Editor,
      session: AceAjax.IEditSession, text: string): AceAjax.Range;
     (state: string, action: string, editor: AceAjax.Editor,
      session: AceAjax.IEditSession, range_or_text: AceAjax.Range | string): any;

@@ -3,20 +3,22 @@
 //      https://github.com/ajaxorg/ace/blob/master/lib/ace/mode/behaviour/cstyle.js
 //
 
-import {IsType, IsBehaviour, IsTokenIterator, BehaviourAction, TextUpdate} from './interfaces';
+import {IsType, IsBehaviour, IsTokenIterator, TextUpdate} from './interfaces';
 
-let Behaviour: IsType<IsBehaviour> = ace.require("ace/mode/behaviour").Behaviour;
-let TokenIterator: IsType<IsTokenIterator> = ace.require("ace/token_iterator").TokenIterator;
-let lang = ace.require("ace/lib/lang");
+/* tslint:disable:no-unused-variable */
+let Behaviour: IsType<IsBehaviour> = ace.require('ace/mode/behaviour').Behaviour;
+/* tslint:enable:no-unused-variable */
+let TokenIterator: IsType<IsTokenIterator> = ace.require('ace/token_iterator').TokenIterator;
+let lang = ace.require('ace/lib/lang');
 
 let SAFE_INSERT_IN_TOKENS =
-    ["text", "paren.rparen", "punctuation.operator"];
+    ['text', 'paren.rparen', 'punctuation.operator'];
 let SAFE_INSERT_BEFORE_TOKENS =
-    ["text", "paren.rparen", "punctuation.operator", "comment"];
+    ['text', 'paren.rparen', 'punctuation.operator', 'comment'];
 
 // The context state is strange:
-// Writing "{\n" and then removing
-// everything except the "{" and then adding again a "\n"
+// Writing '{\n' and then removing
+// everything except the '{' and then adding again a '\n'
 // does not behave identically. Furthermore, I think we should
 // match the brackets. (Lookup for the next possible bracket).
 let context;
@@ -34,11 +36,11 @@ function initContext(editor: AceAjax.Editor) {
     context = contextCache[id] = {
         autoInsertedBrackets: 0,
         autoInsertedRow: -1,
-        autoInsertedLineEnd: "",
+        autoInsertedLineEnd: '',
         maybeInsertedBrackets: 0,
         maybeInsertedRow: -1,
-        maybeInsertedLineStart: "",
-        maybeInsertedLineEnd: ""
+        maybeInsertedLineStart: '',
+        maybeInsertedLineEnd: ''
     };
 }
 
@@ -68,17 +70,17 @@ function on_insert_brace(
         initContext(editor);
         let selection = editor.getSelectionRange();
         let selected = session.doc.getTextRange(selection);
-        if (selected !== "" && selected !== "{" && editor.getWrapBehavioursEnabled()) {
+        if (selected !== '' && selected !== '{' && editor.getWrapBehavioursEnabled()) {
             return getWrapped(selection, selected, '{', '}');
         } else if (AaribaBehaviour.isSaneInsertion(editor, session)) {
             if (/[\]\}\)]/.test(line[cursor.column]) || editor.inMultiSelectMode) {
-                AaribaBehaviour.recordAutoInsert(editor, session, "}");
+                AaribaBehaviour.recordAutoInsert(editor, session, '}');
                 return {
                     text: '{}',
                     selection: [1, 1]
                 };
             } else {
-                AaribaBehaviour.recordMaybeInsert(editor, session, "{");
+                AaribaBehaviour.recordMaybeInsert(editor, session, '{');
                 return {
                     text: '{',
                     selection: [1, 1]
@@ -98,12 +100,12 @@ function on_insert_brace(
                 };
             }
         }
-    } else if (text == "\n" || text == "\r\n") {
+    } else if (text == '\n' || text == '\r\n') {
         initContext(editor);
-        let closing = "";
+        let closing = '';
         let next_indent;
         if (AaribaBehaviour.isMaybeInsertedClosing(cursor, line)) {
-            closing = lang.stringRepeat("}", context.maybeInsertedBrackets);
+            closing = lang.stringRepeat('}', context.maybeInsertedBrackets);
             AaribaBehaviour.clearMaybeInsertedClosing();
         }
         let rightChar = line.substring(cursor.column, cursor.column + 1);
@@ -161,10 +163,10 @@ function on_insert_paren(
         initContext(editor);
         let selection = editor.getSelectionRange();
         let selected = session.doc.getTextRange(selection);
-        if (selected !== "" && editor.getWrapBehavioursEnabled()) {
+        if (selected !== '' && editor.getWrapBehavioursEnabled()) {
             return getWrapped(selection, selected, '(', ')');
         } else if (AaribaBehaviour.isSaneInsertion(editor, session)) {
-            AaribaBehaviour.recordAutoInsert(editor, session, ")");
+            AaribaBehaviour.recordAutoInsert(editor, session, ')');
             return {
                 text: '()',
                 selection: [1, 1]
@@ -211,10 +213,10 @@ export class AaribaBehaviour extends Behaviour {
 
     constructor() {
         super();
-        this.add("braces", "insertion", on_insert_brace);
-        this.add("braces", "deletion", on_delete_brace);
-        this.add("parens", "insertion", on_insert_paren);
-        this.add("parens", "deletion", on_delete_paren);
+        this.add('braces', 'insertion', on_insert_brace);
+        this.add('braces', 'deletion', on_delete_brace);
+        this.add('parens', 'insertion', on_insert_paren);
+        this.add('parens', 'deletion', on_delete_paren);
     }
 
     static isSaneInsertion(editor, session) {
@@ -222,17 +224,17 @@ export class AaribaBehaviour extends Behaviour {
         let iterator = new TokenIterator(session, cursor.row, cursor.column);
 
         // Don't insert in the middle of a keyword/identifier/lexical
-        if (!this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_IN_TOKENS)) {
+        if (!this.$matchTokenType(iterator.getCurrentToken() || 'text', SAFE_INSERT_IN_TOKENS)) {
             // Look ahead in case we're at the end of a token
             let iterator2 = new TokenIterator(session, cursor.row, cursor.column + 1);
-            if (!this.$matchTokenType(iterator2.getCurrentToken() || "text", SAFE_INSERT_IN_TOKENS))
+            if (!this.$matchTokenType(iterator2.getCurrentToken() || 'text', SAFE_INSERT_IN_TOKENS))
                 return false;
         }
 
         // Only insert in front of whitespace/comments
         iterator.stepForward();
         return iterator.getCurrentTokenRow() !== cursor.row ||
-            this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_BEFORE_TOKENS);
+            this.$matchTokenType(iterator.getCurrentToken() || 'text', SAFE_INSERT_BEFORE_TOKENS);
     }
 
     static $matchTokenType(token, types) {

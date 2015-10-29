@@ -1,5 +1,4 @@
 import {Schema, model, Document, Model, Types} from 'mongoose';
-import {error as werror} from 'winston';
 import crypto = require('crypto');
 
 let mongooseUserSchema = new Schema({
@@ -50,7 +49,7 @@ mongooseUserSchema.virtual('password')
 mongooseUserSchema.path('username').validate(function (username) {
     if (this.skipValidation()) return true;
     return username.length;
-}, "User name cannot be empty");
+}, 'User name cannot be empty');
 
 mongooseUserSchema.path('username').validate(function (username, cb) {
     if (this.skipValidation()) cb(true);
@@ -63,7 +62,7 @@ mongooseUserSchema.path('username').validate(function (username, cb) {
     } else {
         cb(true);
     }
-}, "User name already exists");
+}, 'User name already exists');
 
 mongooseUserSchema.path('email').validate(function (email) {
     if (this.skipValidation()) return true;
@@ -81,7 +80,7 @@ mongooseUserSchema.path('email').validate(function (email, cb) {
     } else {
         cb(true);
     }
-}, "Email already exists");
+}, 'Email already exists');
 
 mongooseUserSchema.path('hashed_password').validate(function (hashed_password) {
     if (this.skipValidation()) return true;
@@ -95,7 +94,7 @@ mongooseUserSchema.pre('save', function (next) {
     if (this.skipValidation() || (this.password && this.password.length)) {
         next();
     } else {
-        next(new Error("Invalid password"));
+        next(new Error('Invalid password'));
     }
 });
 

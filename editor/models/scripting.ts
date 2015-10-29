@@ -1,6 +1,4 @@
 
-import _ = require('lodash');
-
 export interface FileTab {
     index: number;
     content: string;
@@ -16,9 +14,9 @@ export class FileManager {
 
     constructor() {
         this.file_list = [
-            { index: 0, name: "test", active: true, readonly: true, content: "" },
-            { index: 1, name: "hello world", active: false, readonly: true, content: "" },
-            { index: 2, name: "foobar", active: false, readonly: false, content: "" }
+            { index: 0, name: 'test', active: true, readonly: true, content: '' },
+            { index: 1, name: 'hello world', active: false, readonly: true, content: '' },
+            { index: 2, name: 'foobar', active: false, readonly: false, content: '' }
         ];
         this.current_file = 0;
     }

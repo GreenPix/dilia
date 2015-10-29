@@ -11,12 +11,12 @@ import session = require('express-session');
 import connectMongo = require('connect-mongo');
 import serveStatic = require('serve-static');
 import passport = require('passport');
-import csrf = require('csurf');
+// import csrf = require('csurf');
 import winston = require('winston');
 import socket_io = require('socket.io');
 
 
-var expressApp = express();
+let expressApp = express();
 export var server = createServer(expressApp);
 export var io = socket_io(server);
 export var app = wrap(expressApp, io);
@@ -70,7 +70,7 @@ app.use((err: any, req: Request, res: Response, next: Function) => {
     res.json({
         error: err.message
     });
-})
+});
 
 
 // adds CSRF support
