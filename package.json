@@ -44,9 +44,9 @@
     "webpack-dev-server": "^1.12.0"
   },
   "dependencies": {
-    "@reactivex/rxjs": "5.0.0-alpha.6",
+    "@reactivex/rxjs": "5.0.0-alpha.7",
     "ace-builds": "ajaxorg/ace-builds#0982db4",
-    "angular2": "2.0.0-alpha.44",
+    "angular2": "2.0.0-alpha.45",
     "body-parser": "^1.13.3",
     "bootstrap-sass": "3.3.5",
     "compression": "^1.6.0",

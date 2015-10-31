@@ -25,8 +25,8 @@ export class Dialog {
         this.is_visible = true;
     }
 
-    hide(event: Event) {
-        if (event.defaultPrevented) {
+    hide(event?: Event) {
+        if (event && event.defaultPrevented) {
             return;
         }
         this.clearAll();

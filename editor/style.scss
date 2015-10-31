@@ -42,6 +42,10 @@ body {
     padding-top: 58px;
 }
 
+.close-glyph {
+    font-size: 18px; // 13px
+}
+
 .fade-in {
     transition: 0.5s opacity;
     opacity: 0;

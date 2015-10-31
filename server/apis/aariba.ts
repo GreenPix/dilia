@@ -3,9 +3,10 @@ import {AaribaScript, AaribaScriptProperties} from '../db/schemas/aariba';
 import {app} from '../config/express';
 import {reqAuth} from './middlewares';
 import {errorToJson} from '../db/error_helpers';
-import {info as winfo, error as werror} from 'winston';
+import {error as werror} from 'winston';
 import {warn as wwarn} from 'winston';
 import {resourceManager, ResourceKind as RK} from '../resources';
+import {success, badReq, unauthorized} from './post_response_fmt';
 import _ = require('lodash');
 
 
@@ -79,7 +80,7 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
             werror(err);
-            res.sendStatus(400);
+            badReq(res, `Couldn't find script: ${req.params.name}`);
         } else {
             // If the resource is not locked by this user
             // then the commit is illegal.
@@ -91,7 +92,7 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
                 wwarn(`User ${user.username} failed to commit on: \n` +
                       `==> '${script.name}' (unauthorized)`
                 );
-                res.sendStatus(401);
+                unauthorized(res, user);
                 return;
             }
 
@@ -102,11 +103,9 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
                 content: req.body.content,
             }, err => {
                 if (err) {
-                    werror(`Couldn't save script: '${script.name}'`);
-                    res.status(400).json(errorToJson(err));
+                    badReq(res, `Couldn't save script: '${script.name}'`, errorToJson(err));
                 } else {
-                    winfo(`Committed new version for '${script.name}'`);
-                    res.sendStatus(200);
+                    success(res, `Committed new version for '${script.name}'`);
                 }
             });
         }
@@ -129,12 +128,9 @@ app.post('/api/aariba/new', reqAuth, (req, res, next) =>  {
     script.save(err => {
         if (err) {
             // next(err);
-            werror(`Couldn't save script: ${properties.name}`);
-            res.status(400).json(errorToJson(err));
+            badReq(res, `Couldn't save script: '${properties.name}'`, errorToJson(err));
         } else {
-            // Saved new script !
-            winfo(`Saved new script '${properties.name}'!`);
-            res.sendStatus(200);
+            success(res, `Saved new script '${properties.name}'!`);
         }
     });
 });

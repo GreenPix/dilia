@@ -11,7 +11,7 @@ bootstrap(App, [
     HTTP_PROVIDERS,
     HttpService,
     SocketIOService,
-    bind(FileManager).toValue(new FileManager()),
+    FileManager,
     bind(User).toValue(User.default()),
     bind(AaribaScriptSettings).toFactory(user => user.aaribaScriptSettings, [User]),
     bind(UniqueId).toFactory(() => new UniqueId()),

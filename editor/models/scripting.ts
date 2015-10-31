@@ -1,3 +1,6 @@
+import {Injectable} from 'angular2/angular2';
+import {Response} from 'angular2/http';
+import {HttpService, RxObservable} from '../services/index';
 
 export interface FileTab {
     index: number;
@@ -5,18 +8,20 @@ export interface FileTab {
     name: string;
     active: boolean;
     readonly: boolean;
+    isNew: boolean;
 }
 
+@Injectable()
 export class FileManager {
 
     file_list: Array<FileTab>;
     current_file: number;
 
-    constructor() {
+    constructor(private http: HttpService) {
         this.file_list = [
-            { index: 0, name: 'test', active: true, readonly: true, content: '' },
-            { index: 1, name: 'hello world', active: false, readonly: true, content: '' },
-            { index: 2, name: 'foobar', active: false, readonly: false, content: '' }
+            { index: 0, name: 'test', active: true, readonly: true, content: '', isNew: false },
+            { index: 1, name: 'hello world', active: false, readonly: true, content: '', isNew: false },
+            { index: 2, name: 'foobar', active: false, readonly: false, content: '', isNew: false }
         ];
         this.current_file = 0;
     }
@@ -32,6 +37,26 @@ export class FileManager {
         this.current_file = file.index;
     }
 
+    commit(file: FileTab, comment: string): RxObservable<Response> {
+        if (file.isNew) {
+            let observable = this.http.post(`/api/aariba/new`, {
+                content: file.content,
+                comment: comment,
+                name: file.name,
+            });
+            observable.subscribe(res => {
+                if (res.status === 200) {
+                    file.isNew = false;
+                }
+            });
+            return observable;
+        }
+        return this.http.post(`/api/aariba/${file.name}/commit`, {
+            content: file.content,
+            comment: comment,
+        });
+    }
+
     currentFile(): FileTab {
         return this.file_list[this.current_file];
     }
@@ -43,6 +68,7 @@ export class FileManager {
             name: '',
             active: false,
             readonly: false,
+            isNew: true
         };
         this.file_list.push(new_file);
         this.open(new_file, previous_content);

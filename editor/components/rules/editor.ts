@@ -10,6 +10,7 @@ import {FileManager, FileTab} from '../../models/scripting';
 import {RuleEditorGlobals} from './globals';
 import {RuleEditorExec} from './exec';
 import {CommitModal} from './commit';
+import {AlertBox} from '../alert/box';
 
 let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<string>('./editor.css');
@@ -19,7 +20,9 @@ let ruleEditorCss = require<string>('./editor.css');
 })
 @View({
     styles: [ruleEditorCss],
-    directives: [CORE_DIRECTIVES, CommitModal, ROUTER_DIRECTIVES, RuleEditorExec, RuleEditorGlobals],
+    directives: [
+        CORE_DIRECTIVES, ROUTER_DIRECTIVES,
+        CommitModal, AlertBox, RuleEditorExec, RuleEditorGlobals],
     templateUrl: ruleEditorTemplate
 })
 export class RuleEditor implements AfterViewInit {
@@ -55,7 +58,9 @@ export class RuleEditor implements AfterViewInit {
     }
 
     commit(): void {
-        this.commit_modal.show(this.currentFile().name);
+        if (!this.currentFile().readonly) {
+            this.commit_modal.show(this.currentFile());
+        }
     }
 
     currentFile(): FileTab {
