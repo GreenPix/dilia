@@ -1,6 +1,6 @@
-
 import {Directive, ElementRef} from 'angular2/angular2';
 import {Component, View, NgStyle} from 'angular2/angular2';
+import {Observable} from '@reactivex/rxjs';
 
 
 @Directive({
@@ -40,8 +40,41 @@ class Tooltip {
     }
 }
 
+@Directive({
+    selector: '[select-this]'
+})
+export class SelectEl {
+
+    constructor(private element: ElementRef) {}
+
+    getHtmlElement(): HTMLElement {
+        return this.element.nativeElement;
+    }
+
+    event<T>(fromEvent: string): Observable<T> {
+        return Observable.fromEvent(this.element.nativeElement, fromEvent);
+    }
+
+    getInputElement(): HTMLInputElement {
+        let el = this.getHtmlElement();
+        if (el.tagName.toLowerCase() != 'input') {
+          throw new Error('Not an input element.');
+        }
+        return <HTMLInputElement>el;
+    }
+
+    getCanvasHtmlElement(): HTMLCanvasElement {
+        let el = this.getHtmlElement();
+        if (el.tagName.toLowerCase() != 'canvas') {
+          throw new Error('Not a canvas element.');
+        }
+        return <HTMLCanvasElement>el;
+    }
+}
+
 
 export var SERVICE_DIRECTIVES = [
     AnimFadeIn,
-    Tooltip
+    Tooltip,
+    SelectEl
 ];

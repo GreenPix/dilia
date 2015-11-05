@@ -11,6 +11,7 @@ import {RuleEditorGlobals} from './globals';
 import {RuleEditorExec} from './exec';
 import {CommitModal} from './commit';
 import {AlertBox} from '../alert/box';
+import {AutocompleteFiles} from '../autocomplete/autocomplete';
 
 let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<string>('./editor.css');
@@ -21,7 +22,7 @@ let ruleEditorCss = require<string>('./editor.css');
 @View({
     styles: [ruleEditorCss],
     directives: [
-        CORE_DIRECTIVES, ROUTER_DIRECTIVES,
+        CORE_DIRECTIVES, ROUTER_DIRECTIVES, AutocompleteFiles,
         CommitModal, AlertBox, RuleEditorExec, RuleEditorGlobals],
     templateUrl: ruleEditorTemplate
 })
