@@ -28,6 +28,8 @@ export class AutocompleteFiles {
     private file_list: Array<FileElement> = [];
     private selected: FileElement = null;
     private selected_index: number = -1;
+    private minlength: number = 3;
+    private input_value: string;
 
     @ViewChild(NgForm)
     private form: NgForm;
@@ -114,6 +116,13 @@ export class AutocompleteFiles {
         }
     }
 
+    isInputInvalid() {
+        if (!this.input_search) return false;
+        return this.input_value && this.input_value.length > this.minlength &&
+            this.file_filtered.length === 0 &&
+            this.input_search.getHtmlElement() === document.activeElement;
+    }
+
     isInputValid() {
         return this.file_filtered.length > 0;
     }
@@ -123,7 +132,7 @@ export class AutocompleteFiles {
             this.form.dirty = false;
             this.clearFocus();
             this.valid_selection.next(this.selected);
-            this.input_search.getInputElement().value = '';
+            this.input_value = '';
         }
     }
 

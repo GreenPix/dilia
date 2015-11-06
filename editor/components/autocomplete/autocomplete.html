@@ -1,10 +1,15 @@
 
-<form class="input-group reset-margin">
+<form class="input-group reset-margin has-feedback"
+    [ng-class]= "{ 'has-error': isInputInvalid() }">
     <span class="input-group-addon fa fa-search" id="addon-search"></span>
     <input type="text" class="form-control" autocomplete="off"
       placeholder="Search / Open a file..." aria-describedby="addon-search"
-      ng-control="search" minlength="2"
+      ng-control="search" minlength="3" [(ng-model)]="input_value"
       select-this>
+    <span class="control-label" *ng-if="isInputInvalid()">
+        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+    </span>
+
 </form>
 
 <div class="autocomplete-box">
