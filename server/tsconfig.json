@@ -19,6 +19,7 @@
     "compileOnSave": false,
     "filesGlob": [
         "./**/*.ts",
+        "../shared/**/*.ts",
         "!./node_modules/**/*"
     ],
     "files": [
@@ -44,6 +45,7 @@
         "./logger/helpers.ts",
         "./resources.ts",
         "./server.ts",
+        "./shared.ts",
         "./typings/body-parser/body-parser.d.ts",
         "./typings/compression/compression.d.ts",
         "./typings/connect-mongo/connect-mongo.d.ts",
@@ -63,7 +65,8 @@
         "./typings/serve-static/serve-static.d.ts",
         "./typings/socket.io/socket.io.d.ts",
         "./typings/tsd.d.ts",
-        "./typings/winston/winston.d.ts"
+        "./typings/winston/winston.d.ts",
+        "../shared/aariba.ts"
     ],
     "exclude": []
 }

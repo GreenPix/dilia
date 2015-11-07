@@ -20,6 +20,7 @@
     "compileOnSave": false,
     "filesGlob": [
         "./editor/**/*.ts",
+        "./shared/**/*.ts",
         "./typings/**/*.ts",
         "./custom_typings/**/*.ts",
         "./editor/**/*.tsx",
@@ -49,7 +50,9 @@
         "./editor/rules/parser.ts",
         "./editor/services/directives.ts",
         "./editor/services/index.ts",
+        "./editor/shared.ts",
         "./editor/util/injector.ts",
+        "./shared/aariba.ts",
         "./typings/ace/ace.d.ts",
         "./typings/lodash/lodash.d.ts",
         "./typings/socket.io-client/socket.io-client.d.ts",
