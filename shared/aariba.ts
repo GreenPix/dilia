@@ -1,7 +1,8 @@
 
-/// Get '/api/aariba'
-export interface AaribaFileList {
-    [file: string]: {
-        is_locked: boolean;
-    };
+export interface AaribaFile {
+    name: string;
+    locked: boolean;
 }
+
+/// Get '/api/aariba'
+export type AaribaFileList = Array<AaribaFile>;

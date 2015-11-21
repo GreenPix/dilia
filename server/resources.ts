@@ -19,8 +19,6 @@ class ResourceManager {
         };
     }
 
-
-
     isUsedBy(res: {
         owner: Types.ObjectId;
         kind: ResourceKind;
@@ -32,4 +30,4 @@ class ResourceManager {
     }
 }
 
-export var resourceManager = new ResourceManager();
+export var accessControlManager = new ResourceManager();

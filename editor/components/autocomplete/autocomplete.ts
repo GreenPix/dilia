@@ -1,18 +1,14 @@
 import {Component, View, NgForm, ViewChild} from 'angular2/angular2';
 import {CORE_DIRECTIVES, FORM_DIRECTIVES} from 'angular2/angular2';
 import {Output, EventEmitter} from 'angular2/angular2';
-import {HttpService} from '../../services/index';
+import {SocketIOService, HttpService} from '../../services/index';
+import {AaribaFileList, AaribaFile} from '../../shared';
 import {SelectEl} from '../../services/directives';
 import * as _ from 'lodash';
 
 let autocompleteTemplate = require<string>('./autocomplete.html');
 let autocompleteScss = require<Webpack.Scss>('./autocomplete.scss');
 
-
-interface FileElement {
-    name: string;
-    locked: boolean;
-}
 
 @Component({
     selector: 'autocomplete-files'
@@ -24,11 +20,11 @@ interface FileElement {
 })
 export class AutocompleteFiles {
 
-    private file_filtered: Array<FileElement> = [];
-    private file_list: Array<FileElement> = [];
-    private selected: FileElement = null;
+    private file_filtered: Array<AaribaFile> = [];
+    private file_list: Array<AaribaFile> = [];
+    private selected: AaribaFile = null;
     private selected_index: number = -1;
-    private minlength: number = 3;
+    private minlength: number = 1;
     private input_value: string;
 
     @ViewChild(NgForm)
@@ -37,21 +33,24 @@ export class AutocompleteFiles {
     @ViewChild(SelectEl)
     private input_search: SelectEl;
 
-    @Output() valid_selection: EventEmitter = new EventEmitter();
+    @Output() openFile: EventEmitter = new EventEmitter();
 
-    constructor(private http: HttpService) {
-        this.file_list.push({ name: 'hello world', locked: true });
-        this.file_list.push({ name: 'test', locked: false });
-        this.file_list.push({ name: 'aariba aariba !!', locked: true });
-        this.selected = this.file_list[1];
-        this.selected_index = 1;
+    constructor(private io: SocketIOService, private http: HttpService) {
+        this.io.get<string>('/api/aariba/new')
+            .subscribe(s => this.file_list.push({ name: s, locked: true }));
+
+        this.http.get('/api/aariba')
+            .map(res => res.json() as AaribaFileList)
+            .subscribe(val => {
+                this.file_list.push(...val);
+            });
     }
 
     onActivate() {
         this.file_list = [];
-        this.http.get('/api/aariba')
-            .map(res => res.json())
+        this.io.get<AaribaFileList>('/api/aariba')
             .subscribe(res => {
+                console.log(res);
                 _.forEach(res, (properties: any, filename) => {
                     this.file_list.push({
                         name: filename,
@@ -130,15 +129,31 @@ export class AutocompleteFiles {
     tryAcceptInput() {
         if (this.isInputValid()) {
             this.form.dirty = false;
-            this.clearFocus();
-            this.valid_selection.next(this.selected);
+            this.openFile.next(this.selected);
             this.input_value = '';
+            this.clearFocus();
+            console.log('input accepted');
         }
     }
 
+    selectFile(file: AaribaFile) {
+        this.selected = file;
+        this.tryAcceptInput();
+        this.resetSelection();
+    }
+
     filterFiles(name: string): void {
+        // Filter by matching
         this.file_filtered =
             _.filter(this.file_list, file => this.match(name, file.name));
+
+        // Sort by lexical order
+        this.file_filtered = _.sortBy(this.file_filtered, 'name');
+
+        // We limit the number of completions to 8,
+        // we might want to always list everything but that still
+        // doesn't seems ideal nor scalable
+        this.file_filtered = this.file_filtered.slice(0, 8);
         this.resetSelection();
     }
 

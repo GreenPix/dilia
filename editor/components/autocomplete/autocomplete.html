@@ -4,7 +4,7 @@
     <span class="input-group-addon fa fa-search" id="addon-search"></span>
     <input type="text" class="form-control" autocomplete="off"
       placeholder="Search / Open a file..." aria-describedby="addon-search"
-      ng-control="search" minlength="3" [(ng-model)]="input_value"
+      ng-control="search" minlength="1" [(ng-model)]="input_value"
       select-this>
     <span class="control-label" *ng-if="isInputInvalid()">
         <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
@@ -15,8 +15,8 @@
 <div class="autocomplete-box">
     <div class="autocomplete-container list-group">
         <!-- <div class="autocomplete-suggestions list-group"> -->
-            <div class="list-group-item" *ng-if="file_list.length === 0">No files</div>
             <button type="button" class="list-group-item"
+                (click)="selectFile(select)"
                 *ng-for="#file of file_filtered"
                 [ng-class]="{ 'active': file === selected, 'file-readonly': file.locked }">
                 {{file.name}}

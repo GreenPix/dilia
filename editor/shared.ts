@@ -1,1 +1,2 @@
-export * from '../shared/aariba.ts';
+export * from '../shared/aariba';
+export * from '../shared/socket';

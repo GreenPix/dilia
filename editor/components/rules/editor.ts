@@ -7,6 +7,7 @@ import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
 import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';
 import {FileManager, FileTab} from '../../models/scripting';
+import {AaribaFile} from '../../shared';
 import {RuleEditorGlobals} from './globals';
 import {RuleEditorExec} from './exec';
 import {CommitModal} from './commit';
@@ -41,7 +42,7 @@ export class RuleEditor implements AfterViewInit {
         id: UniqueId,
         private settings: AaribaScriptSettings,
         private http: HttpService,
-        private socket: SocketIOService,
+        private io: SocketIOService,
         private file_manager: FileManager)
     {
         this.id = id.get();
@@ -50,11 +51,22 @@ export class RuleEditor implements AfterViewInit {
         this.interpreter = new AaribaInterpreter();
     }
 
-    open(event: Event, next_file: FileTab) {
+    open(file: AaribaFile) {
+        // TODO: Set spinner if needed.
+        this.http.get(`/api/aariba/${file.name}`)
+            .map(res => res.json() as any)
+            .subscribe(script => {
+                let content = this.editor.getSession().getValue();
+                let opened_file = this.file_manager.open(file, script.content, content);
+                this.setFile(opened_file);
+            });
+    }
+
+    edit(event: Event, next_file: FileTab) {
         event.preventDefault();
 
         let content = this.editor.getSession().getValue();
-        this.file_manager.open(next_file, content);
+        this.file_manager.edit(next_file, content);
         this.setFile(next_file);
     }
 
@@ -119,6 +131,11 @@ export class RuleEditor implements AfterViewInit {
             this.editor.getSession().clearAnnotations();
             this.interpreter.reset();
             this.interpreter.execute(editor.getValue());
+            let file = this.currentFile();
+            this.io.post<string>(
+                `/api/aariba/${file.name}/liveupdate`,
+                file.content
+            );
         } catch (e) {
             let error: AaribaScriptError = e;
             if (error.line && error.column) {

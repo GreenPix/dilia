@@ -5,7 +5,8 @@ import {reqAuth} from './middlewares';
 import {errorToJson} from '../db/error_helpers';
 import {error as werror} from 'winston';
 import {warn as wwarn} from 'winston';
-import {resourceManager, ResourceKind as RK} from '../resources';
+import {AaribaFileList} from '../shared';
+import {accessControlManager, ResourceKind as RK} from '../resources';
 import {success, badReq, unauthorized} from './post_response_fmt';
 import _ = require('lodash');
 
@@ -20,16 +21,17 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
         let user: UserDocument = req.user;
         res.status(200);
         res.json(_.reduce(scripts, (res, val) => {
-            let is_locked = resourceManager.isUsedBy({
+            let is_locked = accessControlManager.isUsedBy({
                 kind: RK.AaribaScript,
                 owner: user._id,
                 resource: val._id,
             });
-            res[val.name] = {
-                is_locked: is_locked
-            };
+            res.push({
+                locked: is_locked,
+                name: val.name,
+            });
             return res;
-        }, {}));
+        }, <AaribaFileList>[]));
     });
 });
 
@@ -74,6 +76,14 @@ app.get('/api/aariba/:name/revision/:id', reqAuth, (req, res) => {
     });
 });
 
+// Stream of the modified content of a script
+app.io().stream('/api/aariba/:name/liveupdate', (req, res) => {
+    // Send back the content to everyone
+    res.json(req.body);
+    // Obtain a lock on the resource
+    console.log(`Hello from ${req.user.username}`);
+});
+
 // Commit a new revision of a script
 app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
     let user: UserDocument = req.user;
@@ -84,7 +94,7 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
         } else {
             // If the resource is not locked by this user
             // then the commit is illegal.
-            if (!resourceManager.isUsedBy({
+            if (!accessControlManager.isUsedBy({
                 owner: user._id,
                 kind: RK.AaribaScript,
                 resource: script._id
@@ -130,7 +140,11 @@ app.post('/api/aariba/new', reqAuth, (req, res, next) =>  {
             // next(err);
             badReq(res, `Couldn't save script: '${properties.name}'`, errorToJson(err));
         } else {
+            app.broadcast('/api/aariba/new', properties.name);
             success(res, `Saved new script '${properties.name}'!`);
         }
     });
 });
+
+// Allocate a room to listen to scripts creations
+app.io().room('/api/aariba/new');

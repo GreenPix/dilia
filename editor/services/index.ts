@@ -1,8 +1,9 @@
-import _ = require('lodash');
+import * as _ from 'lodash';
+import * as io from 'socket.io-client';
+import {SocketPacket, SocketMethod} from '../shared';
 import {Injectable} from 'angular2/angular2';
 import {Observable, Subscriber} from '@reactivex/rxjs';
 import {Http, Response, Headers} from 'angular2/http';
-import * as io from 'socket.io-client';
 
 export class UniqueId {
     private id: string;
@@ -71,13 +72,12 @@ export class HttpService {
     private injectHttpEvent(res: Response) {
         if (!this._subscriber) return;
         if (!res) {
-                this._subscriber.next({
-                    kind: 'error',
-                    message: 'Server unreachable'
-                });
+            this._subscriber.next({
+                kind: 'error',
+                message: 'Server unreachable'
+            });
         }
         else if (res.status === 200) {
-
             this._subscriber.next({
                 kind: 'success',
                 message: (<any>res.json()).message
@@ -106,14 +106,31 @@ export class SocketIOService {
     private socket: SocketIOClient.Socket;
 
     constructor() {
-        this.socket = io();
+        // TODO: Replace by a webpack Define plugin constant
+        this.socket = io('localhost:3000');
     }
 
-    emit(event: string, ...args: any[]) {
-        this.socket.emit(event, ...args);
+    get<T>(apicall: string): RxObservable<T> {
+        return new Observable<T>((subscriber: Subscriber<T>) => {
+            this.socket.on(apicall, (value) => subscriber.next(value));
+            this.socket.emit('data', {
+                apicall: apicall,
+                method: SocketMethod.GET,
+            } as SocketPacket);
+            return () => {
+                this.socket.emit('data', {
+                    apicall: apicall,
+                    method: SocketMethod.UNSUBSCRIBE,
+                } as SocketPacket);
+            };
+        });
     }
 
-    on(event: string, cb: Function) {
-        this.socket.on(event, cb);
+    post<T>(apicall: string, data: T) {
+        this.socket.emit('data', {
+            apicall: apicall,
+            method: SocketMethod.POST,
+            value: data
+        } as SocketPacket);
     }
 }

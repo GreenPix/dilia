@@ -19,7 +19,6 @@
     "compileOnSave": false,
     "filesGlob": [
         "./**/*.ts",
-        "../shared/**/*.ts",
         "!./node_modules/**/*"
     ],
     "files": [
@@ -34,6 +33,7 @@
         "./config/express.ts",
         "./config/index.ts",
         "./config/passport.ts",
+        "./config/router/index.ts",
         "./config/socket.io.ts",
         "./custom_typings/crypto.d.ts",
         "./custom_typings/passport.socketio.d.ts",
@@ -66,7 +66,10 @@
         "./typings/socket.io/socket.io.d.ts",
         "./typings/tsd.d.ts",
         "./typings/winston/winston.d.ts",
-        "../shared/aariba.ts"
+        "./util/print.ts"
     ],
-    "exclude": []
+    "exclude": [],
+    "atom": {
+        "rewriteTsconfig": true
+    }
 }

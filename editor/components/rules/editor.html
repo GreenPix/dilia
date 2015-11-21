@@ -2,17 +2,8 @@
 
 <nav class="navbar rule-editor">
   <div class="nav navbar-nav nav-option open-search-file" role="search">
-          <autocomplete-files></autocomplete-files>
-      <!-- <div class="input-group">
-      </div> -->
+      <autocomplete-files (open-file)="open($event)"></autocomplete-files>
   </div>
-  <!-- <div class="nav navbar-nav">
-    <label class="navbar-text">Commit message</label>
-    <div class="input-group open-search-file nav-option">
-      <input type="text" class="form-control"
-        placeholder="Commit message.">
-    </div>
-  </div> -->
   <div class="nav navbar-nav navbar-right nav-option">
     <button class="btn btn-success"
         [ng-class]="{ 'disabled': currentFile().readonly }"
@@ -28,7 +19,7 @@
 <div>
   <ul class="nav nav-tabs">
     <li *ng-for="#file of fileList()" role="presentation" [ng-class]="{ 'active': file.active }">
-      <a href="#" (click)="open($event, file)" [ng-switch]="file.isNew">
+      <a href="#" (click)="edit($event, file)" [ng-switch]="file.isNew">
         <span class="fa" [ng-class]="{
           'fa-pencil': !file.readonly,
           'fa-lock': file.readonly }"></span>

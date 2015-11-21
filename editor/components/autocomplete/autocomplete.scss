@@ -11,10 +11,12 @@
     width: 100%;
     background-color: $autocomplete-background-color;
     @include box-shadows;
-    border-radius: 5px;
+    border-radius: 0 0 5px 5px;
+    // max-height: 480px;
+    // overflow-y: auto;
 }
 
-.file-readonly {
+.file-readonly:not(.active) {
     color: #CACACA;
 }
 
@@ -36,7 +38,3 @@
     font-size: 18px;
     top: 10px;
 }
-
-// .autocomplete-suggestions {
-//     line-height: 60px;
-// }
