@@ -1,4 +1,4 @@
-
+import {Subscription} from '@reactivex/rxjs';
 import {Component, View, AfterViewInit, CORE_DIRECTIVES} from 'angular2/angular2';
 import {ViewChild} from 'angular2/angular2';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
@@ -34,6 +34,7 @@ export class RuleEditor implements AfterViewInit {
     text_area_height: number;
     editor: AceAjax.Editor;
     interpreter: AaribaInterpreter;
+    content_observable: Subscription<string> = null;
 
     @ViewChild(CommitModal)
     commit_modal: CommitModal;
@@ -51,11 +52,28 @@ export class RuleEditor implements AfterViewInit {
         this.interpreter = new AaribaInterpreter();
     }
 
+    private cleanPreviousFile() {
+        if (this.content_observable) {
+            this.content_observable.unsubscribe();
+        }
+    }
+
+    private obtainLiveContentUpdate(file: { name: string; }) {
+        this.content_observable = this.io
+            .get<string>(`/api/aariba/${file.name}/liveupdate`)
+            .subscribe(res => {
+                console.log(res);
+                this.editor.getSession().setValue(res);
+            });
+    }
+
     open(file: AaribaFile) {
 
         if (!file) {
             throw new Error(`Tried to open a file with an empty`);
         }
+
+        this.cleanPreviousFile();
 
         // Is this file already opened in a tab?
         if (this.file_manager.hasFile(file.name)) {
@@ -67,29 +85,50 @@ export class RuleEditor implements AfterViewInit {
             return;
         }
 
+        // Read only mode
+        if (file.locked) {
+            this.obtainLiveContentUpdate(file);
+
+            this.http.get(`/api/aariba/${file.name}`)
+                .map(res => res.json() as any)
+                .subscribe(script => {
+                    let content = this.editor.getSession().getValue();
+                    let opened_file = this.file_manager.open(file, script.content, content);
+                    this.setFile(opened_file);
+                });
+        }
+
         // Otherwise obtain the script content from the server
-        this.http.post(`/api/aariba/${file.name}/lock`)
-            .subscribe(res => {
-                if (res.status === 200) {
-                    this.http.get(`/api/aariba/${file.name}`)
-                        .map(res => res.json() as any)
-                        .subscribe(script => {
-                            let content = this.editor.getSession().getValue();
-                            let opened_file = this.file_manager.open(file, script.content, content);
-                            this.setFile(opened_file);
-                        });
-                }
-            }, error => {
-                console.log(error);
-            });
+        else {
+            this.http.post(`/api/aariba/${file.name}/lock`)
+                .subscribe(res => {
+                    if (res.status === 200) {
+                        this.http.get(`/api/aariba/${file.name}`)
+                            .map(res => res.json() as any)
+                            .subscribe(script => {
+                                let content = this.editor.getSession().getValue();
+                                let opened_file = this.file_manager.open(file, script.content, content);
+                                this.setFile(opened_file);
+                            });
+                    }
+                }, error => {
+                    console.log(error);
+                });
+        }
     }
 
     edit(event: Event, next_file: FileTab) {
         event.preventDefault();
 
+        this.cleanPreviousFile();
+
         let content = this.editor.getSession().getValue();
         this.file_manager.edit(next_file, content);
         this.setFile(next_file);
+
+        if (next_file.readonly) {
+            this.obtainLiveContentUpdate(next_file);
+        }
     }
 
     commit(): void {
@@ -162,14 +201,17 @@ export class RuleEditor implements AfterViewInit {
 
     private listenToChange(action: any, editor: any): void {
         try {
+            let file = this.currentFile();
+            let new_content = editor.getValue();
+            if (!file.readonly) {
+                this.io.post<string>(
+                    `/api/aariba/${file.name}/liveupdate`,
+                    new_content
+                );
+            }
             this.editor.getSession().clearAnnotations();
             this.interpreter.reset();
-            this.interpreter.execute(editor.getValue());
-            let file = this.currentFile();
-            this.io.post<string>(
-                `/api/aariba/${file.name}/liveupdate`,
-                file.content
-            );
+            this.interpreter.execute(new_content);
         } catch (e) {
             let error: AaribaScriptError = e;
             if (error.line && error.column) {

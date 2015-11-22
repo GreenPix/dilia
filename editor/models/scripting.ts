@@ -1,7 +1,6 @@
 import {Injectable} from 'angular2/angular2';
 import {Response} from 'angular2/http';
 import {AaribaFile} from '../shared';
-import {Subscription} from '@reactivex/rxjs';
 import {HttpService, RxObservable, SocketIOService} from '../services/index';
 
 export interface FileTab {
@@ -11,7 +10,6 @@ export interface FileTab {
     active: boolean;
     readonly: boolean;
     isNew: boolean;
-    content_observable: Subscription<string>;
 }
 
 @Injectable()
@@ -36,7 +34,6 @@ export class FileManager {
             active: false,
             readonly: false,
             isNew: true,
-            content_observable: null,
         };
         this.file_list.push(new_file);
         this.edit(new_file, previous_content);
@@ -51,7 +48,6 @@ export class FileManager {
             active: false,
             readonly: file.locked,
             isNew: false,
-            content_observable: null,
         };
         this.file_list.push(new_file);
         this.edit(new_file, previous_content);
@@ -72,18 +68,10 @@ export class FileManager {
             let previous_file = this.file_list[this.current_file];
             previous_file.active = false;
             previous_file.content = previous_content;
-            if (previous_file.content_observable) {
-                previous_file.content_observable.unsubscribe();
-            }
         }
 
         // Open the next file
         file.active = true;
-        if (file.readonly) {
-            file.content_observable = this.io
-                .get<string>(`/api/aariba/${file.name}/liveupdate`)
-                .subscribe(res => file.content = res);
-        }
         this.current_file = file.index;
     }
 

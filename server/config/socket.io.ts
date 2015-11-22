@@ -75,47 +75,52 @@ export function wrap(app: Express, io: SocketIO.Server): ExpressSocketIOWrapper 
 
     let router = new Router<ApiCall>();
 
+    function ensureRoomIsReady(packet: SocketPacket) {
+        if (!(packet.apicall in rooms)) {
+            rooms[packet.apicall] = {
+                clients: [],
+                api: router.resolve(packet.apicall)
+            };
+        }
+    }
+
     io.on('connection', socket => {
-        winfo(`SocketIO Client connected`);
+        winfo(`SocketIO Client connected ${socket.client.id}`);
 
         socket.on('data', (packet: SocketPacket) => {
             if (!packet) return;
+
+            ensureRoomIsReady(packet);
+
             // Get or register to a room
             if (packet.method === SocketMethod.GET) {
-                if (packet.apicall in rooms) {
-                    rooms[packet.apicall].clients.push(socket);
-                } else {
-                    rooms[packet.apicall] = {
-                        clients: [],
-                        api: router.resolve(packet.apicall)
-                    };
-                }
+                rooms[packet.apicall].clients.push(socket);
             }
+
             // Unsubscribe from a room
             if (packet.method === SocketMethod.UNSUBSCRIBE) {
                 if (packet.apicall in rooms) {
                     _.remove(rooms[packet.apicall].clients, s => s === socket);
                 }
             }
+
             // Post a new value
             if (packet.method === SocketMethod.POST) {
-                if (packet.apicall in rooms) {
-                    let api = rooms[packet.apicall].api;
-                    let user = socket.request.user;
-                    let req = new SIORequest(api.params, user, packet.value);
-                    let res = new SIOResponse();
-                    res.onEmit(() => {
-                        for (let client of rooms[packet.apicall].clients) {
-                            client.emit('data', res);
-                        }
-                    });
-                    api.cb(req, res);
-                }
+                let api = rooms[packet.apicall].api;
+                let user = socket.request.user;
+                let req = new SIORequest(api.params, user, packet.value);
+                let res = new SIOResponse();
+                res.onEmit(() => {
+                    for (let client of rooms[packet.apicall].clients) {
+                        client.emit(packet.apicall, res.value);
+                    }
+                });
+                api.cb(req, res);
             }
         });
 
         socket.on('disconnected', () => {
-            winfo(`SocketIO Client disconnected: ${socket.client}`);
+            winfo(`SocketIO Client disconnected: ${socket.client.id}`);
         });
     });
 

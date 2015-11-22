@@ -10,7 +10,7 @@ app.get('/api/lycan/aariba/latest', (req, res) => {
             werror(err || '');
             notFound(res);
         } else {
-            res.status(200).json(script.getLatest());
+            res.send(200, script.getLatest().content);
         }
     });
 });
