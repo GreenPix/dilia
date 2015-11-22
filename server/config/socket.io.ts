@@ -7,11 +7,25 @@ import {Router, ApiParams, ApiResolved} from './router/index';
 
 export class SIOResponse {
     private _value: any;
-    json(value: any) {
+    private _cb: Function;
+
+    json(value: any): void {
+        if (this._cb === null) {
+            throw new Error('Already called json!');
+        }
         this._value = value;
+        if (this._cb) {
+            this._cb();
+            this._cb = null;
+        }
     }
+
     get value() {
         return this._value;
+    }
+
+    onEmit(cb: Function) {
+        this._cb = cb;
     }
 }
 
@@ -90,10 +104,12 @@ export function wrap(app: Express, io: SocketIO.Server): ExpressSocketIOWrapper 
                     let user = socket.request.user;
                     let req = new SIORequest(api.params, user, packet.value);
                     let res = new SIOResponse();
+                    res.onEmit(() => {
+                        for (let client of rooms[packet.apicall].clients) {
+                            client.emit('data', res);
+                        }
+                    });
                     api.cb(req, res);
-                    for (let client of rooms[packet.apicall].clients) {
-                        client.emit('data', res);
-                    }
                 }
             }
         });

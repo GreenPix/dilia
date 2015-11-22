@@ -52,7 +52,6 @@
         "./editor/services/index.ts",
         "./editor/shared.ts",
         "./editor/util/injector.ts",
-        "./editor/util/print.ts",
         "./shared/aariba.ts",
         "./shared/socket.ts",
         "./typings/ace/ace.d.ts",

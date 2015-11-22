@@ -9,6 +9,13 @@ export function success(res: Response, msg?: string): Response {
     });
 }
 
+export function notFound(res: Response, user?: UserDocument, msg?: string): Response {
+    warn(msg || user && `Not found for ${user.username}` || `Not Found`);
+    return res.status(404).json({
+        message: msg || `Resource not found`,
+    });
+}
+
 export function unauthorized(res: Response, user: UserDocument): Response {
     warn(`Unauthorized access by ${user.username}`);
     return res.status(401).json({

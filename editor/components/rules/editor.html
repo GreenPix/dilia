@@ -6,7 +6,7 @@
   </div>
   <div class="nav navbar-nav navbar-right nav-option">
     <button class="btn btn-success"
-        [ng-class]="{ 'disabled': currentFile().readonly }"
+        [ng-class]="{ 'disabled': currentFileIsReadOnly() }"
         (click)="commit()">Commit</button>
     <button class="btn btn-primary" (click)="createNewFile()">
       <span class="fa fa-plus"></span> Create new
@@ -28,8 +28,13 @@
       </a>
     </li>
   </ul>
-  <div class="rule-editor--wrapper" [ng-style]="{ 'height': text_area_height+1 }">
-    <div id="{{id}}" class="rule-editor--content" [ng-style]="{ 'width': text_area_width, 'height': text_area_height }"></div>
+  <div class="rule-editor--wrapper"
+       [ng-class]="{ 'hidden': currentFile() === null }"
+       [ng-style]="{ 'height': text_area_height+1 }">
+      <div id="{{id}}" class="rule-editor--content" [ng-style]="{ 'width': text_area_width, 'height': text_area_height }"></div>
+  </div>
+  <div *ng-if="currentFile() === null">
+      <h2 class="lead text-center">You can open a file using the search bar</h2>
   </div>
 </div>
 

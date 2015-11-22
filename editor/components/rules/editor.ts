@@ -52,13 +52,35 @@ export class RuleEditor implements AfterViewInit {
     }
 
     open(file: AaribaFile) {
-        // TODO: Set spinner if needed.
-        this.http.get(`/api/aariba/${file.name}`)
-            .map(res => res.json() as any)
-            .subscribe(script => {
-                let content = this.editor.getSession().getValue();
-                let opened_file = this.file_manager.open(file, script.content, content);
-                this.setFile(opened_file);
+
+        if (!file) {
+            throw new Error(`Tried to open a file with an empty`);
+        }
+
+        // Is this file already opened in a tab?
+        if (this.file_manager.hasFile(file.name)) {
+
+            let content = this.editor.getSession().getValue();
+            let active_file = this.file_manager.editFilename(file.name, content);
+            this.setFile(active_file);
+
+            return;
+        }
+
+        // Otherwise obtain the script content from the server
+        this.http.post(`/api/aariba/${file.name}/lock`)
+            .subscribe(res => {
+                if (res.status === 200) {
+                    this.http.get(`/api/aariba/${file.name}`)
+                        .map(res => res.json() as any)
+                        .subscribe(script => {
+                            let content = this.editor.getSession().getValue();
+                            let opened_file = this.file_manager.open(file, script.content, content);
+                            this.setFile(opened_file);
+                        });
+                }
+            }, error => {
+                console.log(error);
             });
     }
 
@@ -71,13 +93,26 @@ export class RuleEditor implements AfterViewInit {
     }
 
     commit(): void {
-        if (!this.currentFile().readonly) {
+        let current_file = this.currentFile();
+        if (current_file && !current_file.readonly) {
+            current_file.content = this.editor.getSession().getValue();
             this.commit_modal.show(this.currentFile());
         }
     }
 
     currentFile(): FileTab {
-        return this.file_manager.currentFile();
+        if (this.file_manager.hasAnyFile()) {
+            return this.file_manager.currentFile();
+        }
+        return null;
+    }
+
+    currentFileIsReadOnly(): boolean {
+        let current_file = this.currentFile();
+        if (current_file) {
+            return current_file.readonly;
+        }
+        return true;
     }
 
     createNewFile(): void {
@@ -87,7 +122,7 @@ export class RuleEditor implements AfterViewInit {
     }
 
     fileList(): Array<FileTab> {
-        return this.file_manager.file_list;
+        return this.file_manager.fileList();
     }
 
     afterViewInit(): void {
@@ -107,7 +142,6 @@ export class RuleEditor implements AfterViewInit {
         });
 
         // TODO: remove this
-        this.setFile(this.currentFile());
         // TODO: and use this instead:
         //this.getLastUsedResources();
     }

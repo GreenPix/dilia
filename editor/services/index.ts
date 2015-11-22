@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import * as io from 'socket.io-client';
 import {SocketPacket, SocketMethod} from '../shared';
 import {Injectable} from 'angular2/angular2';
-import {Observable, Subscriber} from '@reactivex/rxjs';
+import {Observable, Subscriber, Subscription} from '@reactivex/rxjs';
 import {Http, Response, Headers} from 'angular2/http';
 
 export class UniqueId {
@@ -18,7 +18,7 @@ export class UniqueId {
 }
 
 export interface RxObservable<R> {
-    subscribe(subscriber: (res: R) => void);
+    subscribe(subscriber: (res: R) => void, error?: (err: any) => void): Subscription<R>;
     map<U>(mapper: (res: R) => U): RxObservable<U>;
 }
 

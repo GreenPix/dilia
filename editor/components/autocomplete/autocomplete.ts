@@ -35,7 +35,10 @@ export class AutocompleteFiles {
 
     @Output() openFile: EventEmitter = new EventEmitter();
 
-    constructor(private io: SocketIOService, private http: HttpService) {
+    constructor(
+        private io: SocketIOService,
+        private http: HttpService)
+    {
         this.io.get<string>('/api/aariba/new')
             .subscribe(s => this.file_list.push({ name: s, locked: true }));
 
@@ -46,31 +49,25 @@ export class AutocompleteFiles {
             });
     }
 
-    onActivate() {
-        this.file_list = [];
-        this.io.get<AaribaFileList>('/api/aariba')
-            .subscribe(res => {
-                console.log(res);
-                _.forEach(res, (properties: any, filename) => {
-                    this.file_list.push({
-                        name: filename,
-                        locked: properties.is_locked,
-                    });
-                });
-            });
-    }
-
     afterViewInit() {
+        let throttled = _.throttle(value => this.filterFiles(value.search), 10);
         (<any>this.form.control.valueChanges).toRx()
-            .filter(_ => this.form.valid)
+            .filter(_ => this.form.valid &&
+                this.input_search.getHtmlElement() === document.activeElement)
         // TODO: uncomment the code below once ReactiveX/RxJS#649 is solved
         //    .throttle(1)
-           .subscribe(value => this.filterFiles(value.search));
+           .subscribe(throttled);
 
         this.input_search.event<any>('keydown')
-            .map<KeyboardEvent & { key: string }, string>(event => this.mapKeyCode(event))
+            .map((event: KeyboardEvent & { key: string }) => this.mapKeyCode(event))
             .filter(key => key !== null)
             .subscribe(key => this.processKey(key));
+
+        this.openFile.toRx()
+            .subscribe(() => {
+                this.input_value = '';
+                this.clearFocus();
+            });
     }
 
     mapKeyCode(event: KeyboardEvent & { key: string }): string {
@@ -130,9 +127,6 @@ export class AutocompleteFiles {
         if (this.isInputValid()) {
             this.form.dirty = false;
             this.openFile.next(this.selected);
-            this.input_value = '';
-            this.clearFocus();
-            console.log('input accepted');
         }
     }
 

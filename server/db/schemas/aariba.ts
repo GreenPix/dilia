@@ -40,7 +40,8 @@ export interface AaribaScriptProperties {
 export interface AaribaScriptSchema extends AaribaScriptProperties {
     // Form usefull for the client
     toJsonResponse(): any;
-    getRevision(id: number): any;
+    getRevision(id: number): Revision;
+    getLatest(): Revision;
     commitRevision(rev: Revision, cb: (err: any) => void): void;
 }
 
@@ -83,7 +84,7 @@ mongooseAaribaScriptSchema.method({
             ['name', 'created_on']
         );
 
-        res.content = self.revisions[0].content;
+        res.content = self.revisions[self.revisions.length - 1].content;
         res.revisions = self.revisions.map(r => {
             return {
                 author: r.author,
@@ -93,6 +94,12 @@ mongooseAaribaScriptSchema.method({
         });
 
         return res;
+    },
+
+    getLatest: function (): any {
+        let self: AaribaScriptSchema = this;
+        let id = self.revisions.length - 1;
+        return _.pick(self.revisions[id], ['author', 'content', 'comment', 'date']);
     },
 
     getRevision: function (id: number): any {

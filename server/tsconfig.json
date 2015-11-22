@@ -25,6 +25,7 @@
         "./apis/aariba.ts",
         "./apis/auth.ts",
         "./apis/index.ts",
+        "./apis/lycan.ts",
         "./apis/middlewares.ts",
         "./apis/post_response_fmt.ts",
         "./apis/user.ts",

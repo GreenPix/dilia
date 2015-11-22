@@ -1,6 +1,7 @@
 import {Injectable} from 'angular2/angular2';
 import {Response} from 'angular2/http';
 import {AaribaFile} from '../shared';
+import {Subscription} from '@reactivex/rxjs';
 import {HttpService, RxObservable, SocketIOService} from '../services/index';
 
 export interface FileTab {
@@ -10,31 +11,22 @@ export interface FileTab {
     active: boolean;
     readonly: boolean;
     isNew: boolean;
+    content_observable: Subscription<string>;
 }
 
 @Injectable()
 export class FileManager {
 
-    file_list: Array<FileTab>;
-    current_file: number;
+    private file_list: Array<FileTab> = [];
+    private current_file: number = -1;
+
+    fileList(): Array<FileTab> {
+        return this.file_list;
+    }
 
     constructor(
         private http: HttpService,
-        private io: SocketIOService)
-    {
-        this.file_list = [
-            { index: 0, name: 'test', active: true, readonly: true, content: '', isNew: false },
-            { index: 1, name: 'hello world', active: false, readonly: true, content: '', isNew: false },
-            { index: 2, name: 'foobar', active: false, readonly: false, content: '', isNew: false }
-        ];
-        // TODO: waiting for bugfix on typescript#5746
-        let self = this;
-        for (let file of this.file_list) {
-            self.io.get<string>(`/api/aariba/${file.name}/liveupdate`)
-                .subscribe(res => file.content = res);
-        }
-        this.current_file = 0;
-    }
+        private io: SocketIOService) {}
 
     createNewFile(previous_content: string): FileTab {
         let new_file: FileTab = {
@@ -43,7 +35,8 @@ export class FileManager {
             name: '',
             active: false,
             readonly: false,
-            isNew: true
+            isNew: true,
+            content_observable: null,
         };
         this.file_list.push(new_file);
         this.edit(new_file, previous_content);
@@ -56,23 +49,46 @@ export class FileManager {
             name: file.name,
             content: content,
             active: false,
-            readonly: false,
-            isNew: false
+            readonly: file.locked,
+            isNew: false,
+            content_observable: null,
         };
         this.file_list.push(new_file);
         this.edit(new_file, previous_content);
         return new_file;
     }
 
+    editFilename(filename: string, previous_content: string): FileTab {
+        let file = _.filter(this.file_list, f => f.name === filename)[0];
+        if (file) {
+            this.edit(file, previous_content);
+        }
+        return file;
+    }
+
     edit(file: FileTab, previous_content: string) {
         // Set the previous_file content
-        let previous_file = this.file_list[this.current_file];
-        previous_file.active = false;
-        previous_file.content = previous_content;
+        if (this.current_file >= 0) {
+            let previous_file = this.file_list[this.current_file];
+            previous_file.active = false;
+            previous_file.content = previous_content;
+            if (previous_file.content_observable) {
+                previous_file.content_observable.unsubscribe();
+            }
+        }
 
         // Open the next file
         file.active = true;
+        if (file.readonly) {
+            file.content_observable = this.io
+                .get<string>(`/api/aariba/${file.name}/liveupdate`)
+                .subscribe(res => file.content = res);
+        }
         this.current_file = file.index;
+    }
+
+    hasFile(filename: string): boolean {
+        return _.any(this.file_list, file => file.name === filename);
     }
 
     commit(file: FileTab, comment: string): RxObservable<Response> {
@@ -93,6 +109,10 @@ export class FileManager {
             content: file.content,
             comment: comment,
         });
+    }
+
+    hasAnyFile(): boolean {
+        return this.current_file >= 0;
     }
 
     currentFile(): FileTab {

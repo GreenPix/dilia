@@ -7,7 +7,7 @@ import {error as werror} from 'winston';
 import {warn as wwarn} from 'winston';
 import {AaribaFileList} from '../shared';
 import {accessControlManager, ResourceKind as RK} from '../resources';
-import {success, badReq, unauthorized} from './post_response_fmt';
+import {success, badReq, unauthorized, notFound} from './post_response_fmt';
 import _ = require('lodash');
 
 
@@ -20,11 +20,12 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
     .exec((err, scripts) => {
         let user: UserDocument = req.user;
         res.status(200);
+        accessControlManager.updateLockOnResources();
         res.json(_.reduce(scripts, (res, val) => {
-            let is_locked = accessControlManager.isUsedBy({
+            let is_locked = accessControlManager.isUsedBySomeoneOtherThanMe({
                 kind: RK.AaribaScript,
-                owner: user._id,
-                resource: val._id,
+                me: user._id,
+                resource: val.name,
             });
             res.push({
                 locked: is_locked,
@@ -40,7 +41,7 @@ app.get('/api/aariba/:name', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
             werror(err);
-            res.sendStatus(404);
+            notFound(res, req.user);
         } else {
             let script_reduced = script.toJsonResponse();
 
@@ -64,14 +65,36 @@ app.get('/api/aariba/:name/revision/:id', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
             werror(err);
-            res.sendStatus(404);
+            notFound(res, req.user);
         } else {
             let rev = script.getRevision(req.params.id);
             User.findById(rev.author.toHexString(), (err, user) => {
                 res.status(200);
-                rev.author = user.username;
+                rev.author = user.username as any;
                 res.json(rev);
             });
+        }
+    });
+});
+
+// Try to lock a resource.
+app.post('/api/aariba/:name/lock', reqAuth, (req, res) => {
+    AaribaScript.findOne({ name: req.params.name }, (err, script) => {
+        if (err || !script) {
+            werror(err || 'Script not found');
+            notFound(res, req.user);
+        } else {
+            accessControlManager.updateLockOnResources();
+            let succeed = accessControlManager.lockThisResource({
+                owner: req.user._id,
+                kind: RK.AaribaScript,
+                resource: script.name
+            });
+            if (succeed) {
+                success(res, `Succesfully locked '${script.name}'`);
+            } else {
+                badReq(res, `Couldn't locked '${script.name}'`);
+            }
         }
     });
 });
@@ -81,7 +104,11 @@ app.io().stream('/api/aariba/:name/liveupdate', (req, res) => {
     // Send back the content to everyone
     res.json(req.body);
     // Obtain a lock on the resource
-    console.log(`Hello from ${req.user.username}`);
+    accessControlManager.maintainLockOnResource({
+        owner: req.user._id,
+        kind: RK.AaribaScript,
+        resource: req.params['name'],
+    });
 });
 
 // Commit a new revision of a script
@@ -94,10 +121,10 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
         } else {
             // If the resource is not locked by this user
             // then the commit is illegal.
-            if (!accessControlManager.isUsedBy({
+            if (!accessControlManager.isUsedByMe({
                 owner: user._id,
                 kind: RK.AaribaScript,
-                resource: script._id
+                resource: script.name
             })) {
                 wwarn(`User ${user.username} failed to commit on: \n` +
                       `==> '${script.name}' (unauthorized)`
