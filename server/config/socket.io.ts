@@ -59,7 +59,7 @@ export interface SocketIOApiBuilder {
 
 export interface ExpressSocketIOWrapper extends Express {
     io(): SocketIOApiBuilder;
-    broadcast(apicall: string, value: any): void;
+    emitOn(apicall: string, cb: (user: UserDocument) => any): void;
 }
 
 export function wrap(app: Express, io: SocketIO.Server): ExpressSocketIOWrapper {
@@ -134,10 +134,10 @@ export function wrap(app: Express, io: SocketIO.Server): ExpressSocketIOWrapper 
 
     let apiBuilder = new ApiBuilder();
 
-    wrapped_app.broadcast = (apicall, value) => {
+    wrapped_app.emitOn = (apicall, cb) => {
         if (apicall in rooms) {
             for (let client of rooms[apicall].clients) {
-                client.emit(apicall, value);
+                client.emit(apicall, cb(client.request.user));
             }
         }
     };

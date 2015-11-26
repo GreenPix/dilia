@@ -5,7 +5,7 @@ import {reqAuth} from './middlewares';
 import {errorToJson} from '../db/error_helpers';
 import {error as werror} from 'winston';
 import {warn as wwarn} from 'winston';
-import {AaribaFileList} from '../shared';
+import {AaribaFileList, AaribaFile} from '../shared';
 import {accessControlManager, ResourceKind as RK} from '../resources';
 import {success, badReq, unauthorized, notFound} from './post_response_fmt';
 import _ = require('lodash');
@@ -167,7 +167,13 @@ app.post('/api/aariba/new', reqAuth, (req, res, next) =>  {
             // next(err);
             badReq(res, `Couldn't save script: '${properties.name}'`, errorToJson(err));
         } else {
-            app.broadcast('/api/aariba/new', properties.name);
+            app.emitOn('/api/aariba/new', (client) => {
+              let value: AaribaFile = {
+                name: properties.name,
+                locked: !user._id.equals(client._id),
+              };
+              return value;
+            });
             success(res, `Saved new script '${properties.name}'!`);
         }
     });

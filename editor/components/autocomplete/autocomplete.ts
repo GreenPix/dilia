@@ -39,8 +39,8 @@ export class AutocompleteFiles {
         private io: SocketIOService,
         private http: HttpService)
     {
-        this.io.get<string>('/api/aariba/new')
-            .subscribe(s => this.file_list.push({ name: s, locked: true }));
+        this.io.get<AaribaFile>('/api/aariba/new')
+            .subscribe(f => this.file_list.push(f));
 
         this.http.get('/api/aariba')
             .map(res => res.json() as AaribaFileList)
@@ -137,9 +137,13 @@ export class AutocompleteFiles {
     }
 
     filterFiles(name: string): void {
+
+        // Prepare the string.
+        name = name.toLowerCase();
+
         // Filter by matching
-        this.file_filtered =
-            _.filter(this.file_list, file => this.match(name, file.name));
+        this.file_filtered = _.filter(this.file_list,
+              file => this.match(name, file.name.toLowerCase()));
 
         // Sort by lexical order
         this.file_filtered = _.sortBy(this.file_filtered, 'name');
