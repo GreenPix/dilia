@@ -101,14 +101,27 @@ app.post('/api/aariba/:name/lock', reqAuth, (req, res) => {
 
 // Stream of the modified content of a script
 app.io().stream('/api/aariba/:name/liveupdate', (req, res) => {
+
     // Send back the content to everyone
     res.json(req.body);
+
+    let name = req.params['name'];
+
     // Obtain a lock on the resource
     accessControlManager.maintainLockOnResource({
         owner: req.user._id,
         kind: RK.AaribaScript,
-        resource: req.params['name'],
+        resource: name,
     });
+
+    app.emitOn(`/api/aariba/lock_status`, (client) => {
+      let value: AaribaFile = {
+        name: name,
+        locked: !req.user._id.equals(client._id),
+      };
+      return value;
+    });
+
 });
 
 // Commit a new revision of a script

@@ -42,6 +42,12 @@ export class AutocompleteFiles {
         this.io.get<AaribaFile>('/api/aariba/new')
             .subscribe(f => this.file_list.push(f));
 
+        this.io.get<AaribaFile>('/api/aariba/lock_status')
+            .subscribe(fl => {
+                let file = _.filter(this.file_list, f => f.name == fl.name);
+                if (file.length > 0) file[0].locked = fl.locked;
+            });
+
         this.http.get('/api/aariba')
             .map(res => res.json() as AaribaFileList)
             .subscribe(val => {
