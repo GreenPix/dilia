@@ -179,18 +179,6 @@ export class RuleEditor implements AfterViewInit {
         this.editor.addEventListener('change', (action, editor) => {
             this.listenToChange(action, editor);
         });
-
-        // TODO: remove this
-        // TODO: and use this instead:
-        //this.getLastUsedResources();
-    }
-
-    private getLastUsedResources(): void {
-        this.http.get('/api/user/lastusedresources')
-            .map(res => <any>res.json())
-            .subscribe(res => {
-                console.log(res);
-            });
     }
 
     private setFile(file: FileTab): void {

@@ -65,7 +65,6 @@ export class AutocompleteFiles {
 
         this.openFile.toRx()
             .subscribe(() => {
-                this.input_value = '';
                 this.clearFocus();
             });
     }
@@ -157,6 +156,10 @@ export class AutocompleteFiles {
 
     clearFocus(): void {
         this.input_search.getHtmlElement().blur();
+        // Small hack to make it work. TODO: See what's wrong with the ng-model.
+        setTimeout(() => {
+            this.input_value = '';
+        });
         this.file_filtered = [];
     }
 
