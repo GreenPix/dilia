@@ -7,6 +7,10 @@
     <div class="toolbar" *ng-if="!isLoginPage()">
       <div class="toolbar-options">
           <button [router-link]="['./ScriptEditor']"
+                class="btn btn-default fa fa-cube" tooltip="Settings editor"></button>
+          <button [router-link]="['./MapEditor']"
+                class="btn btn-default fa fa-map-o" tooltip="Map editor"></button>
+          <button [router-link]="['./ScriptEditor']"
                 class="btn btn-default fa fa-code" tooltip="Script editor"></button>
           <button [router-link]="['./Profile']"
                 class="btn btn-default fa fa-user" tooltip="Profile"></button>

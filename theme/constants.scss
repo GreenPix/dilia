@@ -7,6 +7,12 @@ $overlay-background-color: rgba(#676767, 0.48);
 $autocomplete-background-color: $navbar-background-color;
 $box-shadow-color: rgba(0, 0, 0, 0.5);
 
+// Everything rely on the fact that at 100px the logo
+// is 43 pixel in height.
+$navbar-logo-height: 43px;
+$navbar-margin-top-bottom: 8px;
+$navbar-height: $navbar-logo-height + 2 * $navbar-margin-top-bottom;
+
 @mixin border-bot {
     border-bottom: 1px solid $navbar-border-bottom-color;
 }
