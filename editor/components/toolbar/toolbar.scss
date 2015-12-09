@@ -1,0 +1,28 @@
+@import "theme/constants";
+
+.logo {
+    img {
+        width: 100px;
+    }
+}
+
+.center-logo {
+    margin: 8px 0;
+    text-align: center;
+}
+
+.toolbar {
+    position: relative;
+    width: 100%;
+}
+
+.toolbar-options {
+    position: absolute;
+    width: 100%;
+    bottom: 13px;
+    display: flex;
+    justify-content: flex-end;
+    .btn {
+        margin-left: 5px;
+    }
+}

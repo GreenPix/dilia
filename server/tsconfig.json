@@ -13,7 +13,8 @@
         "removeComments": true,
         "noLib": false,
         "preserveConstEnums": true,
-        "suppressImplicitAnyIndexErrors": true
+        "suppressImplicitAnyIndexErrors": true,
+        "moduleResolution": "node"
     },
     "compileOnSave": false,
     "filesGlob": [
@@ -21,17 +22,55 @@
         "!./node_modules/**/*"
     ],
     "files": [
-        "./errors/BadRequest.ts",
+        "./apis/aariba.ts",
+        "./apis/auth.ts",
+        "./apis/index.ts",
+        "./apis/lycan.ts",
+        "./apis/middlewares.ts",
+        "./apis/post_response_fmt.ts",
+        "./apis/user.ts",
+        "./apis/users.ts",
+        "./check.ts",
+        "./config/express.ts",
+        "./config/index.ts",
+        "./config/passport.ts",
+        "./config/router/index.ts",
+        "./config/socket.io.ts",
+        "./custom_typings/crypto.d.ts",
+        "./custom_typings/passport.socketio.d.ts",
+        "./db/error_helpers.ts",
+        "./db/index.ts",
+        "./db/schemas/aariba.ts",
+        "./db/schemas/users.ts",
+        "./errors/index.ts",
+        "./logger/helpers.ts",
+        "./resources.ts",
         "./server.ts",
+        "./shared.ts",
         "./typings/body-parser/body-parser.d.ts",
+        "./typings/compression/compression.d.ts",
+        "./typings/connect-mongo/connect-mongo.d.ts",
         "./typings/cookie-parser/cookie-parser.d.ts",
+        "./typings/csurf/csurf.d.ts",
         "./typings/express-session/express-session.d.ts",
         "./typings/express/express.d.ts",
+        "./typings/lodash/lodash.d.ts",
         "./typings/mime/mime.d.ts",
+        "./typings/mongodb/mongodb.d.ts",
+        "./typings/mongoose/mongoose.d.ts",
+        "./typings/multer/multer.d.ts",
         "./typings/node/node.d.ts",
+        "./typings/passport-google-oauth/passport-google-oauth.d.ts",
         "./typings/passport-local/passport-local.d.ts",
         "./typings/passport/passport.d.ts",
         "./typings/serve-static/serve-static.d.ts",
-        "./typings/tsd.d.ts"
-    ]
+        "./typings/socket.io/socket.io.d.ts",
+        "./typings/tsd.d.ts",
+        "./typings/winston/winston.d.ts",
+        "./util/print.ts"
+    ],
+    "exclude": [],
+    "atom": {
+        "rewriteTsconfig": true
+    }
 }

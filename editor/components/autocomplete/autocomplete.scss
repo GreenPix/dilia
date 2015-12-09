@@ -1,0 +1,40 @@
+@import "theme/constants";
+@import "~font-awesome/scss/variables";
+
+.autocomplete-box {
+    position: relative;
+}
+
+.autocomplete-container {
+    z-index: 1000;
+    position: absolute;
+    width: 100%;
+    background-color: $autocomplete-background-color;
+    @include box-shadows;
+    border-radius: 0 0 5px 5px;
+    // max-height: 480px;
+    // overflow-y: auto;
+}
+
+.file-readonly:not(.active) {
+    color: #CACACA;
+}
+
+.reset-margin {
+    margin: 0;
+}
+
+.file-readonly-icon::before {
+    content: $fa-var-lock;
+}
+
+.file-readonly-icon {
+    display: inline-block;
+    font: normal normal normal 18px FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 18px;
+    top: 10px;
+}

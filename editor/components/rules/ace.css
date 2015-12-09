@@ -1,0 +1,15 @@
+.ace_editor .ace_variable {
+  color: #C353E4;
+}
+
+.ace_editor .ace_numeric {
+  color: #EC913B;
+}
+
+.ace_editor .ace_keyword {
+  color: #61afef;
+}
+
+.ace_editor .ace_variable.ace_global {
+  color: #DE1827;
+}

@@ -17,7 +17,13 @@ Vagrant.configure(2) do |config|
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
 
+  # server
   config.vm.network "forwarded_port", guest: 3000, host: 3000
+  # mongo-express
+  config.vm.network "forwarded_port", guest: 3001, host: 3001
+  # node-inspector
+  config.vm.network "forwarded_port", guest: 8080, host: 8080
+  config.vm.network "forwarded_port", guest: 5858, host: 5858
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -35,8 +41,21 @@ Vagrant.configure(2) do |config|
   #   push.app = "YOUR_ATLAS_USERNAME/YOUR_APPLICATION_NAME"
   # end
 
-  config.vm.provision "shell", run: "always" do |s|
+  # config.vm.provision "shell", run: "always" do |s|
+  config.vm.provision "shell" do |s|
     s.path = "deploy.sh"
     s.privileged = false
   end
+
+  # If you are behind a proxy, instanll the plugin vagrant-proxyconf
+  # by executing the following command:
+  #
+  #     vagrant plugin install vagrant-proxyconf
+  #
+  if Vagrant.has_plugin?("vagrant-proxyconf")
+    config.proxy.http     = ENV['HTTP_PROXY']
+    config.proxy.https    = ENV['HTTPS_PROXY']
+    config.proxy.no_proxy = "localhost,127.0.0.1"
+  end
+
 end

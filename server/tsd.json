@@ -6,19 +6,19 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "express/express.d.ts": {
-      "commit": "bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
+      "commit": "571bf28dd6c3266e131e412c894378b8c4af5064"
     },
     "node/node.d.ts": {
-      "commit": "bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
+      "commit": "af5b8275d1f2b92738b93fddabc461fc20c553a1"
     },
     "serve-static/serve-static.d.ts": {
-      "commit": "bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
+      "commit": "571bf28dd6c3266e131e412c894378b8c4af5064"
     },
     "mime/mime.d.ts": {
-      "commit": "bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
+      "commit": "571bf28dd6c3266e131e412c894378b8c4af5064"
     },
     "passport/passport.d.ts": {
-      "commit": "bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
+      "commit": "3fc1377ce29dd9670975cb68615edf1b819fc4a5"
     },
     "passport-local/passport-local.d.ts": {
       "commit": "bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
@@ -30,10 +30,37 @@
       "commit": "bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
     },
     "express-session/express-session.d.ts": {
-      "commit": "bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
+      "commit": "571bf28dd6c3266e131e412c894378b8c4af5064"
     },
     "lodash/lodash.d.ts": {
       "commit": "4356af494c045299110677b21e62000957e7a72e"
+    },
+    "mongoose/mongoose.d.ts": {
+      "commit": "571bf28dd6c3266e131e412c894378b8c4af5064"
+    },
+    "winston/winston.d.ts": {
+      "commit": "66f88ec51858bb21bc375fa91a963c04bc09401e"
+    },
+    "csurf/csurf.d.ts": {
+      "commit": "3fc1377ce29dd9670975cb68615edf1b819fc4a5"
+    },
+    "multer/multer.d.ts": {
+      "commit": "3fc1377ce29dd9670975cb68615edf1b819fc4a5"
+    },
+    "passport-google-oauth/passport-google-oauth.d.ts": {
+      "commit": "3fc1377ce29dd9670975cb68615edf1b819fc4a5"
+    },
+    "compression/compression.d.ts": {
+      "commit": "571bf28dd6c3266e131e412c894378b8c4af5064"
+    },
+    "connect-mongo/connect-mongo.d.ts": {
+      "commit": "571bf28dd6c3266e131e412c894378b8c4af5064"
+    },
+    "mongodb/mongodb.d.ts": {
+      "commit": "571bf28dd6c3266e131e412c894378b8c4af5064"
+    },
+    "socket.io/socket.io.d.ts": {
+      "commit": "af5b8275d1f2b92738b93fddabc461fc20c553a1"
     }
   }
 }

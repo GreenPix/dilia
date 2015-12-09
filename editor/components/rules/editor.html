@@ -1,0 +1,42 @@
+<commit-modal></commit-modal>
+
+<nav class="navbar rule-editor">
+  <div class="nav navbar-nav nav-option open-search-file" role="search">
+      <autocomplete-files (open-file)="open($event)"></autocomplete-files>
+  </div>
+  <div class="nav navbar-nav navbar-right nav-option">
+    <button class="btn btn-success"
+        [ng-class]="{ 'disabled': currentFileIsReadOnly() }"
+        (click)="commit()">Commit</button>
+    <button class="btn btn-primary" (click)="createNewFile()">
+      <span class="fa fa-plus"></span> Create new
+    </button>
+  </div>
+</nav>
+
+<alert-box></alert-box>
+
+<div>
+  <ul class="nav nav-tabs">
+    <li *ng-for="#file of fileList()" role="presentation" [ng-class]="{ 'active': file.active }">
+      <a href="#" (click)="edit($event, file)" [ng-switch]="file.isNew">
+        <span class="fa" [ng-class]="{
+          'fa-pencil': !file.readonly,
+          'fa-lock': file.readonly }"></span>
+        <template [ng-switch-when]="true">New file*</template>
+        <template ng-switch-default>File: {{file.name}}</template>
+      </a>
+    </li>
+  </ul>
+  <div class="rule-editor--wrapper"
+       [ng-class]="{ 'hidden': currentFile() === null }"
+       [ng-style]="{ 'height': text_area_height+1 }">
+      <div id="{{id}}" class="rule-editor--content" [ng-style]="{ 'width': text_area_width, 'height': text_area_height }"></div>
+  </div>
+  <div *ng-if="currentFile() === null">
+      <h2 class="lead text-center">You can open a file using the search bar</h2>
+  </div>
+</div>
+
+<rule-editor-globals></rule-editor-globals>
+<rule-editor-exec></rule-editor-exec>

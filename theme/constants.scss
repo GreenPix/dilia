@@ -1,0 +1,35 @@
+
+$color_back: rgb(93, 93, 93);
+$login-background-color: #FAFAFA;
+$navbar-background-color: #FFF;
+$navbar-border-bottom-color: #EEE;
+$overlay-background-color: rgba(#676767, 0.48);
+$autocomplete-background-color: $navbar-background-color;
+$box-shadow-color: rgba(0, 0, 0, 0.5);
+
+@mixin border-bot {
+    border-bottom: 1px solid $navbar-border-bottom-color;
+}
+
+@mixin border-top {
+    border-top: 1px solid $navbar-border-bottom-color;
+}
+
+@mixin border-left {
+    border-left: 1px solid $navbar-border-bottom-color;
+}
+
+@mixin border-right {
+    border-right: 1px solid $navbar-border-bottom-color;
+}
+
+@mixin border-all {
+    @extend .border-top;
+    @extend .border-right;
+    @extend .border-bot;
+    @extend .border-left;
+}
+
+@mixin box-shadows {
+    box-shadow: 0 5px 15px $box-shadow-color;
+}

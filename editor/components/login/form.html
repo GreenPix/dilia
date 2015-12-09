@@ -1,0 +1,55 @@
+<div class="row prepend-top-20 fade-in">
+  <div class="col-sm-5 pull-right">
+  <div class="login-box">
+    <div class="login-heading">
+      <h3>Sign in</h3>
+    </div>
+    <form (submit)="doLogin($event)" [ng-form-model]="loginForm" novalidate>
+      <div class="form-group has-feedback" [ng-class]="{
+        'has-error': isLoginInvalid() &&
+                     loginForm.dirty &&
+                     loginForm.controls?.login?.touched,
+        'has-success': isLoginValid() && loginForm.dirty }" >
+        <input class="form-control" ng-control="login" placeholder="Username">
+        <span class="control-label" *ng-if="isLoginValid() && loginForm.dirty">
+          <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+        </span>
+        <span class="control-label" *ng-if="
+          isLoginInvalid() &&
+          loginForm.dirty &&
+          loginForm.controls?.login?.touched
+        ">
+          <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+          Login is required
+        </span>
+      </div>
+      <div class="form-group has-feedback" [ng-class]="{
+        'has-error':  isPasswordInvalid() &&
+                      loginForm.dirty &&
+                      loginForm.controls?.password?.touched,
+        'has-success': isPasswordValid() &&
+                       loginForm.dirty }">
+        <input class="form-control" ng-control="password" type="password" placeholder="Password">
+        <span class="control-label" *ng-if="isPasswordValid() && loginForm.dirty">
+          <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+        </span>
+        <span class="control-label" *ng-if="
+          isPasswordInvalid() &&
+          loginForm.dirty &&
+          loginForm.controls?.password?.touched
+        ">
+          <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+          Password is required
+        </span>
+      </div>
+      <button class="btn btn-primary" type="submit">
+        Log in
+        <span class="fa fa-sign-in"></span>
+      </button>
+    </form>
+  </div>
+  </div>
+  <div class="col-sm-7 pull-left">
+    <h1>Dilia - Game Editor</h1>
+  </div>
+</div>

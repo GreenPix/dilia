@@ -1,0 +1,62 @@
+$fa-font-path: "~font-awesome/fonts";
+@import "~font-awesome/scss/font-awesome";
+$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+@import "theme/constants";
+
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 300;
+    src: local("Source Sans Pro Light"), local("SourceSansPro-Light"),
+      url("/fonts/source-sans-pro/SourceSansPro-Light.otf") format("opentype");
+}
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: local("Source Sans Pro"), local("SourceSansPro-Regular"),
+      url("/fonts/source-sans-pro/SourceSansPro-Regular.otf") format('opentype');
+}
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 600;
+    src: local("Source Sans Pro Semibold"), local("SourceSansPro-Semibold"),
+      url("/fonts/source-sans-pro/SourceSansPro-Semibold.otf") format('opentype');
+}
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 700;
+    src: local("Source Sans Pro Bold"), local("SourceSansPro-Bold"),
+      url("/fonts/source-sans-pro/SourceSansPro-Bold.otf") format('opentype');
+}
+
+body {
+    font-family: 'Source Sans Pro';
+    font-weight: normal;
+    font-style: normal;
+    margin: 0px;
+    padding-top: 58px;
+}
+
+.close-glyph {
+    font-size: 18px; // 13px
+}
+
+.fade-in {
+    transition: 0.5s opacity;
+    opacity: 0;
+}
+
+header.navbar-empty {
+    background: $navbar-background-color;
+    border-bottom: 1px solid $navbar-border-bottom-color;
+}
+
+header.navbar.navbar-fixed-top.navbar-empty {
+    background: $navbar-background-color none repeat scroll 0% 0%;
+    border-bottom: 1px solid $navbar-border-bottom-color;
+}

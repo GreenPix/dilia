@@ -1,0 +1,16 @@
+{
+    "rules": {
+        "class-name": true,
+        "indent": [true, "spaces"],
+        "no-unused-expression": true,
+        "no-unused-variable": true,
+        "no-unreachable": true,
+        "radix": true,
+        "no-use-before-declare": false,
+        "no-var-keyword": true,
+        "quotemark": [true, "single"],
+        "semicolon": true,
+        "variable-name": false,
+        "no-eval": true
+    }
+}
