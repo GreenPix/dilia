@@ -1,6 +1,6 @@
-import {Component, View, NgForm, ViewChild} from 'angular2/angular2';
-import {CORE_DIRECTIVES, FORM_DIRECTIVES} from 'angular2/angular2';
-import {Output, EventEmitter} from 'angular2/angular2';
+import {Component, View, ViewChild} from 'angular2/core';
+import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm} from 'angular2/common';
+import {Output, EventEmitter} from 'angular2/core';
 import {SocketIOService, HttpService} from '../../services/index';
 import {AaribaFileList, AaribaFile} from '../../shared';
 import {SelectEl} from '../../services/directives';
@@ -33,7 +33,7 @@ export class AutocompleteFiles {
     @ViewChild(SelectEl)
     private input_search: SelectEl;
 
-    @Output() openFile: EventEmitter = new EventEmitter();
+    @Output() openFile: EventEmitter<AaribaFile> = new EventEmitter<AaribaFile>();
 
     constructor(
         private io: SocketIOService,
@@ -55,13 +55,13 @@ export class AutocompleteFiles {
             });
     }
 
-    afterViewInit() {
+    ngAfterViewInit() {
         let throttled = _.throttle(value => this.filterFiles(value.search), 10);
-        (<any>this.form.control.valueChanges).toRx()
+        this.form.control.valueChanges
             .filter(_ => this.form.valid &&
                 this.input_search.getHtmlElement() === document.activeElement)
         // TODO: uncomment the code below once ReactiveX/RxJS#649 is solved
-        //    .throttle(1)
+        //   .throttle(1)
            .subscribe(throttled);
 
         this.input_search.event<any>('keydown')
@@ -69,10 +69,7 @@ export class AutocompleteFiles {
             .filter(key => key !== null)
             .subscribe(key => this.processKey(key));
 
-        this.openFile.toRx()
-            .subscribe(() => {
-                this.clearFocus();
-            });
+        this.openFile.subscribe(() => this.clearFocus());
     }
 
     mapKeyCode(event: KeyboardEvent & { key: string }): string {

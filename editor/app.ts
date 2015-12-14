@@ -1,4 +1,5 @@
-import {Component, View, CORE_DIRECTIVES} from 'angular2/angular2';
+import {Component, View} from 'angular2/core';
+import {CORE_DIRECTIVES} from 'angular2/common';
 import {RouteConfig, ROUTER_DIRECTIVES, Router, Location} from 'angular2/router';
 import {MapEditor} from './components/map/editor';
 import {LoginForm} from './components/login/form';
@@ -23,7 +24,7 @@ let appCss = require<Webpack.Scss>('./app.scss');
     { path: '/map-editor', component: MapEditor, as: 'MapEditor' },
     { path: '/rule-editor', component: RuleEditor, as: 'ScriptEditor' },
     { path: '/profile', component: Profile, as: 'Profile' },
-    { path: '/', redirectTo: '/login', as: 'Home' }
+    { path: '/', redirectTo: ['./Login'], as: 'Home' }
 ])
 export class App {
     router: Router;

@@ -1,6 +1,7 @@
-import {Subscription} from '@reactivex/rxjs';
-import {Component, View, AfterViewInit, CORE_DIRECTIVES} from 'angular2/angular2';
-import {ViewChild} from 'angular2/angular2';
+import {Subscription} from 'rxjs';
+import {Component, View, AfterViewInit} from 'angular2/core';
+import {CORE_DIRECTIVES} from 'angular2/common';
+import {ViewChild} from 'angular2/core';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
 import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
@@ -164,7 +165,7 @@ export class RuleEditor implements AfterViewInit {
         return this.file_manager.fileList();
     }
 
-    afterViewInit(): void {
+    ngAfterViewInit(): void {
         this.editor = ace.edit(this.id);
         this.editor.setOptions({
             enableBasicAutocompletion: true,

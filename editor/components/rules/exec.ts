@@ -1,4 +1,4 @@
-import {Component, View} from 'angular2/angular2';
+import {Component, View} from 'angular2/core';
 
 let execTemplate = require<string>('./exec.html');
 let execCss = require<string>('./exec.css');

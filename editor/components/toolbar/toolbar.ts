@@ -1,4 +1,5 @@
-import {Component, View, CORE_DIRECTIVES} from 'angular2/angular2';
+import {Component, View} from 'angular2/core';
+import {CORE_DIRECTIVES} from 'angular2/common';
 import {Location, Router, RouterLink} from 'angular2/router';
 import {HttpService} from '../../services/index';
 import {SERVICE_DIRECTIVES} from '../../services/directives';

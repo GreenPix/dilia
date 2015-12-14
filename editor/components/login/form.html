@@ -4,17 +4,17 @@
     <div class="login-heading">
       <h3>Sign in</h3>
     </div>
-    <form (submit)="doLogin($event)" [ng-form-model]="loginForm" novalidate>
-      <div class="form-group has-feedback" [ng-class]="{
+    <form (submit)="doLogin($event)" [ngFormModel]="loginForm" novalidate>
+      <div class="form-group has-feedback" [ngClass]="{
         'has-error': isLoginInvalid() &&
                      loginForm.dirty &&
                      loginForm.controls?.login?.touched,
         'has-success': isLoginValid() && loginForm.dirty }" >
-        <input class="form-control" ng-control="login" placeholder="Username">
-        <span class="control-label" *ng-if="isLoginValid() && loginForm.dirty">
+        <input class="form-control" ngControl="login" placeholder="Username">
+        <span class="control-label" *ngIf="isLoginValid() && loginForm.dirty">
           <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
         </span>
-        <span class="control-label" *ng-if="
+        <span class="control-label" *ngIf="
           isLoginInvalid() &&
           loginForm.dirty &&
           loginForm.controls?.login?.touched
@@ -23,17 +23,17 @@
           Login is required
         </span>
       </div>
-      <div class="form-group has-feedback" [ng-class]="{
+      <div class="form-group has-feedback" [ngClass]="{
         'has-error':  isPasswordInvalid() &&
                       loginForm.dirty &&
                       loginForm.controls?.password?.touched,
         'has-success': isPasswordValid() &&
                        loginForm.dirty }">
-        <input class="form-control" ng-control="password" type="password" placeholder="Password">
-        <span class="control-label" *ng-if="isPasswordValid() && loginForm.dirty">
+        <input class="form-control" ngControl="password" type="password" placeholder="Password">
+        <span class="control-label" *ngIf="isPasswordValid() && loginForm.dirty">
           <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
         </span>
-        <span class="control-label" *ng-if="
+        <span class="control-label" *ngIf="
           isPasswordInvalid() &&
           loginForm.dirty &&
           loginForm.controls?.password?.touched
