@@ -1,4 +1,4 @@
-import {Component, View} from 'angular2/angular2';
+import {Component, View} from 'angular2/core';
 import {CanActivate} from 'angular2/router';
 
 let mapEditorTemplate = require<string>('./editor.html');

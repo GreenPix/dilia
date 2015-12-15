@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import * as io from 'socket.io-client';
 import {SocketPacket, SocketMethod} from '../shared';
-import {Injectable} from 'angular2/angular2';
-import {Observable, Subscriber, Subscription} from '@reactivex/rxjs';
+import {Injectable} from 'angular2/core';
+import {Observable, Subscriber, Subscription} from 'rxjs';
 import {Http, Response, Headers} from 'angular2/http';
 
 export class UniqueId {

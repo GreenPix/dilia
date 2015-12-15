@@ -1,4 +1,5 @@
-import {Component, View, CORE_DIRECTIVES} from 'angular2/angular2';
+import {Component, View} from 'angular2/core';
+import {CORE_DIRECTIVES} from 'angular2/common';
 import {HttpService} from '../../services/index';
 
 @Component({
@@ -7,11 +8,12 @@ import {HttpService} from '../../services/index';
 @View({
     template: `
         <div class="alert alert-{{alert_kind}}" role="alert"
-            [ng-style]="{ 'display': last_error ? 'block': 'none' }"
+            [ngStyle]="{ 'display': last_error ? 'block': 'none' }"
             >{{last_error}}
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"
               (click)="close()"
               ><span class="close-glyph glyphicon glyphicon-remove" aria-hidden="true"></span>
+            </button>
         </div>
     `,
     directives: [CORE_DIRECTIVES]

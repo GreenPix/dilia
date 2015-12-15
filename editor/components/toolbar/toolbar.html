@@ -2,13 +2,13 @@
 <header class="navbar navbar-fixed-top navbar-empty">
   <div class="container-fluid">
     <div class="logo center-logo">
-      <img src="/img/logo.png"/></img>
+      <img src="/img/logo.png"/>
     </div>
-    <div class="toolbar" *ng-if="!isLoginPage()">
+    <div class="toolbar" *ngIf="!isLoginPage()">
       <div class="toolbar-options">
-          <button [router-link]="['./ScriptEditor']"
+          <button [routerLink]="['./ScriptEditor']"
                 class="btn btn-default fa fa-code" tooltip="Script editor"></button>
-          <button [router-link]="['./Profile']"
+          <button [routerLink]="['./Profile']"
                 class="btn btn-default fa fa-user" tooltip="Profile"></button>
           <button (click)="logout()" class="btn btn-default fa fa-sign-out"
             tooltip="Sign out"></button>

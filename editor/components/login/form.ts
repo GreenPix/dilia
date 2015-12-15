@@ -1,6 +1,6 @@
-import {Component, View} from 'angular2/angular2';
-import {FORM_DIRECTIVES, FormBuilder, Validators, ControlGroup} from 'angular2/angular2';
-import {CORE_DIRECTIVES} from 'angular2/angular2';
+import {Component, View} from 'angular2/core';
+import {FormBuilder, Validators, ControlGroup} from 'angular2/common';
+import {FORM_DIRECTIVES, CORE_DIRECTIVES} from 'angular2/common';
 import {Router, OnActivate, ComponentInstruction} from 'angular2/router';
 import {HttpService} from '../../services/index';
 import {User} from '../../models/user';
@@ -81,7 +81,7 @@ export class LoginForm implements OnActivate {
         }
     }
 
-    onActivate(next: ComponentInstruction, prev: ComponentInstruction) {
+    routerOnActivate(next: ComponentInstruction, prev: ComponentInstruction) {
         let promise = new Promise<void>((resolve, reject) => {
             this.http.post('/api/verify')
                 .map(res => res.json())
