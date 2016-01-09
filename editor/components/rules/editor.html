@@ -2,11 +2,11 @@
 
 <nav class="navbar rule-editor">
   <div class="nav navbar-nav nav-option open-search-file" role="search">
-      <autocomplete-files (open-file)="open($event)"></autocomplete-files>
+      <autocomplete-files (openFile)="open($event)"></autocomplete-files>
   </div>
   <div class="nav navbar-nav navbar-right nav-option">
     <button class="btn btn-success"
-        [ng-class]="{ 'disabled': currentFileIsReadOnly() }"
+        [ngClass]="{ 'disabled': currentFileIsReadOnly() }"
         (click)="commit()">Commit</button>
     <button class="btn btn-primary" (click)="createNewFile()">
       <span class="fa fa-plus"></span> Create new
@@ -18,22 +18,22 @@
 
 <div>
   <ul class="nav nav-tabs">
-    <li *ng-for="#file of fileList()" role="presentation" [ng-class]="{ 'active': file.active }">
-      <a href="#" (click)="edit($event, file)" [ng-switch]="file.isNew">
-        <span class="fa" [ng-class]="{
+    <li *ngFor="#file of fileList()" role="presentation" [ngClass]="{ 'active': file.active }">
+      <a href="#" (click)="edit($event, file)" [ngSwitch]="file.isNew">
+        <span class="fa" [ngClass]="{
           'fa-pencil': !file.readonly,
           'fa-lock': file.readonly }"></span>
-        <template [ng-switch-when]="true">New file*</template>
-        <template ng-switch-default>File: {{file.name}}</template>
+        <template [ngSwitchWhen]="true">New file*</template>
+        <template ngSwitchDefault>File: {{file.name}}</template>
       </a>
     </li>
   </ul>
   <div class="rule-editor--wrapper"
-       [ng-class]="{ 'hidden': currentFile() === null }"
-       [ng-style]="{ 'height': text_area_height+1 }">
-      <div id="{{id}}" class="rule-editor--content" [ng-style]="{ 'width': text_area_width, 'height': text_area_height }"></div>
+       [ngClass]="{ 'hidden': currentFile() === null }"
+       [ngStyle]="{ 'height': text_area_height+1 }">
+      <div id="{{id}}" class="rule-editor--content" [ngStyle]="{ 'width': text_area_width, 'height': text_area_height }"></div>
   </div>
-  <div *ng-if="currentFile() === null">
+  <div *ngIf="currentFile() === null">
       <h2 class="lead text-center">You can open a file using the search bar</h2>
   </div>
 </div>

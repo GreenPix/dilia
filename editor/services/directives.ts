@@ -1,6 +1,7 @@
-import {Directive, ElementRef} from 'angular2/angular2';
-import {Component, View, NgStyle} from 'angular2/angular2';
-import {Observable} from '@reactivex/rxjs';
+import {Directive, ElementRef} from 'angular2/core';
+import {Component, View} from 'angular2/core';
+import {NgStyle} from 'angular2/common';
+import {Observable} from 'rxjs';
 
 
 @Directive({
@@ -27,7 +28,7 @@ export class AnimFadeIn {
 @View({
     directives: [NgStyle],
     template: `<span class="tooltip bottom"
-        [ng-style]="{'opacity': opacity}">{{text}}</span>`
+        [ngStyle]="{'opacity': opacity}">{{text}}</span>`
 })
 class Tooltip {
     text: string;

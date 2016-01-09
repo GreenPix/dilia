@@ -1,4 +1,5 @@
-import {Component, View, ViewChild, FORM_DIRECTIVES, CORE_DIRECTIVES} from 'angular2/angular2';
+import {Component, View, ViewChild} from 'angular2/core';
+import {FORM_DIRECTIVES, CORE_DIRECTIVES} from 'angular2/common';
 import {Dialog} from '../modal/dialog';
 import {FileTab, FileManager} from '../../models/scripting';
 
@@ -10,13 +11,13 @@ import {FileTab, FileManager} from '../../models/scripting';
         <dialog-modal>
             <dialog-header>Commit your changes for <code>{{filename}}</code></dialog-header>
             <dialog-body>
-                <div class="form-group" *ng-if="file?.isNew">
+                <div class="form-group" *ngIf="file?.isNew">
                     <label class="control-label">File name:</label>
-                    <input [(ng-model)]="filename" type="text" class="form-control">
+                    <input [(ngModel)]="filename" type="text" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="commit-content" class="control-label">Message:</label>
-                    <input [(ng-model)]="message"
+                    <input [(ngModel)]="message"
                         type="text" class="form-control"
                         id="commit-content"
                         [attr.placeholder]="file?.isNew ? 'First commit': 'Updated ' + filename + '.'">
@@ -25,7 +26,7 @@ import {FileTab, FileManager} from '../../models/scripting';
             <dialog-footer>
                 <button type="button" class="btn btn-default" (click)="hide($event)">Cancel</button>
                 <button type="button" class="btn btn-primary"
-                    [ng-class]="{ 'disabled': committing }"
+                    [ngClass]="{ 'disabled': committing }"
                     (click)="commit()">Save changes</button>
             </dialog-footer>
         </dialog-modal>

@@ -1,4 +1,4 @@
-import {Component, View} from 'angular2/angular2';
+import {Component, View} from 'angular2/core';
 import {UniqueId} from '../../services/index';
 
 let mapEditorTemplate = require<string>('./editor.html');

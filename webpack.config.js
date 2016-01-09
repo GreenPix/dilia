@@ -28,12 +28,15 @@ module.exports = {
     entry: {
         'libs': [
             // Angular 2 Deps
-            '@reactivex/rxjs',
+            'rxjs',
             'zone.js',
             'reflect-metadata',
             // to ensure these modules are grouped together in one file
-            'angular2/angular2',
+            'angular2/platform/browser',
+            'angular2/platform/common_dom',
             'angular2/core',
+            'angular2/common',
+            'angular2/animate',
             'angular2/router',
             'angular2/http'
         ],
@@ -52,13 +55,13 @@ module.exports = {
     },
     resolve: {
         root: __dirname,
-        extensions: ['', '.json', '.ts', '.tsx', '.js'],
-        alias: {
-          'rx': '@reactivex/rxjs'
-        }
+        extensions: ['', '.json', '.ts', '.tsx', '.js']
     },
     context: __dirname,
     module: {
+      preLoaders: [
+        { test: /\.ts$/, loader: 'tslint'}
+      ],
       loaders: [
         // Sass / css / fonts
         { test: /\b(?!style)\w+\.scss$/,  loader: 'css?sourceMap!sass?sourceMap' },
@@ -73,7 +76,7 @@ module.exports = {
         { test: /\.json$/,  loader: 'json'  },
         { test: /\.html$/,  loader: 'url'   },
         { test: /\.pegjs$/, loader: 'pegjs' },
-        { test: /\.tsx?$/,  loader: 'ts' }
+        { test: /\.ts$/,  loader: 'ts' }
       ]
     },
     noParse: [
