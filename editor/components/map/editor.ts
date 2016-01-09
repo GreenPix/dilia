@@ -1,51 +1,31 @@
-import {Component, View} from 'angular2/core';
-import {UniqueId} from '../../services/index';
+import {Component, View, ViewChild} from 'angular2/core';
+import {WebGLSurface} from '../webgl/surface';
 
 let mapEditorTemplate = require<string>('./editor.html');
 let mapEditorScss = require<Webpack.Scss>('./editor.scss');
+let vertexShaderSrc = require<string>('./shaders/tiles.vs');
+let fragmentShaderSrc = require<string>('./shaders/tiles.fs');
 
 @Component({
     selector: 'map-editor',
 })
 @View({
     styles: [mapEditorScss.toString()],
-    templateUrl: mapEditorTemplate
+    templateUrl: mapEditorTemplate,
+    directives: [WebGLSurface]
 })
 export class MapEditor {
 
-    private id: string;
-    private canvas: HTMLCanvasElement;
-    private gl: WebGLRenderingContext;
-    private _loop: () => void;
+    @ViewChild(WebGLSurface)
+    private surface: WebGLSurface;
 
-    constructor(id: UniqueId) {
-        this.id = id.get();
+    constructor() {}
+
+    currentMapIsReadOnly() {
+        return false;
     }
 
     afterViewInit(): void {
-        this.canvas = document.getElementById(this.id) as HTMLCanvasElement;
-        this.gl = this.canvas.getContext('webgl') as WebGLRenderingContext;
-
-        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-
-        window.onresize = () => {
-            this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-        };
-
-        this.gl.enable(this.gl.DEPTH_TEST);
-        this.gl.depthFunc(this.gl.LEQUAL);
-
-        this._loop = () => {
-            this.loop();
-            setTimeout(this._loop, 200);
-        };
-
-        this._loop();
-    }
-
-    loop() {
-        let gl = this.gl;
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
+        this.surface.setShader(vertexShaderSrc, fragmentShaderSrc);
     }
 }

@@ -16,13 +16,13 @@ import {AlertBox} from '../alert/box';
 import {AutocompleteFiles} from '../autocomplete/autocomplete';
 
 let ruleEditorTemplate = require<string>('./editor.html');
-let ruleEditorCss = require<string>('./editor.css');
+let ruleEditorCss = require<Webpack.Scss>('./editor.scss');
 
 @Component({
     selector: 'rule-editor'
 })
 @View({
-    styles: [ruleEditorCss],
+    styles: [ruleEditorCss.toString()],
     directives: [
         CORE_DIRECTIVES, ROUTER_DIRECTIVES, AutocompleteFiles,
         CommitModal, AlertBox, RuleEditorExec, RuleEditorGlobals],

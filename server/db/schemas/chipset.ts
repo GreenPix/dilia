@@ -1,4 +1,4 @@
-import {Scheman, model, Document, Types} from 'mongoose';
+import {Schema, model, Document, Types} from 'mongoose';
 
 // This is the store for chipsets.
 // The API should be immutable as chipsets

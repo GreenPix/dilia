@@ -60,3 +60,21 @@ export NODE_ENV='development' && npm run server
 ```
 
 And navigate to http://localhost:3000/.
+
+### Text editor setup
+
+#### Atom
+
+If you use [atom](http://atom.io/), you might consider installing those
+packages:
+  - `atom-typescript`
+  - `linter-tslint`
+  - `language-pegjs`
+  - `language-glsl`
+  - `autocomplete-paths`
+  - `autocomplete-glsl`
+  - `docblockr`
+  - `color-picker`
+
+For fun :)
+  - `file-icons`

@@ -76,6 +76,8 @@ module.exports = {
         { test: /\.json$/,  loader: 'json'  },
         { test: /\.html$/,  loader: 'url'   },
         { test: /\.pegjs$/, loader: 'pegjs' },
+        { test: /\.fs$/,    loader: 'raw'   },
+        { test: /\.vs$/,    loader: 'raw'   },
         { test: /\.ts$/,  loader: 'ts' }
       ]
     },

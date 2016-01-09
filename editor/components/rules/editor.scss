@@ -1,5 +1,7 @@
+@import "theme/constants";
+
 .rule-editor {
-    margin-top: 15px;
+    margin-top: $margin-for-editors-navbar;
 }
 
 .rule-editor--wrapper {
@@ -16,13 +18,4 @@
 
 .open-search-file {
     max-width: 400px;
-}
-
-.nav-option {
-    margin-left: 0;
-    margin-right: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 8px;
-    margin-bottom: 8px;
 }

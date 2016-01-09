@@ -1,19 +1,37 @@
 import {app} from '../config/express';
 import {authenticate} from 'passport';
 import {logRequest} from '../logger/helpers';
+import {unauthorized} from './post_response_fmt';
 
 require('../config/passport');
+
 
 // Verify
 app.post('/api/verify', (req, res) => res.json({
     authenticated: req.isAuthenticated()
 }));
 
+
 // Local auth
-app.post('/api/login', authenticate('local'), logRequest('has logged in.'),
-    (req, res) => res.status(200).json({}));
+app.post('/api/login', (req, res, next) => {
+    authenticate('local', (err, user, info) => {
+        if (err) return next(err);
+        if (!user) return unauthorized(res, 'Invalid user or password');
+        req.logIn(user, (err) => {
+            if (err) {
+                next(err);
+            } else {
+                res.status(200).json({});
+            }
+        });
+    })(req, res, next);
+}, logRequest('has logged in.'));
+
+
+// Logout
 app.post('/api/logout', logRequest('has logged out.'),
     (req, res) => { req.logout(); res.status(200).json({}); });
+
 
 // Google auth
 app.get('/api/auth/google', authenticate('google', {
@@ -25,6 +43,7 @@ app.get('/api/auth/google', authenticate('google', {
 app.get('/api/auth/google/callback', authenticate('google'),
     (req, res) => res.sendStatus(200)
 );
+
 
 // Github auth
 app.get('/api/auth/github', authenticate('github'), () => {});
