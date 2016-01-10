@@ -1,6 +1,11 @@
+import {newUniform, UniformCb} from './uniform';
+import {VertexBuffer, BufferCb} from './buffer';
+
 export class Program {
 
     private program: WebGLProgram;
+    private uniforms: { [uniform_name: string] : UniformCb };
+    private attrs_to_buffer: { [attr_name: string]: BufferCb };
 
     constructor(
         private gl: WebGLRenderingContext
@@ -11,6 +16,9 @@ export class Program {
         let vertex_shader = gl.createShader(gl.VERTEX_SHADER);
         let fragment_shader = gl.createShader(gl.FRAGMENT_SHADER);
         let program = gl.createProgram();
+        this.program = program;
+        this.uniforms = {};
+        this.attrs_to_buffer = {};
 
         gl.shaderSource(vertex_shader, vertex_src);
         gl.shaderSource(fragment_shader, fragment_src);
@@ -35,43 +43,65 @@ export class Program {
                     ${gl.getProgramInfoLog(program)}`;
         }
 
-        gl.detachShader(program, vertex_shader);
-        gl.detachShader(program, fragment_shader);
+        // gl.detachShader(program, vertex_shader);
+        // gl.detachShader(program, fragment_shader);
+        //
+        // gl.deleteShader(vertex_shader);
+        // gl.deleteShader(fragment_shader);
 
-        gl.deleteShader(vertex_shader);
-        gl.deleteShader(fragment_shader);
+        // Collecting the list of uniforms and preparing the callbacks
+        // when the values are going to be set.
+        let nb_uniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+        let last_used_texture_unit = 0;
+
+        for (let i = 0; i < nb_uniforms; ++i) {
+            let uniform_info = gl.getActiveUniform(program, i);
+            if (uniform_info) {
+                let loc = gl.getUniformLocation(program, uniform_info.name);
+                let [uniform, new_ltu] = newUniform(
+                    gl, loc, uniform_info, last_used_texture_unit
+                );
+                last_used_texture_unit = new_ltu;
+                this.uniforms[uniform_info.name] = uniform;
+            }
+        }
+
+        let nb_attribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
+
+        for (let i = 0; i < nb_attribs; ++i) {
+            let attrib_info = gl.getActiveAttrib(program, i);
+            if (attrib_info) {
+                let loc = gl.getAttribLocation(program, attrib_info.name);
+
+                // TODO: Remove when Typescript 1.8 is released
+                ((loc: number, attrib_info: WebGLActiveInfo) => {
+
+                this.attrs_to_buffer[attrib_info.name] = (buffer: VertexBuffer) => {
+                    buffer.bindAtLocation(loc);
+                };
+
+                // TODO: Remove when TypesScript 1.8 is released
+                })(loc, attrib_info);
+            }
+        }
     }
 
-    uniform(name: string): WebGLUniformLocation {
-        return this.gl.getUniformLocation(this.program, name);
+    getBindBufferCallback(attr_name: string): BufferCb {
+        return this.attrs_to_buffer[attr_name];
     }
 
-    // use(...attributes: Attribute[]) {
-    //     this.gl.useProgram(this.program);
-    //     // Binding attributes values
-    //     for (let attr of attributes) {
-    //         switch (attr.kind) {
-    //             case AK.Mat2d:
-    //                 let mat: Matrix2d = attr.value as Matrix2d;
-    //                 this.gl.uniformMatrix2fv(
-    //                     attr.location,
-    //                     false,
-    //                     new Float32Array(mat)
-    //                 );
-    //                 break;
-    //             case AK.Tex2d:
-    //                 this.gl.unif
-    //                 break;
-    //             default:
-    //                 throw 'Unimplemented';
-    //         }
-    //     }
-    // }
-}
+    setUniforms(values: { [uniform_name: string]: any }) {
+        for (let name in values) {
+            let glUniform = this.uniforms[name];
+            let value = values[name];
+            if (glUniform) {
+                glUniform(value);
+            }
+        }
+    }
 
-export type Matrix2d = number[];
-
-export enum AK {
-    Mat2d,
-    Tex2d,
+    use(): WebGLRenderingContext {
+        this.gl.useProgram(this.program);
+        return this.gl;
+    }
 }
