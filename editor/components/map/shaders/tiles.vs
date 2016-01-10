@@ -7,6 +7,6 @@ varying vec2 ftexCoord;
 
 void main()
 {
-    gl_Position = vec4(proj * texCoord, 0.0, 1.0);
+    gl_Position = vec4(proj * pos, 0.0, 1.0);
     ftexCoord = texCoord;
 }

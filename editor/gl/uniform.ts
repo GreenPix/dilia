@@ -49,9 +49,9 @@ export function newUniform(
             case gl.BOOL_VEC3:    return gl.uniform3iv;
             case gl.BOOL_VEC4:    return gl.uniform4iv;
 
-            case gl.FLOAT_MAT2:   return wrapum(gl.uniformMatrix2fv);
-            case gl.FLOAT_MAT3:   return wrapum(gl.uniformMatrix3fv);
-            case gl.FLOAT_MAT4:   return wrapum(gl.uniformMatrix4fv);
+            case gl.FLOAT_MAT2:   return (l, v) => gl.uniformMatrix2fv(l, false, v);
+            case gl.FLOAT_MAT3:   return (l, v) => gl.uniformMatrix3fv(l, false, v);
+            case gl.FLOAT_MAT4:   return (l, v) => gl.uniformMatrix4fv(l, false, v);
 
             // Texture types
             case gl.SAMPLER_2D:
@@ -61,7 +61,7 @@ export function newUniform(
                     for (let i = 0; i < size; ++i) {
                         units[i] = last_used_texture_unit++;
                     }
-                    return (loc: WebGLUniformLocation, textures: any[]) => {
+                    return (loc: WebGLUniformLocation, textures: WebGLTexture[]) => {
                         gl.uniform1iv(loc, units);
                         textures.forEach((texture, index) => {
                             gl.activeTexture(gl.TEXTURE0 + units[index]);
@@ -70,7 +70,7 @@ export function newUniform(
                     };
                 } else {
                     let tex_unit = last_used_texture_unit++;
-                    return (loc, texture) => {
+                    return (loc: WebGLUniformLocation, texture: WebGLTexture) => {
                         gl.uniform1i(loc, tex_unit);
                         gl.activeTexture(gl.TEXTURE0 + tex_unit);
                         gl.bindTexture(tex_type, texture);
@@ -83,10 +83,4 @@ export function newUniform(
     }
 
     return [uniform, last_used_texture_unit];
-}
-
-function wrapum(fn: (l: number, t: boolean, v: any) => void)
-    : (l: number, v: any) => void
-{
-    return (l, v) => fn(l, false, v);
 }
