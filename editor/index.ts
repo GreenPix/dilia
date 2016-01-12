@@ -1,6 +1,6 @@
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {bootstrap} from 'angular2/platform/browser';
-import {bind} from 'angular2/core';
+import {provide} from 'angular2/core';
 import {ROUTER_PROVIDERS, LocationStrategy, HashLocationStrategy} from 'angular2/router';
 import {UniqueId, HttpService, SocketIOService} from './services/index';
 import {App} from './app';
@@ -13,8 +13,8 @@ bootstrap(App, [
     HttpService,
     SocketIOService,
     FileManager,
-    bind(User).toValue(User.default()),
-    bind(AaribaScriptSettings).toFactory(user => user.aaribaScriptSettings, [User]),
-    bind(UniqueId).toFactory(() => new UniqueId()),
-    bind(LocationStrategy).toClass(HashLocationStrategy)
+    provide(User, { useValue: User.default() }),
+    provide(AaribaScriptSettings, { useFactory: user => user.aaribaScriptSettings, deps: [User] }),
+    provide(UniqueId, { useFactory: () => new UniqueId() }),
+    provide(LocationStrategy, { useClass: HashLocationStrategy })
 ]);
