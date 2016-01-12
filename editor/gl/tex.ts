@@ -1,13 +1,20 @@
 
+export class Texture {
+    width: number;
+    height: number;
+    tex_id: WebGLTexture;
+}
+
+
 export class TextureLoader {
 
     constructor(private gl: WebGLRenderingContext) {}
 
-    loadTexture(path: string, cb: (tex: WebGLTexture) => void) {
+    loadTexture(path: string, cb: (tex: Texture) => void) {
         let img = new Image();
         let gl = this.gl;
-        let texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        let tex_id = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex_id);
         // Fill the texture with a 1x1 blue pixel.
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
                       new Uint8Array([0, 0, 255, 255]));
@@ -18,7 +25,7 @@ export class TextureLoader {
         }
 
         img.onload = () => {
-            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.bindTexture(gl.TEXTURE_2D, tex_id);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
                 gl.UNSIGNED_BYTE, img);
             if (isPowerOf2(img.width) && isPowerOf2(img.height)) {
@@ -33,7 +40,11 @@ export class TextureLoader {
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             }
-            cb(texture);
+            let tex = new Texture();
+            tex.tex_id = tex_id;
+            tex.width = img.width;
+            tex.height = img.height;
+            cb(tex);
         };
     }
 }

@@ -35,12 +35,13 @@ export class MapEditor implements AfterViewInit {
         //     .addVertexBuffer([0, 1, 0, 1, 0, 0, 0, 0, 1], 3, 'color')
         //     .setIndicesBuffer([0, 1, 2])
         //     .start();
-        this.surface.setShader(vertexShaderSrc, fragmentShaderSrc)
+        this.surface.createRenderingContext()
+            .setShader(vertexShaderSrc, fragmentShaderSrc)
             .setUniform('proj', [1, 0, 0, 1])
             .setTexture('texture', 'img/logo.png')
             .addVertexBuffer('pos', [-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5], 2)
             .addVertexBuffer('texCoord', [0, 0, 0, 1, 1, 1, 1, 0], 2)
-            .setIndicesBuffer([0, 1, 2, 0, 2, 3])
-            .start();
+            .setIndicesBuffer([0, 1, 2, 0, 2, 3]);
+        this.surface.start();
     }
 }
