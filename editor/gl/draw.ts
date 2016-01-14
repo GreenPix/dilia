@@ -9,14 +9,10 @@ export enum Geom {
 
 export function glDrawBuffers(
     mode: Geom,
-    program: Program,
+    gl: WebGLRenderingContext,
     uniforms: { [uniform_name: string]: any },
     indices: IndicesBuffer, ...buffers: BufferLinkedToProgram[])
 {
-    // make sure the program is active
-    let gl = program.use();
-    program.setUniforms(uniforms);
-
     let count = indices.bufferLength();
     // count = mode === Geom.POINTS ? count: count / 3;
     for (let buffer of buffers) {

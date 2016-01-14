@@ -3,10 +3,10 @@ import {WebGLSurface} from '../webgl/surface';
 
 let mapEditorTemplate = require<string>('./editor.html');
 let mapEditorScss = require<Webpack.Scss>('./editor.scss');
-// let vertexShaderSrc = require<string>('./shaders/triangle.vs');
-// let fragmentShaderSrc = require<string>('./shaders/triangle.fs');
-let vertexShaderSrc = require<string>('./shaders/tiles.vs');
-let fragmentShaderSrc = require<string>('./shaders/tiles.fs');
+let vertex_shader_triangle_src = require<string>('./shaders/triangle.vs');
+let fragment_shader_triangle_src = require<string>('./shaders/triangle.fs');
+let vertex_shader_src = require<string>('./shaders/tiles.vs');
+let fragment_shader_src = require<string>('./shaders/tiles.fs');
 
 
 
@@ -30,13 +30,14 @@ export class MapEditor implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        // this.surface.setShader(vertexShaderSrc, fragmentShaderSrc)
-        //     .addVertexBuffer([-0.5, -0.5, 0, 0.5, 0.5, 0], 2, 'position')
-        //     .addVertexBuffer([0, 1, 0, 1, 0, 0, 0, 0, 1], 3, 'color')
-        //     .setIndicesBuffer([0, 1, 2])
-        //     .start();
         this.surface.createRenderingContext()
-            .setShader(vertexShaderSrc, fragmentShaderSrc)
+            .setShader(vertex_shader_triangle_src, fragment_shader_triangle_src)
+            .addVertexBuffer('position', [-0.5, -0.5, 0, 0.5, 0.5, 0], 2)
+            .addVertexBuffer('color', [0, 1, 0, 1, 0, 0, 0, 0, 1], 3)
+            .setIndicesBuffer([0, 1, 2]);
+
+        this.surface.createRenderingContext()
+            .setShader(vertex_shader_src, fragment_shader_src)
             .setUniform('proj', [1, 0, 0, 1])
             .setTexture('texture', 'img/logo.png')
             .addVertexBuffer('pos', [-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5], 2)

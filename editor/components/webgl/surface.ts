@@ -33,6 +33,12 @@ export class WebGLSurface implements AfterViewInit {
 
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.depthFunc(this.gl.LEQUAL);
+        this.gl.enable(this.gl.BLEND);
+        this.gl.blendFuncSeparate(
+            this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA,
+            this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA
+        );
+
 
         this._loop = () => {
             this.loop();
@@ -57,7 +63,7 @@ export class WebGLSurface implements AfterViewInit {
 
     private loop() {
         let gl = this.gl;
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clearColor(0.5, 0.5, 0.5, 1.0);
         gl.clearDepth(1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
         for (let render_ctx of this.rendering_ctxs) {

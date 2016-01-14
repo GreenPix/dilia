@@ -51,10 +51,14 @@ export class RenderingContext {
     }
 
     draw() {
+        // make sure the program is active
+        this.program.use();
+        this.program.setUniforms(this.uniforms_values);
+
         if (this.buffers.length > 0 && this.indices && this.resources_not_yet_loaded === 0) {
             glDrawBuffers(
                 Geom.TRIANGLES,
-                this.program,
+                this.gl,
                 this.uniforms_values,
                 this.indices, ...this.buffers);
         }
