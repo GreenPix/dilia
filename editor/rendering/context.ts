@@ -1,6 +1,7 @@
 import {TextureLoader, Geom, glDrawBuffers} from '../gl/gl';
 import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
+import {Camera} from './camera';
 
 export class RenderingContext {
 
@@ -50,9 +51,10 @@ export class RenderingContext {
         return this;
     }
 
-    draw() {
+    draw(camera: Camera) {
         // make sure the program is active
         this.program.use();
+        this.uniforms_values['proj'] = (camera as any).values;
         this.program.setUniforms(this.uniforms_values);
 
         if (this.buffers.length > 0 && this.indices && this.resources_not_yet_loaded === 0) {

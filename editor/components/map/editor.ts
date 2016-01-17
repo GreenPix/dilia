@@ -38,9 +38,8 @@ export class MapEditor implements AfterViewInit {
 
         this.surface.createRenderingContext()
             .setShader(vertex_shader_src, fragment_shader_src)
-            .setUniform('proj', [1, 0, 0, 1])
             .setTexture('texture', 'img/logo.png')
-            .addVertexBuffer('pos', [-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5], 2)
+            .addVertexBuffer('pos', [-123.7, -53.5, -123.7, 53.5, 123.7, 53.5, 123.7, -53.5], 2)
             .addVertexBuffer('texCoord', [0, 0, 0, 1, 1, 1, 1, 0], 2)
             .setIndicesBuffer([0, 1, 2, 0, 2, 3]);
         this.surface.start();
