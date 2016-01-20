@@ -21,6 +21,13 @@ export class IndicesBuffer {
         this.draw_type = toNumber(gl, draw_type);
     }
 
+    fillTyped(values: Uint16Array): this {
+        this.len = values.length;
+        this.bind();
+        this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, values, this.draw_type);
+        return this;
+    }
+
     fill(values: number[]): this {
         let buffer = new Uint16Array(values);
         this.len = values.length;
@@ -78,6 +85,13 @@ export class VertexBuffer {
 
     numberOfVertices(): number {
         return this.count;
+    }
+
+    fillTyped(values: Float32Array): this {
+        this.count = values.length / this.nb_comp;
+        this.bind();
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, values, this.draw_type);
+        return this;
     }
 
     // Fill the buffer with the given values.

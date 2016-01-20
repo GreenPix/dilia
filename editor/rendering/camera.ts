@@ -7,7 +7,18 @@ export class Camera {
         0, 1, 0,
         0, 0, 0
     ];
+
+    // Object space coordinates should map to pixels when
+    // the scale factor is 1.
+    // TODO: fix that (currently not the case)
     private zoom_factor = 1.0;
+
+
+    // Top left corner of the camera in object space
+    pos: [number, number] = [0, 0];
+    // Camera dimensions in object space.
+    wos: number = 1; // width  in object space
+    hos: number = 1; // height in object space
 
     translate(x: number, y: number) {
         this.values[7] += x;

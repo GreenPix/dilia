@@ -57,6 +57,8 @@
         "./editor/models/user.ts",
         "./editor/rendering/camera.ts",
         "./editor/rendering/context.ts",
+        "./editor/rendering/object.ts",
+        "./editor/rendering/tiles.ts",
         "./editor/rules/parser.ts",
         "./editor/services/directives.ts",
         "./editor/services/index.ts",
