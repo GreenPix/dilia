@@ -33,8 +33,8 @@ export class MapEditor implements AfterViewInit {
         this.surface.createRenderingContext()
             .setShader(vertex_shader_triangle_src, fragment_shader_triangle_src)
             .addVertexBuffer('position', [-0.5, -0.5, 0, 0.5, 0.5, 0], 2)
-            .addVertexBuffer('color', [0, 1, 0, 1, 0, 0, 0, 0, 1], 3)
-            .setIndicesBuffer([0, 1, 2]);
+            .addVertexBuffer('color', [0, 1, 0, 1, 0, 0, 0, 0, 1], 3);
+            // .setIndicesBuffer([0, 1, 2]);
 
         this.surface.createRenderingContext()
             .setShader(vertex_shader_src, fragment_shader_src)

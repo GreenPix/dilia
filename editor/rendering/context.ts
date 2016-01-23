@@ -1,7 +1,8 @@
-import {TextureLoader, Geom, glDrawBuffers} from '../gl/gl';
+import {TextureLoader, Geom, glDrawBuffers, glDrawElements} from '../gl/gl';
 import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
 import {Camera} from './camera';
+import {TilesLayer} from './tiles';
 
 export class RenderingContext {
 
@@ -57,13 +58,46 @@ export class RenderingContext {
         this.uniforms_values['proj'] = (camera as any).values;
         this.program.setUniforms(this.uniforms_values);
 
-        if (this.buffers.length > 0 && this.indices && this.resources_not_yet_loaded === 0) {
-            glDrawBuffers(
-                Geom.TRIANGLES,
-                this.gl,
-                this.uniforms_values,
-                this.indices, ...this.buffers);
+        if (this.buffers.length > 0 && this.resources_not_yet_loaded === 0) {
+            if (this.indices) {
+                glDrawElements(
+                    Geom.TRIANGLES,
+                    this.gl,
+                    this.indices, ...this.buffers);
+            } else {
+                glDrawBuffers(
+                    Geom.TRIANGLES,
+                    this.gl,
+                    ...this.buffers);
+            }
         }
     }
 
+}
+
+let tiles_vertex_shader = require<string>('./shaders/tiles.vs');
+let tiles_fragment_shader = require<string>('./shaders/tiles.fs');
+
+export class TilesRenderingContext {
+    private program: Program;
+    private objects: Array<TilesLayer> = [];
+
+    constructor(
+        private gl: WebGLRenderingContext
+    ) {
+        this.program = new Program(gl);
+        this.program.src(tiles_vertex_shader, tiles_fragment_shader);
+    }
+
+    draw(camera: Camera) {
+
+        this.program.use();
+        this.program.setUniforms({
+            'proj': (camera as any).values
+        });
+
+        for (let object of this.objects) {
+            object.draw(this.gl, this.program, camera);
+        }
+    }
 }

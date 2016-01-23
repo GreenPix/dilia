@@ -35,11 +35,10 @@ export class TexObject {
         });
     }
 
-    draw(gl: WebGLRenderingContext, uniforms_values) {
+    draw(gl: WebGLRenderingContext) {
         glDrawBuffers(
             Geom.TRIANGLES,
             gl,
-            uniforms_values,
-            this.indices, this.buffer_pos, this.buffer_texCoord);
+            this.buffer_pos, this.buffer_texCoord);
     }
 }

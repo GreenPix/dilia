@@ -7,10 +7,9 @@ export enum Geom {
     TRIANGLES,
 }
 
-export function glDrawBuffers(
+export function glDrawElements(
     mode: Geom,
     gl: WebGLRenderingContext,
-    uniforms: { [uniform_name: string]: any },
     indices: IndicesBuffer, ...buffers: BufferLinkedToProgram[])
 {
     let count = indices.bufferLength();
@@ -27,6 +26,25 @@ export function glDrawBuffers(
     gl.drawElements(m, count, indices.type(), /* offset in IndicesBuffer */ 0);
 }
 
+export function glDrawBuffers(
+    mode: Geom,
+    gl: WebGLRenderingContext,
+    ...buffers: BufferLinkedToProgram[])
+{
+    let m = mode === Geom.POINTS ? gl.POINTS: gl.TRIANGLES;
+    let count = 0;
+
+    for (let buffer of buffers) {
+        buffer.bindBuffer();
+        if (count == 0) {
+            count = buffer.count;
+        } else {
+            count = Math.min(count, buffer.count);
+        }
+    }
+
+    gl.drawArrays(m, 0, count);
+}
 
 export class BufferLinkedToProgram {
 
