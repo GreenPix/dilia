@@ -1,41 +1,69 @@
 import {Program, VertexBuffer, glDrawElements, Geom} from '../gl/gl';
 import {IndicesBuffer, BufferLinkedToProgram} from '../gl/gl';
+import {Texture} from '../gl/gl';
 import {Camera} from './camera';
 
 
-// A note on how the process should be
+// A note on how the rendering works:
 //
 // We perform the rendering for tiles as follow
 // - We have a total of nb_tiles = width * height
 // - We group tiles per chipset
+//
 //      - A render call consist of:
-//        the chipset (uniform) 1
-//        an indices buffer     nb_tiles * 12 (square) [0, 0, 0, 0, 0 (12 times), 1, 1, 1 ...]
-//        the list of tiles     nb_tiles
-//        (all the geometry is computed in the shader)
-//      OR
-//      - A render call with
-//        the chipset
-//        an indices buffer     nb_tiles * 12
-//        a vertex buffer       (width + 1) * (height + 1) = nb_tiles + 1 + width + height
-//        a list of tiles       nb_tiles
-//        (nothing is computed in the shader)
+//        a chipset
+//        a shared indices buffer           nb_tiles * 6 (square)
+//        a unique list of tiles            nb_tiles
+//        a shared tile vertex buffer       nb_tiles * 4
+//        (the texture coordinates are computed in the shader)
 //
-//        This version can be further optimized:
+//        Here the tile vertex buffer is shared with all the
+//        layers.
 //
-//        We can reduce the vertex buffer to only the part that is visible + some data
+//   OR
+//      - A render call could be:
+//        a chipset
+//        a unique indices buffer       nb_tiles_using_chipset * 6
+//        a unique vertex buffer        nb_tiles_using_chipset * 4
+//        a unique list of tiles        nb_tiles_using_chipset
+//
+//        The vertex buffer is reduced to only the part that are visible.
 //        Same for the list of tiles.
 //
-//        This requires some computation from time to time during the frames to know
-//        what should be the new content of the vertex buffer.
+//        However nothing is shared, so more memory is used.
 //
-// - We render them
+// - When the camera change we update the vertex buffers to only render
+//   what's visible plus some extent.
 //
 
 // This is a constant that encode
 // the camera precision and will be used to check if there's a need
 // for an update.
 const CFP = 2;
+
+export interface ChipsetLayer {
+    chipset: Texture;
+    tiles_id: Uint16Array;
+}
+
+/// This interface is just here to enforce some
+/// semantic in the creation of the TilesLayer and
+/// hide functions that would confuse a user.
+/// We could still improve it as some functions
+/// declared here needs to be called after the others
+/// have all been called (Design a Protocol basically).
+export interface TilesLayerBuilder {
+
+    // Builder pattern
+    setWidth(w: number): this;
+    setHeight(h: number): this;
+    tileSize(ts: number): this;
+    position(pos: [number, number]): this;
+
+    // Requires a call to tileSize first.
+    // Could be inforced with another interface.
+    addLayer(layer_per_texture: Array<ChipsetLayer>): this;
+}
 
 /// Model defining an array of layers of tiles
 /// This class is supposed to be used to create a layer that
@@ -45,7 +73,7 @@ const CFP = 2;
 /// As a reference, if the number of tiles that fit within the camera
 /// is less than the number of tiles your layer contains, then this
 /// is probably not the abstraction you are looking for.
-export class TilesLayer {
+export class TilesLayer implements TilesLayerBuilder {
 
     // In tile space the size of those layers
     private width: number = 0;
@@ -79,7 +107,24 @@ export class TilesLayer {
         this.vertex_linked = undefined;
     }
 
+    /// Builder pattern exposed via TilesLayerBuilder
+    setWidth(w: number): this { this.width = w; return this; }
+    setHeight(h: number): this { this.height = h; return this; }
+    tileSize(ts: number): this { this.tile_size = ts; return this;  }
+    position(pos: [number, number]): this { this.pos = pos; return this;  }
+    addLayer(layer_per_texture: ChipsetLayer[]): this {
+        let l = Layer.createFromRawData(this.tile_size, layer_per_texture);
+        this.static_layers.push(l);
+        return this;
+    }
+
+
+    /// Draw operation only used by a rendering context.
     draw(gl: WebGLRenderingContext, program: Program, camera: Camera) {
+
+        // Init dynamic_layers if needed
+        this.initDynamicLayers(gl);
+
         // Update content of buffers if needed
         this.updateBuffers(camera);
 
@@ -97,6 +142,16 @@ export class TilesLayer {
 
         for (let layer of this.dynamic_layers) {
             layer.draw(gl, program, this.vertex_linked, this.index_buffer);
+        }
+    }
+
+    private initDynamicLayers(gl: WebGLRenderingContext) {
+        if (this.dynamic_layers.length === 0) {
+            for (let sl of this.static_layers) {
+                this.dynamic_layers.push(
+                    Layer.createForRendering(gl, sl)
+                );
+            }
         }
     }
 
@@ -187,18 +242,43 @@ export class TilesLayer {
 // can be rendered into only one draw call.
 class PartialLayer {
 
-    private texture: WebGLTexture;
     // Will be used by the shader to compute the
     // tex coordinates
-    private texture_width_tile_space: number;
-    private texture_height_tile_space: number;
+    private texture_width_tile_space: number = 0;
+    private texture_height_tile_space: number = 0;
 
     // Some of those ids are zero which is a special
     // value. (This field does not exists for the static_layers case)
-    private tiles_id: Uint16Array;
+    private tiles_id: Uint16Array = undefined;
     // This field does exists for the dynamic_layers case
-    private tiles_id_buffer: VertexBuffer;
-    private tiles_id_linked: BufferLinkedToProgram;
+    private tiles_id_buffer: VertexBuffer = undefined;
+    private tiles_id_linked: BufferLinkedToProgram = undefined;
+
+    static createForRendering(
+        gl: WebGLRenderingContext,
+        spl: PartialLayer): PartialLayer
+    {
+        let pl = new PartialLayer(spl.texture);
+        pl.tiles_id_buffer =
+            new VertexBuffer(gl)
+            .numberOfComponents(1);
+        return pl;
+    }
+
+    static createFromRawData(
+        tile_size: number,
+        chipset: ChipsetLayer): PartialLayer
+    {
+        let pl = new PartialLayer(chipset.chipset.tex_id);
+        pl.texture_width_tile_space = chipset.chipset.width / tile_size;
+        pl.texture_height_tile_space = chipset.chipset.height / tile_size;
+        pl.tiles_id = chipset.tiles_id;
+        return pl;
+    }
+
+    constructor(
+        private texture: WebGLTexture
+    ) {}
 
     updateAsViewOf(
         origin: PartialLayer,
@@ -219,6 +299,8 @@ class PartialLayer {
                 tex_ids[index++] = tex_id;
             }
         }
+
+        this.tiles_id_buffer.fillTyped(tex_ids);
     }
 
     texId(i: number, j: number, w: number): number {
@@ -255,11 +337,37 @@ class PartialLayer {
 
 // Layer shares the same vertex buffer.
 // They differ in tiles_id and textures.
-export class Layer {
+class Layer {
 
     // In a partial layers all tiles share the same texture
     // and tiles_ids are relative to that texture.
-    private partial_layers: Array<PartialLayer>;
+    private partial_layers: Array<PartialLayer> = [];
+
+    static createForRendering(
+        gl: WebGLRenderingContext,
+        sl: Layer): Layer
+    {
+        let self = new Layer();
+        for (let spl of sl.partial_layers) {
+            self.partial_layers.push(
+                PartialLayer.createForRendering(gl, spl)
+            );
+        }
+        return self;
+    }
+
+    static createFromRawData(
+        tile_size: number,
+        layer_per_texture: Array<ChipsetLayer>): Layer
+    {
+        let self = new Layer();
+        for (let cl of layer_per_texture) {
+            self.partial_layers.push(
+                PartialLayer.createFromRawData(tile_size, cl)
+            );
+        }
+        return self;
+    }
 
     updateAsViewOf(
         origin: Layer,

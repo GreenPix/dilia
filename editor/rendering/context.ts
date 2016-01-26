@@ -2,7 +2,7 @@ import {TextureLoader, Geom, glDrawBuffers, glDrawElements} from '../gl/gl';
 import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
 import {Camera} from './camera';
-import {TilesLayer} from './tiles';
+import {TilesLayer, TilesLayerBuilder} from './tiles';
 
 export class RenderingContext {
 
@@ -87,6 +87,12 @@ export class TilesRenderingContext {
     ) {
         this.program = new Program(gl);
         this.program.src(tiles_vertex_shader, tiles_fragment_shader);
+    }
+
+    addObject(): TilesLayerBuilder {
+        let tl = new TilesLayer(this.gl);
+        this.objects.push(tl);
+        return tl;
     }
 
     draw(camera: Camera) {
