@@ -53,6 +53,7 @@ export class IndicesBuffer {
 export class VertexBuffer {
 
     private draw_type: number;
+    private data_type: number;
     private handle: WebGLBuffer;
     private should_normalize: boolean = false;
     private nb_comp = 3;
@@ -64,6 +65,7 @@ export class VertexBuffer {
     ) {
         this.handle = gl.createBuffer();
         this.draw_type = toNumber(gl, draw_type);
+        this.data_type = gl.FLOAT;
     }
 
     // Builder like API to normalize the buffer
@@ -87,7 +89,12 @@ export class VertexBuffer {
         return this.count;
     }
 
-    fillTyped(values: Float32Array): this {
+    fillTyped(values: Float32Array | Uint16Array): this {
+        if (values instanceof Uint16Array) {
+            this.data_type = this.gl.UNSIGNED_SHORT;
+        } else {
+            this.data_type = this.gl.FLOAT;
+        }
         this.count = values.length / this.nb_comp;
         this.bind();
         this.gl.bufferData(this.gl.ARRAY_BUFFER, values, this.draw_type);
@@ -115,7 +122,7 @@ export class VertexBuffer {
         this.gl.vertexAttribPointer(
             location,
             this.nb_comp,
-            this.gl.FLOAT,
+            this.data_type,
             this.should_normalize,
             0, // Stride: used if this buffer would be used for multiple locations
             0  // Offset for the first component (again useful in same scenario as above)
