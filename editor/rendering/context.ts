@@ -3,20 +3,45 @@ import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
 import {Camera} from './camera';
 import {TilesLayer, TilesLayerBuilder} from './tiles';
+import {Texture} from '../gl/tex';
 
-export class RenderingContext {
-
-    private tex_loader: TextureLoader;
-    private uniforms_values: { [name: string]: any } = {};
+abstract class BaseRC {
+    protected tex_loader: TextureLoader;
     private resources_not_yet_loaded: number = 0;
+
+    constructor(
+        protected gl: WebGLRenderingContext
+    ) {
+        this.tex_loader = new TextureLoader(this.gl);
+    }
+
+    protected loadTexture(path: string, cb: (t: Texture) => void): void {
+        this.resources_not_yet_loaded += 1;
+        this.tex_loader.loadTexture(path, tex => {
+            cb(tex);
+            this.resources_not_yet_loaded -= 1;
+        });
+    }
+
+    draw(camera: Camera) {
+        if (this.resources_not_yet_loaded === 0) {
+            this.drawImpl(camera);
+        }
+    }
+
+    protected abstract drawImpl(camera: Camera);
+}
+
+
+export class RenderingContext extends BaseRC {
+
+    private uniforms_values: { [name: string]: any } = {};
     private buffers: BufferLinkedToProgram[] = [];
     private indices: IndicesBuffer;
     private program: Program;
 
-    constructor(
-        private gl: WebGLRenderingContext
-    ) {
-        this.tex_loader = new TextureLoader(this.gl);
+    constructor(gl: WebGLRenderingContext) {
+        super(gl);
     }
 
     setShader(vertex_shader_src: string, fragment_shader_src: string): this {
@@ -26,10 +51,8 @@ export class RenderingContext {
     }
 
     setTexture(uniform_name: string, path: string): this {
-        this.resources_not_yet_loaded += 1;
-        this.tex_loader.loadTexture(path, tex => {
+        this.loadTexture(path, tex => {
             this.uniforms_values[uniform_name] = tex.tex_id;
-            this.resources_not_yet_loaded -= 1;
         });
         return this;
     }
@@ -52,13 +75,15 @@ export class RenderingContext {
         return this;
     }
 
-    draw(camera: Camera) {
-        // make sure the program is active
-        this.program.use();
-        this.uniforms_values['proj'] = (camera as any).values;
-        this.program.setUniforms(this.uniforms_values);
+    protected drawImpl(camera: Camera) {
 
-        if (this.buffers.length > 0 && this.resources_not_yet_loaded === 0) {
+        if (this.buffers.length > 0) {
+
+            // make sure the program is active
+            this.program.use();
+            this.uniforms_values['proj'] = (camera as any).values;
+            this.program.setUniforms(this.uniforms_values);
+
             if (this.indices) {
                 glDrawElements(
                     Geom.TRIANGLES,
@@ -78,24 +103,43 @@ export class RenderingContext {
 let tiles_vertex_shader = require<string>('./shaders/tiles.vs');
 let tiles_fragment_shader = require<string>('./shaders/tiles.fs');
 
-export class TilesRenderingContext {
+export class TilesRenderingContext extends BaseRC {
+
     private program: Program;
     private objects: Array<TilesLayer> = [];
 
     constructor(
-        private gl: WebGLRenderingContext
+        gl: WebGLRenderingContext
     ) {
+        super(gl);
         this.program = new Program(gl);
         this.program.src(tiles_vertex_shader, tiles_fragment_shader);
     }
 
-    addObject(): TilesLayerBuilder {
+    addObject(
+        chipset_paths: string[],
+        cb: (chipset_datas: Texture[], object: TilesLayerBuilder) => void): this
+    {
         let tl = new TilesLayer(this.gl);
+        let nb_chipset = chipset_paths.length;
+        let chipset_datas = new Array(nb_chipset);
+        for (let i = 0; i < nb_chipset; ++i) {
+            // TODO: Remove this once TypeScript 1.8 is released
+            ((i: number) => {
+            this.loadTexture(chipset_paths[i], tex => {
+                chipset_datas[i] = tex;
+                if (--nb_chipset === 0) {
+                    cb(chipset_datas, tl);
+                }
+            });
+            // TODO: Remove this once TypeScript 1.8 is released
+            })(i);
+        }
         this.objects.push(tl);
-        return tl;
+        return this;
     }
 
-    draw(camera: Camera) {
+    drawImpl(camera: Camera) {
 
         this.program.use();
         this.program.setUniforms({
