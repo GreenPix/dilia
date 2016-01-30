@@ -128,10 +128,6 @@ export class TilesLayer implements TilesLayerBuilder {
         // Update content of buffers if needed
         this.updateBuffers(camera);
 
-        program.setUniforms({
-            tile_size: this.tile_size
-        });
-
         if (!this.vertex_linked) {
             this.vertex_linked = new BufferLinkedToProgram(
                 program,
@@ -196,26 +192,27 @@ export class TilesLayer implements TilesLayerBuilder {
             let tiles_h = new_hw[1] - new_ij[1];
             let nb_tiles = tiles_w * tiles_h;
             let indices = new Uint16Array(nb_tiles * 6);
-            let vertices = new Float32Array(nb_tiles * 4);
+            let vertices = new Float32Array(nb_tiles * 8);
 
             // Vertex buffer
             let index = 0;
             let indices_index = 0;
+            let eps = 0.1;
             for (let i = new_ij[0]; i < new_hw[0]; ++i) {
                 for (let j = new_ij[1]; j < new_hw[1]; ++j) {
                     let first_index = index / 2;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * j;
-                    vertices[index++] = this.pos[1] + this.tile_size * i;
+                    vertices[index++] = this.pos[0] + this.tile_size * j - eps;
+                    vertices[index++] = this.pos[1] + this.tile_size * i - eps;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1);
-                    vertices[index++] = this.pos[1] + this.tile_size * i;
+                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1) + eps;
+                    vertices[index++] = this.pos[1] + this.tile_size * i - eps;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1);
-                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1);
+                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1) + eps;
+                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1) + eps;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * j;
-                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1);
+                    vertices[index++] = this.pos[0] + this.tile_size * j - eps;
+                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1) + eps;
 
                     indices[indices_index++] = first_index + 0;
                     indices[indices_index++] = first_index + 1;
@@ -229,7 +226,11 @@ export class TilesLayer implements TilesLayerBuilder {
             // Update the texture ids buffers.
             for (let i = 0; i < this.static_layers.length; ++i) {
                 let origin = this.static_layers[i];
-                this.dynamic_layers[i].updateAsViewOf(origin, new_ij, new_hw, this.width);
+                this.dynamic_layers[i].updateAsViewOf(
+                    origin,
+                    new_ij, new_hw,
+                    nb_tiles,
+                    this.width);
             }
 
             this.index_buffer.fillTyped(indices);
@@ -244,8 +245,8 @@ class PartialLayer {
 
     // Will be used by the shader to compute the
     // tex coordinates
-    private texture_width_tile_space: number = 0;
-    private texture_height_tile_space: number = 0;
+    private texture_width_tile_space: number;
+    private texture_height_tile_space: number;
 
     // Some of those ids are zero which is a special
     // value. (This field does not exists for the static_layers case)
@@ -261,7 +262,7 @@ class PartialLayer {
         let pl = new PartialLayer(spl.texture);
         pl.tiles_id_buffer =
             new VertexBuffer(gl)
-            .numberOfComponents(1);
+            .numberOfComponents(2);
         return pl;
     }
 
@@ -284,19 +285,49 @@ class PartialLayer {
         origin: PartialLayer,
         new_ij: [number, number],
         new_hw: [number, number],
-        width: number)
+        nb_tiles: number,
+        width_ts: number)
     {
         let index = 0;
-        let nb_tiles = 0;
-        let tex_ids = new Uint16Array(nb_tiles * 4);
+        let tex_ids = new Float32Array(nb_tiles * 8);
+        let tex_wts = origin.texture_width_tile_space;
+        let tex_hts = origin.texture_height_tile_space;
 
         for (let i = new_ij[0]; i < new_hw[0]; ++i) {
             for (let j = new_ij[1]; j < new_hw[1]; ++j) {
-                let tex_id = origin.texId(i, j, width);
-                tex_ids[index++] = tex_id;
-                tex_ids[index++] = tex_id;
-                tex_ids[index++] = tex_id;
-                tex_ids[index++] = tex_id;
+                let tex_id = origin.texId(i, j, width_ts);
+
+                if (tex_id == 0) {
+                    tex_ids[index++] = 0;
+                    tex_ids[index++] = 0;
+
+                    tex_ids[index++] = 0;
+                    tex_ids[index++] = 0;
+
+                    tex_ids[index++] = 0;
+                    tex_ids[index++] = 0;
+
+                    tex_ids[index++] = 0;
+                    tex_ids[index++] = 0;
+                } else {
+
+                    let tex_coord_x = tex_id - 1;
+                    let tex_coord_y = Math.floor(tex_coord_x / tex_wts);
+                    tex_coord_x = tex_coord_x % tex_wts;
+
+                    tex_ids[index++] = tex_coord_x / tex_wts + 1;
+                    tex_ids[index++] = tex_coord_y / tex_hts + 1;
+
+                    tex_ids[index++] = (tex_coord_x + 1) / tex_wts + 1;
+                    tex_ids[index++] = tex_coord_y / tex_hts + 1;
+
+                    tex_ids[index++] = (tex_coord_x + 1) / tex_wts + 1;
+                    tex_ids[index++] = (tex_coord_y + 1) / tex_hts + 1;
+
+                    tex_ids[index++] = tex_coord_x / tex_wts + 1;
+                    tex_ids[index++] = (tex_coord_y + 1) / tex_hts + 1;
+                }
+
             }
         }
 
@@ -315,15 +346,13 @@ class PartialLayer {
     {
         program.setUniforms({
             tile_tex: this.texture,
-            tex_wts: this.texture_width_tile_space,
-            tex_hts: this.texture_height_tile_space,
         });
 
         if (!this.tiles_id_linked) {
             this.tiles_id_linked = new BufferLinkedToProgram(
                 program,
                 this.tiles_id_buffer,
-                'tile_tex_id'
+                'tile_tex_coord'
             );
         }
 
@@ -373,11 +402,16 @@ class Layer {
         origin: Layer,
         new_ij: [number, number],
         new_hw: [number, number],
-        width: number
+        nb_tiles: number,
+        width_ts: number
     ) {
         for (let i = 0; i < this.partial_layers.length; ++i) {
             let pl = origin.partial_layers[i];
-            this.partial_layers[i].updateAsViewOf(pl, new_ij, new_hw, width);
+            this.partial_layers[i].updateAsViewOf(
+                pl,
+                new_ij, new_hw,
+                nb_tiles,
+                width_ts);
         }
     }
 

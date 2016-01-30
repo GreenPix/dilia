@@ -30,18 +30,35 @@ export class MapEditor implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.surface.createRenderingContext()
+        this.surface.createGenericRenderingContext()
             .setShader(vertex_shader_triangle_src, fragment_shader_triangle_src)
             .addVertexBuffer('position', [-0.5, -0.5, 0, 0.5, 0.5, 0], 2)
             .addVertexBuffer('color', [0, 1, 0, 1, 0, 0, 0, 0, 1], 3);
             // .setIndicesBuffer([0, 1, 2]);
 
-        this.surface.createRenderingContext()
+        this.surface.createGenericRenderingContext()
             .setShader(vertex_shader_src, fragment_shader_src)
             .setTexture('texture', 'img/logo.png')
             .addVertexBuffer('pos', [-123.7, -53.5, -123.7, 53.5, 123.7, 53.5, 123.7, -53.5], 2)
             .addVertexBuffer('texCoord', [0, 0, 0, 1, 1, 1, 1, 0], 2)
             .setIndicesBuffer([0, 1, 2, 0, 2, 3]);
+
+        this.surface.createTilesRenderingContext()
+            .addObject(['/api/chipset/0'], (chipsets, builder) => {
+                builder.setWidth(10)
+                    .setHeight(4)
+                    .tileSize(16)
+                    .addLayer([{
+                        tiles_id: new Uint16Array([
+                            91, 92, 92, 92, 91, 91, 91, 91, 91, 91,
+                            91, 91, 91,  0,  0, 91, 91, 91, 91, 91,
+                            91, 91, 91,  0,  0, 91, 91, 91, 91, 91,
+                            92, 92, 92, 92, 92, 92, 92, 92, 92, 92
+                        ]),
+                        chipset: chipsets[0]
+                    }]);
+            });
+
         this.surface.start();
     }
 }

@@ -1,6 +1,8 @@
 import {Component, View, AfterViewInit} from 'angular2/core';
 import {UniqueId} from '../../services/index';
 import {RenderingContext} from '../../rendering/context';
+import {GenericRenderingContext} from '../../rendering/context';
+import {TilesRenderingContext} from '../../rendering/context';
 import {Camera} from '../../rendering/camera';
 
 @Component({
@@ -48,12 +50,21 @@ export class WebGLSurface implements AfterViewInit {
 
         this._loop = () => {
             this.loop();
+            // TODO: Use the commented version for production and
+            // keep the setTimeout one for development.
+            // (window as any).unwrapedRequestAnimationFrame(this._loop);
             setTimeout(this._loop, 100);
         };
     }
 
-    createRenderingContext(): RenderingContext {
-        let render_ctx = new RenderingContext(this.gl);
+    createGenericRenderingContext(): GenericRenderingContext {
+        let render_ctx = new GenericRenderingContext(this.gl);
+        this.rendering_ctxs.push(render_ctx);
+        return render_ctx;
+    }
+
+    createTilesRenderingContext(): TilesRenderingContext {
+        let render_ctx = new TilesRenderingContext(this.gl);
         this.rendering_ctxs.push(render_ctx);
         return render_ctx;
     }
@@ -91,14 +102,14 @@ export class WebGLSurface implements AfterViewInit {
     }
 
     mouseDown(event: MouseEvent) {
-        console.log('MouseDown', event.button, event.clientX, event.clientY);
+        // console.log('MouseDown', event.button, event.clientX, event.clientY);
     }
 
     mouseMove(event: MouseEvent) {
-        console.log('MouseMove', event.clientX, event.clientY);
+        // console.log('MouseMove', event.clientX, event.clientY);
     }
 
     mouseUp(event: MouseEvent) {
-        console.log('MouseUp', event.button, event.clientX, event.clientY);
+        // console.log('MouseUp', event.button, event.clientX, event.clientY);
     }
 }

@@ -33,6 +33,8 @@ export class Camera {
     }
 
     viewport(width: number, height: number) {
+        this.wos = width;
+        this.hos = height;
         this.values[0] = 1 / width;
         this.values[4] = 1 / height;
     }

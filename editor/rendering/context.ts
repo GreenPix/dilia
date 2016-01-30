@@ -5,7 +5,14 @@ import {Camera} from './camera';
 import {TilesLayer, TilesLayerBuilder} from './tiles';
 import {Texture} from '../gl/tex';
 
-abstract class BaseRC {
+// A rendering context offers some
+// common API to allow drawing of things.
+export interface RenderingContext {
+    draw(camera: Camera);
+}
+
+
+abstract class BaseRenderingContext {
     protected tex_loader: TextureLoader;
     private resources_not_yet_loaded: number = 0;
 
@@ -32,8 +39,7 @@ abstract class BaseRC {
     protected abstract drawImpl(camera: Camera);
 }
 
-
-export class RenderingContext extends BaseRC {
+export class GenericRenderingContext extends BaseRenderingContext {
 
     private uniforms_values: { [name: string]: any } = {};
     private buffers: BufferLinkedToProgram[] = [];
@@ -103,7 +109,7 @@ export class RenderingContext extends BaseRC {
 let tiles_vertex_shader = require<string>('./shaders/tiles.vs');
 let tiles_fragment_shader = require<string>('./shaders/tiles.fs');
 
-export class TilesRenderingContext extends BaseRC {
+export class TilesRenderingContext extends BaseRenderingContext {
 
     private program: Program;
     private objects: Array<TilesLayer> = [];
@@ -139,7 +145,7 @@ export class TilesRenderingContext extends BaseRC {
         return this;
     }
 
-    drawImpl(camera: Camera) {
+    protected drawImpl(camera: Camera) {
 
         this.program.use();
         this.program.setUniforms({
