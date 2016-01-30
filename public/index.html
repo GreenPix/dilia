@@ -6,6 +6,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript">
+        // Zone.js is modifying those, we need to keep them
+        // for the map rendering.
+        window.unwrapedRequestAnimationFrame = window.requestAnimationFrame;
+        window.unwrapedCancelAnimationFrame = window.cancelAnimationFrame;
+    </script>
     <script src="/js/common.js"></script>
     <script src="/js/libs.js"></script>
     <script src="/js/libs-free.js"></script>
