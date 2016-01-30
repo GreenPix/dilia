@@ -5,8 +5,8 @@ let mapEditorTemplate = require<string>('./editor.html');
 let mapEditorScss = require<Webpack.Scss>('./editor.scss');
 let vertex_shader_triangle_src = require<string>('./shaders/triangle.vs');
 let fragment_shader_triangle_src = require<string>('./shaders/triangle.fs');
-let vertex_shader_src = require<string>('./shaders/tiles.vs');
-let fragment_shader_src = require<string>('./shaders/tiles.fs');
+let vertex_shader_src = require<string>('./shaders/sprite.vs');
+let fragment_shader_src = require<string>('./shaders/sprite.fs');
 
 
 
