@@ -1,10 +1,13 @@
+<chipset-modal></chipset-modal>
+
 <webgl-surface class="map-editor--canvas"></webgl-surface>
 
 <nav class="navbar map-editor--nav">
     <div class="nav navbar-nav nav-option" role="search">
     </div>
     <div class="nav navbar-nav navbar-right nav-option">
-        <button class="btn btn-default">Upload Chipset</button>
+        <button class="btn btn-default"
+            (click)="uploadChipset()">Upload Chipset</button>
         <button class="btn btn-success"
             [ngClass]="{ 'disabled': currentMapIsReadOnly() }"
             (click)="commit()">Commit</button>

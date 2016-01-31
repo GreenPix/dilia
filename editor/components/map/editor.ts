@@ -1,5 +1,6 @@
 import {Component, View, ViewChild, AfterViewInit} from 'angular2/core';
 import {WebGLSurface} from '../webgl/surface';
+import {ChipsetModal} from './chipset';
 
 let mapEditorTemplate = require<string>('./editor.html');
 let mapEditorScss = require<Webpack.Scss>('./editor.scss');
@@ -16,17 +17,24 @@ let fragment_shader_src = require<string>('./shaders/sprite.fs');
 @View({
     styles: [mapEditorScss.toString()],
     templateUrl: mapEditorTemplate,
-    directives: [WebGLSurface]
+    directives: [WebGLSurface, ChipsetModal]
 })
 export class MapEditor implements AfterViewInit {
 
     @ViewChild(WebGLSurface)
     private surface: WebGLSurface;
 
+    @ViewChild(ChipsetModal)
+    private chipset_modal: ChipsetModal;
+
     constructor() {}
 
     currentMapIsReadOnly() {
         return false;
+    }
+
+    uploadChipset() {
+        this.chipset_modal.show();
     }
 
     ngAfterViewInit(): void {
@@ -50,9 +58,9 @@ export class MapEditor implements AfterViewInit {
                     .tileSize(16)
                     .addLayer([{
                         tiles_id: new Uint16Array([
-                            91, 92, 92, 92, 91, 91, 91, 91, 91, 91,
-                            91, 91, 91,  0,  0, 91, 91, 91, 91, 91,
-                            91, 91, 91,  0,  0, 91, 91, 91, 91, 91,
+                             0, 92, 92, 92, 91, 91, 91, 91, 91, 91,
+                            91,  0, 91,  0,  0, 91, 91, 91, 91, 91,
+                            91, 91,  0,  0,  0, 91, 91, 91, 91, 91,
                             92, 92, 92, 92, 92, 92, 92, 92, 92, 92
                         ]),
                         chipset: chipsets[0]

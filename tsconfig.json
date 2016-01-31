@@ -31,7 +31,7 @@
         "./editor/components/alert/box.ts",
         "./editor/components/autocomplete/autocomplete.ts",
         "./editor/components/login/form.ts",
-        "./editor/components/map/chipset-edit.ts",
+        "./editor/components/map/chipset.ts",
         "./editor/components/map/editor.ts",
         "./editor/components/modal/dialog.ts",
         "./editor/components/profile/profile.ts",
