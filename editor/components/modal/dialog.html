@@ -4,7 +4,7 @@
     [ngStyle]="{ 'display': is_visible? 'block': 'none' }"
     role="dialog"
 >
-    <div class="modal-dialog" role="document" (click)="$event.preventDefault()">
+    <div class="modal-dialog" role="document" (click)="preventHide()">
     <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"

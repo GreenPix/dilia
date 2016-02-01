@@ -17,6 +17,11 @@ export class Dialog {
     private is_visible: boolean;
     private timeid_shown: number;
     private timeid_visible: number;
+    private should_not_hide: boolean = false;
+
+    preventHide() {
+        this.should_not_hide = true;
+    }
 
     show() {
         this.clearAll();
@@ -27,7 +32,8 @@ export class Dialog {
     }
 
     hide(event?: Event) {
-        if (event && event.defaultPrevented) {
+        if (event && this.should_not_hide) {
+            this.should_not_hide = false;
             return;
         }
         this.clearAll();
