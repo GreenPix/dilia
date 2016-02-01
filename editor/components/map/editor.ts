@@ -53,7 +53,7 @@ export class MapEditor implements AfterViewInit {
 
         this.surface.createTilesRenderingContext()
             .addObject(['/api/chipset/0'], (chipsets, builder) => {
-                builder.setWidth(10)
+                let handle = builder.setWidth(10)
                     .setHeight(4)
                     .tileSize(16)
                     .addLayer([{
@@ -64,7 +64,12 @@ export class MapEditor implements AfterViewInit {
                             92, 92, 92, 92, 92, 92, 92, 92, 92, 92
                         ]),
                         chipset: chipsets[0]
-                    }]);
+                    }])
+                    .build();
+                let s = handle.select(0, 0);
+                s.setTileId(0.5, 0.5, 93);
+                s.setTileId(17, 17, 93);
+                s.setTileId(3 * 16 +1, 16 + 1, 93);
             });
 
         this.surface.start();

@@ -63,7 +63,34 @@ export interface TilesLayerBuilder {
     // Requires a call to tileSize first.
     // Could be inforced with another interface.
     addLayer(layer_per_texture: Array<ChipsetLayer>): this;
+
+    // Returns a handle to modify the data
+    // later
+    build(): TilesHandle;
 }
+
+/// This interface allows to modify
+/// an existing object made of tiles.
+export interface TilesHandle {
+    // Select a specific layer.
+    select(layer_index: number, chipset: number): SelectedPartialLayer;
+    // The layer inserted has the new position given here.
+    insertEmptyLayer(layer_index: number): void;
+    // TODO:
+    // extendTo(x: number, y: number): void;
+}
+
+/// This interface allows to modify the id of
+/// a specific place in the map
+export interface SelectedPartialLayer {
+    /// Set the tile id for the tile that contains
+    /// the (x, y) coordinate.
+    /// @param x is expressed in object space.
+    /// @param y is expressed in object space.
+    /// @param tile_id is relative to the chipset.
+    setTileId(x: number, y: number, tile_id: number): void;
+}
+
 
 /// Model defining an array of layers of tiles
 /// This class is supposed to be used to create a layer that
@@ -73,7 +100,7 @@ export interface TilesLayerBuilder {
 /// As a reference, if the number of tiles that fit within the camera
 /// is less than the number of tiles your layer contains, then this
 /// is probably not the abstraction you are looking for.
-export class TilesLayer implements TilesLayerBuilder {
+export class TilesLayer implements TilesLayerBuilder, TilesHandle {
 
     // In tile space the size of those layers
     private width: number = 0;
@@ -107,7 +134,8 @@ export class TilesLayer implements TilesLayerBuilder {
         this.vertex_linked = undefined;
     }
 
-    /// Builder pattern exposed via TilesLayerBuilder
+
+    // TilesLayerBuilder interface
     setWidth(w: number): this { this.width = w; return this; }
     setHeight(h: number): this { this.height = h; return this; }
     tileSize(ts: number): this { this.tile_size = ts; return this;  }
@@ -116,6 +144,19 @@ export class TilesLayer implements TilesLayerBuilder {
         let l = Layer.createFromRawData(this.tile_size, layer_per_texture);
         this.static_layers.push(l);
         return this;
+    }
+    build(): this { return this; }
+
+
+    // TilesHandle
+    select(layer_index: number, chipset: number): SelectedPartialLayer {
+        return this.static_layers[layer_index]
+            .select(this.width, this.height, this.tile_size, chipset);
+    }
+    insertEmptyLayer(layer_index: number): void {
+        this.static_layers.splice(layer_index, 0,
+            Layer.createFromRawData(this.tile_size, [])
+        );
     }
 
 
@@ -281,6 +322,10 @@ class PartialLayer {
         private texture: WebGLTexture
     ) {}
 
+    setTileId(width: number, i: number, j: number, tile_id: number): void {
+        this.tiles_id[i * width + j] = tile_id;
+    }
+
     updateAsViewOf(
         origin: PartialLayer,
         new_ij: [number, number],
@@ -295,7 +340,7 @@ class PartialLayer {
 
         for (let i = new_ij[0]; i < new_hw[0]; ++i) {
             for (let j = new_ij[1]; j < new_hw[1]; ++j) {
-                let tex_id = origin.texId(i, j, width_ts);
+                let tex_id = origin.tiles_id[i * width_ts + j];
 
                 if (tex_id == 0) {
                     tex_ids[index++] = 0;
@@ -332,10 +377,6 @@ class PartialLayer {
         }
 
         this.tiles_id_buffer.fillTyped(tex_ids);
-    }
-
-    texId(i: number, j: number, w: number): number {
-        return this.tiles_id[i * w + j];
     }
 
     draw(
@@ -398,6 +439,21 @@ class Layer {
         return self;
     }
 
+    select(
+        width: number,
+        height: number,
+        tile_size: number,
+        chipset: number): SelectedPartialLayer
+    {
+        let tmp = new SelectedPartialLayerImpl(
+            width,
+            height,
+            tile_size,
+            this.partial_layers[chipset]
+        );
+        return tmp;
+    }
+
     updateAsViewOf(
         origin: Layer,
         new_ij: [number, number],
@@ -424,5 +480,21 @@ class Layer {
         for (let pl of this.partial_layers) {
             pl.draw(gl, program, vertex_buffer, index_buffer);
         }
+    }
+}
+
+class SelectedPartialLayerImpl implements SelectedPartialLayer {
+    constructor(
+        private width: number,
+        private height: number,
+        private tile_size: number,
+        private pl: PartialLayer
+    ) {}
+
+    setTileId(x: number, y: number, tile_id: number): void {
+        let i, j;
+        i = Math.max(0, Math.min(Math.floor(y / this.tile_size), this.width));
+        j = Math.max(0, Math.min(Math.floor(x / this.tile_size), this.height));
+        this.pl.setTileId(this.width, i, j, tile_id);
     }
 }
