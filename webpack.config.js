@@ -86,6 +86,10 @@ module.exports = {
         /reflect-metadata/
     ],
     plugins: [
+        new DefinePlugin({
+            VERSION: 1.0,
+            IS_PRODUCTION: false,
+        }),
         new OccurenceOrderPlugin(),
         new DedupePlugin(),
         new CommonsChunkPlugin({

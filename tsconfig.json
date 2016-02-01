@@ -66,6 +66,7 @@
         "./editor/shared.ts",
         "./editor/util/injector.ts",
         "./editor/util/mouse.ts",
+        "./editor/util/requestAnimationFrame.ts",
         "./shared/aariba.ts",
         "./shared/socket.ts",
         "./typings/ace/ace.d.ts",

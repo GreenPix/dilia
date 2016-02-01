@@ -4,6 +4,7 @@ import {RenderingContext} from '../../rendering/context';
 import {GenericRenderingContext} from '../../rendering/context';
 import {TilesRenderingContext} from '../../rendering/context';
 import {Camera} from '../../rendering/camera';
+import {requestAnimationFrame} from '../../util/requestAnimationFrame';
 
 @Component({
     selector: 'webgl-surface'
@@ -50,10 +51,7 @@ export class WebGLSurface implements AfterViewInit {
 
         this._loop = () => {
             this.loop();
-            // TODO: Use the commented version for production and
-            // keep the setTimeout one for development.
-            // (window as any).unwrapedRequestAnimationFrame(this._loop);
-            setTimeout(this._loop, 100);
+            requestAnimationFrame(this._loop);
         };
     }
 
