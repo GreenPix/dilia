@@ -127,6 +127,7 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
     // Previously stored camera position and bounds in tile space:
     private old_cam_ij: [number, number] = [0, 0];
     private old_cam_hw: [number, number] = [0, 0];
+    private is_dirty: boolean = true;
 
     constructor(gl: WebGLRenderingContext) {
         this.vertex_buffer = new VertexBuffer(gl).numberOfComponents(2);
@@ -150,6 +151,7 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
 
     // TilesHandle
     select(layer_index: number, chipset: number): SelectedPartialLayer {
+        this.is_dirty = true;
         return this.static_layers[layer_index]
             .select(this.width, this.height, this.tile_size, chipset);
     }
@@ -224,10 +226,12 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
 
 
         if (new_ij[0] !== this.old_cam_ij[0] || new_ij[1] !== this.old_cam_ij[1]
-         || new_hw[0] !== this.old_cam_hw[0] || new_hw[1] !== this.old_cam_hw[1])
+         || new_hw[0] !== this.old_cam_hw[0] || new_hw[1] !== this.old_cam_hw[1]
+         || this.is_dirty)
         {
             this.old_cam_ij = new_ij;
             this.old_cam_hw = new_hw;
+            this.is_dirty = false;
 
             let tiles_w = new_hw[0] - new_ij[0];
             let tiles_h = new_hw[1] - new_ij[1];

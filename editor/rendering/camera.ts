@@ -25,6 +25,13 @@ export class Camera {
         this.values[8] += y;
     }
 
+    fromWindowCoordToObjectSpace(x: number, y: number): [number, number] {
+        return [
+            this.pos[0] - 0.5 * this.wos + x / this.zoom_factor,
+            this.pos[1] + 0.5 * this.hos - y / this.zoom_factor
+        ];
+    }
+
     zoom(value: number) {
         let f = 1 / this.zoom_factor;
         this.zoom_factor += value;
@@ -33,8 +40,8 @@ export class Camera {
     }
 
     viewport(width: number, height: number) {
-        this.wos = width;
-        this.hos = height;
+        this.wos = width / this.zoom_factor;
+        this.hos = height / this.zoom_factor;
         this.values[0] = this.zoom_factor / width;
         this.values[4] = this.zoom_factor / height;
     }

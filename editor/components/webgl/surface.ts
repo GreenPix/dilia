@@ -6,6 +6,14 @@ import {TilesRenderingContext} from '../../rendering/context';
 import {Camera} from '../../rendering/camera';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
 
+
+export interface MouseHandler {
+    mouseWheel(camera: Camera, event: WheelEvent): void;
+    mouseMove(camera: Camera, event: MouseEvent): void;
+    mouseDown(camera: Camera, event: MouseEvent): void;
+    mouseUp(camera: Camera, event: MouseEvent): void;
+}
+
 @Component({
     selector: 'webgl-surface'
 })
@@ -25,9 +33,14 @@ export class WebGLSurface implements AfterViewInit {
     private _loop: () => void;
     private camera: Camera = new Camera();
     private rendering_ctxs: RenderingContext[] = [];
+    private mouse_handler: MouseHandler;
 
     constructor(id: UniqueId) {
         this.id = id.get();
+    }
+
+    setMouseHandler(mouse_handler: MouseHandler) {
+        this.mouse_handler = mouse_handler;
     }
 
     ngAfterViewInit(): void {
@@ -100,14 +113,20 @@ export class WebGLSurface implements AfterViewInit {
     }
 
     mouseDown(event: MouseEvent) {
-        // console.log('MouseDown', event.button, event.clientX, event.clientY);
+        if (this.mouse_handler) {
+            this.mouse_handler.mouseDown(this.camera, event);
+        }
     }
 
     mouseMove(event: MouseEvent) {
-        // console.log('MouseMove', event.clientX, event.clientY);
+        if (this.mouse_handler) {
+            this.mouse_handler.mouseMove(this.camera, event);
+        }
     }
 
     mouseUp(event: MouseEvent) {
-        // console.log('MouseUp', event.button, event.clientX, event.clientY);
+        if (this.mouse_handler) {
+            this.mouse_handler.mouseUp(this.camera, event);
+        }
     }
 }
