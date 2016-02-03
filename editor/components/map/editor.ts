@@ -56,7 +56,7 @@ export class MapEditor implements AfterViewInit {
 
             },
             mouseDown: (c, e) => {
-                let [x, y] = c.fromWindowCoordToObjectSpace(e.clientX, e.clientY);
+                let [x, y] = c.fromWindowCoordToObjectSpace(e.clientX, e.clientY - 63);
                 this.handles[0].select(0, 0)
                     .setTileId(x, y, 93);
             },

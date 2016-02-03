@@ -37,6 +37,8 @@ export class Camera {
         this.zoom_factor += value;
         this.values[0] *= this.zoom_factor * f;
         this.values[4] *= this.zoom_factor * f;
+        this.wos /= this.zoom_factor * f;
+        this.hos /= this.zoom_factor * f;
     }
 
     viewport(width: number, height: number) {

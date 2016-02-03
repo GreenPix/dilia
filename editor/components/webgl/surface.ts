@@ -49,9 +49,7 @@ export class WebGLSurface implements AfterViewInit {
             this.canvas.getContext('experimental-webgl')) as WebGLRenderingContext;
 
 
-        window.onresize = () => {
-            this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-        };
+        window.onresize = () => this.viewport();
 
         this.gl.enable(this.gl.DEPTH_TEST);
         this.gl.depthFunc(this.gl.LEQUAL);

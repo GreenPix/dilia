@@ -151,9 +151,10 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
 
     // TilesHandle
     select(layer_index: number, chipset: number): SelectedPartialLayer {
-        this.is_dirty = true;
         return this.static_layers[layer_index]
-            .select(this.width, this.height, this.tile_size, chipset);
+            .select(this.width, this.height, this.tile_size, chipset, {
+                markAsDirty: () => this.is_dirty = true
+            });
     }
     insertEmptyLayer(layer_index: number): void {
         this.static_layers.splice(layer_index, 0,
@@ -247,17 +248,17 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
                 for (let j = new_ij[1]; j < new_hw[1]; ++j) {
                     let first_index = index / 2;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * j - eps;
-                    vertices[index++] = this.pos[1] + this.tile_size * i - eps;
+                    vertices[index++] = this.pos[0] + 2 * this.tile_size * j - eps;
+                    vertices[index++] = this.pos[1] + 2 * this.tile_size * i - eps;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1) + eps;
-                    vertices[index++] = this.pos[1] + this.tile_size * i - eps;
+                    vertices[index++] = this.pos[0] + 2 * this.tile_size * (j + 1) + eps;
+                    vertices[index++] = this.pos[1] + 2 * this.tile_size * i - eps;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1) + eps;
-                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1) + eps;
+                    vertices[index++] = this.pos[0] + 2 * this.tile_size * (j + 1) + eps;
+                    vertices[index++] = this.pos[1] + 2 * this.tile_size * (i + 1) + eps;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * j - eps;
-                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1) + eps;
+                    vertices[index++] = this.pos[0] + 2 * this.tile_size * j - eps;
+                    vertices[index++] = this.pos[1] + 2 * this.tile_size * (i + 1) + eps;
 
                     indices[indices_index++] = first_index + 0;
                     indices[indices_index++] = first_index + 1;
@@ -447,12 +448,15 @@ class Layer {
         width: number,
         height: number,
         tile_size: number,
-        chipset: number): SelectedPartialLayer
+        chipset: number,
+        dirty_flag: DirtyFlag
+    ): SelectedPartialLayer
     {
         let tmp = new SelectedPartialLayerImpl(
             width,
             height,
             tile_size,
+            dirty_flag,
             this.partial_layers[chipset]
         );
         return tmp;
@@ -488,17 +492,26 @@ class Layer {
 }
 
 class SelectedPartialLayerImpl implements SelectedPartialLayer {
+
     constructor(
         private width: number,
         private height: number,
         private tile_size: number,
+        private dirty_flag: DirtyFlag,
         private pl: PartialLayer
     ) {}
 
     setTileId(x: number, y: number, tile_id: number): void {
         let i, j;
-        i = Math.max(0, Math.min(Math.floor(y / this.tile_size), this.width));
-        j = Math.max(0, Math.min(Math.floor(x / this.tile_size), this.height));
-        this.pl.setTileId(this.width, i, j, tile_id);
+        i = Math.floor(y / this.tile_size);
+        j = Math.floor(x / this.tile_size);
+        if (i >= 0 && i < this.height && j >= 0 && j < this.width) {
+            this.dirty_flag.markAsDirty();
+            this.pl.setTileId(this.width, i, j, tile_id);
+        }
     }
+}
+
+interface DirtyFlag {
+    markAsDirty(): void;
 }
