@@ -1,0 +1,7 @@
+{
+  "ambientDependencies": {
+    "ace": "github:DefinitelyTyped/DefinitelyTyped/ace/ace.d.ts#52b0ea5c9719831eecf6ba7436660e30061a4b3c",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#4356af494c045299110677b21e62000957e7a72e",
+    "socket.io-client": "github:DefinitelyTyped/DefinitelyTyped/socket.io-client/socket.io-client.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1"
+  }
+}
