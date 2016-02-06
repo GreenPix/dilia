@@ -32,9 +32,32 @@ export class Camera {
         ];
     }
 
-    zoom(value: number) {
+    // TODO: Write a test for this function.
+    zoom(sign: number) {
+        let value = Math.sign(sign);
         let f = 1 / this.zoom_factor;
-        this.zoom_factor += value;
+        if (Math.abs(this.zoom_factor - 1) <= 0.1) {
+            if (value === -1) {
+                this.zoom_factor = 0.5;
+            } else {
+                this.zoom_factor += 1;
+            }
+        } else if (Math.abs(this.zoom_factor - 0.5) <= 0.1) {
+            if (value === 1) {
+                this.zoom_factor = 1;
+            } else {
+                return;
+            }
+        } else if (this.zoom_factor < 5) {
+            this.zoom_factor += value;
+        } else if (this.zoom_factor < 10) {
+            this.zoom_factor += 2 * value;
+        } else if (this.zoom_factor >= 10 && value === -1) {
+            this.zoom_factor -= 2;
+        } else {
+            return;
+        }
+
         this.values[0] *= this.zoom_factor * f;
         this.values[4] *= this.zoom_factor * f;
         this.wos /= this.zoom_factor * f;
