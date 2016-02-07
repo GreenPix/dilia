@@ -2,7 +2,8 @@ import {TextureLoader, Geom, glDrawBuffers, glDrawElements} from '../gl/gl';
 import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
 import {Camera} from './camera';
-import {TilesLayer, TilesLayerBuilder} from './tiles';
+import {TilesLayer, TilesLayerBuilder, TilesHandle} from './tiles';
+import {SpriteObject, SpriteBuilder, SpriteHandle} from './sprite';
 import {Texture} from '../gl/tex';
 
 // A rendering context offers some
@@ -106,6 +107,52 @@ export class GenericRenderingContext extends BaseRenderingContext {
 
 }
 
+let sprite_vertex_shader = require<string>('./shaders/sprite.vs');
+let sprite_fragment_shader = require<string>('./shaders/sprite.fs');
+
+export class SpriteRenderingContext extends BaseRenderingContext {
+    private program: Program;
+    private objects: Array<SpriteObject> = [];
+
+    constructor(
+        gl: WebGLRenderingContext
+    ) {
+        super(gl);
+        this.program = new Program(gl);
+        this.program.src(sprite_vertex_shader, sprite_fragment_shader);
+    }
+
+    addSpriteObject(
+        texture_path: string,
+        cb: (object: SpriteBuilder) => void
+    ): this {
+        let so = new SpriteObject(this.gl, this.program);
+        this.loadTexture(texture_path, tex => {
+            so.initWith(tex);
+            cb(so);
+        });
+        this.objects.push(so);
+        return this;
+    }
+
+    removeSprite(sprite_handle: SpriteHandle) {
+        this.objects.splice(
+            this.objects.indexOf(sprite_handle as SpriteObject),
+            1);
+    }
+
+    protected drawImpl(camera: Camera) {
+        this.program.use();
+        this.program.setUniforms({
+            'proj': (camera as any).values
+        });
+
+        for (let object of this.objects) {
+            object.draw(this.gl, this.program);
+        }
+    }
+}
+
 let tiles_vertex_shader = require<string>('./shaders/tiles.vs');
 let tiles_fragment_shader = require<string>('./shaders/tiles.fs');
 
@@ -122,10 +169,10 @@ export class TilesRenderingContext extends BaseRenderingContext {
         this.program.src(tiles_vertex_shader, tiles_fragment_shader);
     }
 
-    addObject(
+    addTileLayerObject(
         chipset_paths: string[],
-        cb: (chipset_datas: Texture[], object: TilesLayerBuilder) => void): this
-    {
+        cb: (chipset_datas: Texture[], object: TilesLayerBuilder) => void
+    ): this {
         let tl = new TilesLayer(this.gl);
         let nb_chipset = chipset_paths.length;
         let chipset_datas = new Array(nb_chipset);
@@ -143,6 +190,10 @@ export class TilesRenderingContext extends BaseRenderingContext {
         }
         this.objects.push(tl);
         return this;
+    }
+
+    remoteTileLayer(tile_handle: TilesHandle): void {
+        this.objects.splice(this.objects.indexOf(tile_handle as TilesLayer), 1);
     }
 
     protected drawImpl(camera: Camera) {

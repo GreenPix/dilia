@@ -2,15 +2,13 @@ import {Component, View, ViewChild, AfterViewInit} from 'angular2/core';
 import {WebGLSurface} from '../webgl/surface';
 import {ChipsetModal} from './chipset';
 import {TilesHandle} from '../../rendering/tiles';
+import {SpriteHandle} from '../../rendering/sprite';
+import {MapManager} from '../../models/map';
 
 let mapEditorTemplate = require<string>('./editor.html');
 let mapEditorScss = require<Webpack.Scss>('./editor.scss');
 let vertex_shader_triangle_src = require<string>('./shaders/triangle.vs');
 let fragment_shader_triangle_src = require<string>('./shaders/triangle.fs');
-let vertex_shader_src = require<string>('./shaders/sprite.vs');
-let fragment_shader_src = require<string>('./shaders/sprite.fs');
-
-
 
 @Component({
     selector: 'map-editor',
@@ -28,10 +26,12 @@ export class MapEditor implements AfterViewInit {
     @ViewChild(ChipsetModal)
     private chipset_modal: ChipsetModal;
 
-    private current_edited_layer: number = 0;
     private handles: TilesHandle[] = [];
+    private sprite_under_mouse: SpriteHandle;
 
-    constructor() {}
+    constructor(
+        private map_manager: MapManager
+    ) {}
 
     currentMapIsReadOnly() {
         return false;
@@ -42,15 +42,18 @@ export class MapEditor implements AfterViewInit {
     }
 
     openMap(map: any) {
-        // TODO
-        this.current_edited_layer = 0;
+        this.map_manager.openMap(map);
     }
 
     selectLayer(index: number) {
-        this.current_edited_layer = index;
+        this.map_manager.selectLayer(index);
     }
 
     ngAfterViewInit(): void {
+
+        // TODO: CLEAN UP THIS MESS
+        // This is really temporary and only for testing purpose. :)
+
         this.surface.setMouseHandler({
             mouseUp: (camera, event) => {
 
@@ -61,7 +64,10 @@ export class MapEditor implements AfterViewInit {
                     .setTileId(x, y, 93);
             },
             mouseMove: (c, e) => {
-
+                let [x, y] = c.fromWindowCoordToObjectSpace(e.clientX, e.clientY - 63);
+                x = Math.floor(x / 16) * 16;
+                y = Math.floor(y / 16) * 16;
+                this.sprite_under_mouse.position([x, y]);
             },
             mouseWheel: (c, e) => {
 
@@ -74,15 +80,11 @@ export class MapEditor implements AfterViewInit {
             .addVertexBuffer('color', [0, 1, 0, 1, 0, 0, 0, 0, 1], 3);
             // .setIndicesBuffer([0, 1, 2]);
 
-        this.surface.createGenericRenderingContext()
-            .setShader(vertex_shader_src, fragment_shader_src)
-            .setTexture('texture', 'img/logo.png')
-            .addVertexBuffer('pos', [-123.7, -53.5, -123.7, 53.5, 123.7, 53.5, 123.7, -53.5], 2)
-            .addVertexBuffer('texCoord', [0, 0, 0, 1, 1, 1, 1, 0], 2)
-            .setIndicesBuffer([0, 1, 2, 0, 2, 3]);
+        this.surface.createSpriteRenderingContext()
+            .addSpriteObject('img/logo.png', b => b.buildWithEntireTexture());
 
         this.surface.createTilesRenderingContext()
-            .addObject(['/api/chipset/0'], (chipsets, builder) => {
+            .addTileLayerObject(['/api/chipset/0'], (chipsets, builder) => {
                 let handle = builder.setWidth(10)
                     .setHeight(4)
                     .tileSize(16)
@@ -101,6 +103,14 @@ export class MapEditor implements AfterViewInit {
                 s.setTileId(17, 17, 93);
                 s.setTileId(3 * 16 +1, 16 + 1, 93);
                 this.handles.push(handle);
+            });
+
+        this.surface.createSpriteRenderingContext()
+            .addSpriteObject('/api/chipset/0', builder => {
+                this.sprite_under_mouse = builder
+                    .overlayFlag(true)
+                    .buildFromTileId(16, 93);
+                // builder.buildWithEntireTexture();
             });
 
         this.surface.start();

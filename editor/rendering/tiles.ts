@@ -72,6 +72,8 @@ export interface TilesLayerBuilder {
 /// This interface allows to modify
 /// an existing object made of tiles.
 export interface TilesHandle {
+    // Set the new position
+    position(pos: [number, number]): void;
     // Select a specific layer.
     select(layer_index: number, chipset: number): SelectedPartialLayer;
     // The layer inserted has the new position given here.
@@ -248,17 +250,17 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
                 for (let j = new_ij[1]; j < new_hw[1]; ++j) {
                     let first_index = index / 2;
 
-                    vertices[index++] = this.pos[0] + 2 * this.tile_size * j - eps;
-                    vertices[index++] = this.pos[1] + 2 * this.tile_size * i - eps;
+                    vertices[index++] = this.pos[0] + this.tile_size * j - eps;
+                    vertices[index++] = this.pos[1] + this.tile_size * i - eps;
 
-                    vertices[index++] = this.pos[0] + 2 * this.tile_size * (j + 1) + eps;
-                    vertices[index++] = this.pos[1] + 2 * this.tile_size * i - eps;
+                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1) + eps;
+                    vertices[index++] = this.pos[1] + this.tile_size * i - eps;
 
-                    vertices[index++] = this.pos[0] + 2 * this.tile_size * (j + 1) + eps;
-                    vertices[index++] = this.pos[1] + 2 * this.tile_size * (i + 1) + eps;
+                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1) + eps;
+                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1) + eps;
 
-                    vertices[index++] = this.pos[0] + 2 * this.tile_size * j - eps;
-                    vertices[index++] = this.pos[1] + 2 * this.tile_size * (i + 1) + eps;
+                    vertices[index++] = this.pos[0] + this.tile_size * j - eps;
+                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1) + eps;
 
                     indices[indices_index++] = first_index + 0;
                     indices[indices_index++] = first_index + 1;
@@ -303,8 +305,8 @@ class PartialLayer {
 
     static createForRendering(
         gl: WebGLRenderingContext,
-        spl: PartialLayer): PartialLayer
-    {
+        spl: PartialLayer
+    ): PartialLayer {
         let pl = new PartialLayer(spl.texture);
         pl.tiles_id_buffer =
             new VertexBuffer(gl)
@@ -314,8 +316,8 @@ class PartialLayer {
 
     static createFromRawData(
         tile_size: number,
-        chipset: ChipsetLayer): PartialLayer
-    {
+        chipset: ChipsetLayer
+    ): PartialLayer {
         let pl = new PartialLayer(chipset.chipset.tex_id);
         pl.texture_width_tile_space = chipset.chipset.width / tile_size;
         pl.texture_height_tile_space = chipset.chipset.height / tile_size;
@@ -336,8 +338,8 @@ class PartialLayer {
         new_ij: [number, number],
         new_hw: [number, number],
         nb_tiles: number,
-        width_ts: number)
-    {
+        width_ts: number
+    ) {
         let index = 0;
         let tex_ids = new Float32Array(nb_tiles * 8);
         let tex_wts = origin.texture_width_tile_space;
@@ -388,8 +390,8 @@ class PartialLayer {
         gl: WebGLRenderingContext,
         program: Program,
         vertex_buffer: BufferLinkedToProgram,
-        index_buffer: IndicesBuffer)
-    {
+        index_buffer: IndicesBuffer
+    ) {
         program.setUniforms({
             tile_tex: this.texture,
         });
@@ -420,8 +422,8 @@ class Layer {
 
     static createForRendering(
         gl: WebGLRenderingContext,
-        sl: Layer): Layer
-    {
+        sl: Layer
+    ): Layer {
         let self = new Layer();
         for (let spl of sl.partial_layers) {
             self.partial_layers.push(
@@ -433,8 +435,8 @@ class Layer {
 
     static createFromRawData(
         tile_size: number,
-        layer_per_texture: Array<ChipsetLayer>): Layer
-    {
+        layer_per_texture: Array<ChipsetLayer>
+    ): Layer {
         let self = new Layer();
         for (let cl of layer_per_texture) {
             self.partial_layers.push(
@@ -450,8 +452,7 @@ class Layer {
         tile_size: number,
         chipset: number,
         dirty_flag: DirtyFlag
-    ): SelectedPartialLayer
-    {
+    ): SelectedPartialLayer {
         let tmp = new SelectedPartialLayerImpl(
             width,
             height,
@@ -483,8 +484,8 @@ class Layer {
         gl: WebGLRenderingContext,
         program: Program,
         vertex_buffer: BufferLinkedToProgram,
-        index_buffer: IndicesBuffer)
-    {
+        index_buffer: IndicesBuffer
+    ) {
         for (let pl of this.partial_layers) {
             pl.draw(gl, program, vertex_buffer, index_buffer);
         }

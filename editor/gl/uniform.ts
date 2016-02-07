@@ -27,27 +27,27 @@ export function newUniform(
         switch (type) {
             // Floating point types
             case gl.FLOAT:
-                if (is_array) return gl.uniform1fv;
-                else return gl.uniform1f;
-            case gl.FLOAT_VEC2:   return gl.uniform2fv;
-            case gl.FLOAT_VEC3:   return gl.uniform3fv;
-            case gl.FLOAT_VEC4:   return gl.uniform4fv;
+                if (is_array) return gl.uniform1fv.bind(gl);
+                else return gl.uniform1f.bind(gl);
+            case gl.FLOAT_VEC2:   return gl.uniform2fv.bind(gl);
+            case gl.FLOAT_VEC3:   return gl.uniform3fv.bind(gl);
+            case gl.FLOAT_VEC4:   return gl.uniform4fv.bind(gl);
 
             // Integer types
             case gl.INT:
-                if (is_array) return gl.uniform1i;
-                return gl.uniform1i;
-            case gl.INT_VEC2:     return gl.uniform2iv;
-            case gl.INT_VEC3:     return gl.uniform3iv;
-            case gl.INT_VEC4:     return gl.uniform4iv;
+                if (is_array) return gl.uniform1i.bind(gl);
+                return gl.uniform1i.bind(gl);
+            case gl.INT_VEC2:     return gl.uniform2iv.bind(gl);
+            case gl.INT_VEC3:     return gl.uniform3iv.bind(gl);
+            case gl.INT_VEC4:     return gl.uniform4iv.bind(gl);
 
             // Boolean types
             case gl.BOOL:
-                if (is_array) return gl.uniform1iv;
-                return gl.uniform1i;
-            case gl.BOOL_VEC2:    return gl.uniform2iv;
-            case gl.BOOL_VEC3:    return gl.uniform3iv;
-            case gl.BOOL_VEC4:    return gl.uniform4iv;
+                if (is_array) return gl.uniform1iv.bind(gl);
+                return gl.uniform1i.bind(gl);
+            case gl.BOOL_VEC2:    return gl.uniform2iv.bind(gl);
+            case gl.BOOL_VEC3:    return gl.uniform3iv.bind(gl);
+            case gl.BOOL_VEC4:    return gl.uniform4iv.bind(gl);
 
             case gl.FLOAT_MAT2:   return (l, v) => gl.uniformMatrix2fv(l, false, v);
             case gl.FLOAT_MAT3:   return (l, v) => gl.uniformMatrix3fv(l, false, v);

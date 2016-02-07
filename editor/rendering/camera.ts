@@ -2,11 +2,11 @@
 export class Camera {
 
     // Values, the actual matrix is the transposed of that one
-    private values: Array<number> = [
-        2, 0, 0,
-        0, 2, 0,
+    private values: Float32Array = new Float32Array([
+        4, 0, 0,
+        0, 4, 0,
         0, 0, 0
-    ];
+    ]);
 
     // Object space coordinates should map to pixels when
     // the scale factor is 1.
@@ -67,7 +67,7 @@ export class Camera {
     viewport(width: number, height: number) {
         this.wos = width / this.zoom_factor;
         this.hos = height / this.zoom_factor;
-        this.values[0] = this.zoom_factor / width;
-        this.values[4] = this.zoom_factor / height;
+        this.values[0] = 2 * this.zoom_factor / width;
+        this.values[4] = 2 * this.zoom_factor / height;
     }
 }

@@ -3,6 +3,7 @@ import {UniqueId} from '../../services/index';
 import {RenderingContext} from '../../rendering/context';
 import {GenericRenderingContext} from '../../rendering/context';
 import {TilesRenderingContext} from '../../rendering/context';
+import {SpriteRenderingContext} from '../../rendering/context';
 import {Camera} from '../../rendering/camera';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
 
@@ -78,6 +79,12 @@ export class WebGLSurface implements AfterViewInit {
         return render_ctx;
     }
 
+    createSpriteRenderingContext(): SpriteRenderingContext {
+        let render_ctx = new SpriteRenderingContext(this.gl);
+        this.rendering_ctxs.push(render_ctx);
+        return render_ctx;
+    }
+
     start(): void {
         setTimeout(() => {
             this.viewport();
@@ -94,7 +101,7 @@ export class WebGLSurface implements AfterViewInit {
 
     private loop() {
         let gl = this.gl;
-        gl.clearColor(0.5, 0.5, 0.5, 1.0);
+        gl.clearColor(1.0, 1.0, 1.0, 1.0);
         gl.clearDepth(1.0);
         gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
         for (let render_ctx of this.rendering_ctxs) {
