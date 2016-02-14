@@ -1,6 +1,7 @@
 import {glDrawElements, Geom, Texture} from '../gl/gl';
 import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
+import {Obj2D} from './camera';
 
 
 /// Sprite builder to customize
@@ -13,10 +14,10 @@ export interface SpriteBuilder {
     buildFromTileId(tile_size: number, id: number): SpriteHandle;
 }
 
-export interface SpriteHandle {
-    position(pos: [number, number]): void;
+export interface SpriteHandle extends Obj2D {
     hide(): void;
     show(): void;
+    getTileIdFor(x: number, y: number, tile_size: number): number;
 }
 
 export class SpriteObject implements SpriteBuilder, SpriteHandle {
@@ -43,16 +44,36 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
     show(): void {
         this.is_hidden = false;
     }
+    getWidth(): number {
+        return this.tex.width;
+    }
+    getHeight(): number {
+        return this.tex.height;
+    }
+    getPosition(): [number, number] {
+        return this.pos;
+    }
+    getTileIdFor(x: number, y: number, tile_size: number): number {
+        let i, j, w, h;
+        i = Math.floor(y / tile_size);
+        j = Math.floor(x / tile_size);
+        w = this.tex.width / tile_size;
+        h = this.tex.height / tile_size;
+        if (i >= 0 && i < h && j >= 0 && j < w) {
+            return i * w + j + 1;
+        }
+        return 0;
+    }
 
     // SpriteBuilder interface
     position(pos: [number, number]): this { this.pos = pos; return this; }
     overlayFlag(overlay: boolean): this   { this.is_overlay = overlay; return this;}
     buildWithEntireTexture(): this {
         let values = [
-            -this.tex.width / 2, -this.tex.height / 2,
-            -this.tex.width / 2, +this.tex.height / 2,
-            +this.tex.width / 2, +this.tex.height / 2,
-            +this.tex.width / 2, -this.tex.height / 2,
+            0, 0,
+            this.tex.width, 0,
+            this.tex.width, this.tex.height,
+            0, this.tex.height
         ];
         let vec_size = 2;
         let buffer;
@@ -61,7 +82,7 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         this.vertex_linked = new BufferLinkedToProgram(
             this.program, buffer, 'pos');
         buffer = new VertexBuffer(this.gl)
-            .fill([0, 0, 0, 1, 1, 1, 1, 0]).numberOfComponents(2);
+            .fill([0, 0, 1, 0, 1, 1, 0, 1]).numberOfComponents(2);
         this.texCoord_linked = new BufferLinkedToProgram(
             this.program, buffer, 'texCoord');
         return this;

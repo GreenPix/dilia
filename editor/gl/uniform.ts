@@ -7,17 +7,16 @@ export function newUniform(
     uniform_info: { name: string, type: number, size: number },
     last_used_texture_unit: number): [UniformCb, number]
 {
-    let uniform: UniformCb;
     let tex_type: number;
     let type = uniform_info.type;
     let size = uniform_info.size;
     let is_array = (uniform_info.size > 1 && uniform_info.name.substr(-3) === '[0]');
 
-    let glUniform = resolveGlUniformFromType();
+    let glUniform = resolveGlUniformFromType(uniform_location);
 
-    uniform = (v) => glUniform(uniform_location, v);
-
-    function resolveGlUniformFromType(): (location: WebGLUniformLocation, value: any) => void {
+    function resolveGlUniformFromType(
+        l: WebGLUniformLocation
+    ): (value: any) => void {
 
         switch (type) {
             case gl.SAMPLER_2D: tex_type = gl.TEXTURE_2D; break;
@@ -27,31 +26,31 @@ export function newUniform(
         switch (type) {
             // Floating point types
             case gl.FLOAT:
-                if (is_array) return gl.uniform1fv.bind(gl);
-                else return gl.uniform1f.bind(gl);
-            case gl.FLOAT_VEC2:   return gl.uniform2fv.bind(gl);
-            case gl.FLOAT_VEC3:   return gl.uniform3fv.bind(gl);
-            case gl.FLOAT_VEC4:   return gl.uniform4fv.bind(gl);
+                if (is_array) return (v) => gl.uniform1fv(uniform_location, v);
+                else return (v) => gl.uniform1f(uniform_location, v);
+            case gl.FLOAT_VEC2:   return (v) => gl.uniform2fv(uniform_location, v);
+            case gl.FLOAT_VEC3:   return (v) => gl.uniform3fv(uniform_location, v);
+            case gl.FLOAT_VEC4:   return (v) => gl.uniform4fv(uniform_location, v);
 
             // Integer types
             case gl.INT:
-                if (is_array) return gl.uniform1i.bind(gl);
-                return gl.uniform1i.bind(gl);
-            case gl.INT_VEC2:     return gl.uniform2iv.bind(gl);
-            case gl.INT_VEC3:     return gl.uniform3iv.bind(gl);
-            case gl.INT_VEC4:     return gl.uniform4iv.bind(gl);
+                if (is_array) return (v) => gl.uniform1i(uniform_location, v);
+                return (v) => gl.uniform1i(uniform_location, v);
+            case gl.INT_VEC2:     return (v) => gl.uniform2iv(l, v);
+            case gl.INT_VEC3:     return (v) => gl.uniform3iv(l, v);
+            case gl.INT_VEC4:     return (v) => gl.uniform4iv(l, v);
 
             // Boolean types
             case gl.BOOL:
-                if (is_array) return gl.uniform1iv.bind(gl);
-                return gl.uniform1i.bind(gl);
-            case gl.BOOL_VEC2:    return gl.uniform2iv.bind(gl);
-            case gl.BOOL_VEC3:    return gl.uniform3iv.bind(gl);
-            case gl.BOOL_VEC4:    return gl.uniform4iv.bind(gl);
+                if (is_array) return (v) => gl.uniform1iv(uniform_location, v);
+                return (v) => gl.uniform1i(uniform_location, v);
+            case gl.BOOL_VEC2:    return (v) => gl.uniform2iv(l, v);
+            case gl.BOOL_VEC3:    return (v) => gl.uniform3iv(l, v);
+            case gl.BOOL_VEC4:    return (v) => gl.uniform4iv(l, v);
 
-            case gl.FLOAT_MAT2:   return (l, v) => gl.uniformMatrix2fv(l, false, v);
-            case gl.FLOAT_MAT3:   return (l, v) => gl.uniformMatrix3fv(l, false, v);
-            case gl.FLOAT_MAT4:   return (l, v) => gl.uniformMatrix4fv(l, false, v);
+            case gl.FLOAT_MAT2:   return (v) => gl.uniformMatrix2fv(l, false, v);
+            case gl.FLOAT_MAT3:   return (v) => gl.uniformMatrix3fv(l, false, v);
+            case gl.FLOAT_MAT4:   return (v) => gl.uniformMatrix4fv(l, false, v);
 
             // Texture types
             case gl.SAMPLER_2D:
@@ -61,8 +60,8 @@ export function newUniform(
                     for (let i = 0; i < size; ++i) {
                         units[i] = last_used_texture_unit++;
                     }
-                    return (loc: WebGLUniformLocation, textures: WebGLTexture[]) => {
-                        gl.uniform1iv(loc, units);
+                    return (textures: WebGLTexture[]) => {
+                        gl.uniform1iv(l, units);
                         textures.forEach((texture, index) => {
                             gl.activeTexture(gl.TEXTURE0 + units[index]);
                             gl.bindTexture(tex_type, texture);
@@ -70,8 +69,8 @@ export function newUniform(
                     };
                 } else {
                     let tex_unit = last_used_texture_unit++;
-                    return (loc: WebGLUniformLocation, texture: WebGLTexture) => {
-                        gl.uniform1i(loc, tex_unit);
+                    return (texture: WebGLTexture) => {
+                        gl.uniform1i(l, tex_unit);
                         gl.activeTexture(gl.TEXTURE0 + tex_unit);
                         gl.bindTexture(tex_type, texture);
                     };
@@ -82,5 +81,5 @@ export function newUniform(
         }
     }
 
-    return [uniform, last_used_texture_unit];
+    return [glUniform, last_used_texture_unit];
 }

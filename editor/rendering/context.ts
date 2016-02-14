@@ -14,11 +14,12 @@ export interface RenderingContext {
 
 
 abstract class BaseRenderingContext {
-    protected tex_loader: TextureLoader;
+
     private resources_not_yet_loaded: number = 0;
 
     constructor(
-        protected gl: WebGLRenderingContext
+        protected gl: WebGLRenderingContext,
+        private tex_loader: TextureLoader
     ) {
         this.tex_loader = new TextureLoader(this.gl);
     }
@@ -46,10 +47,6 @@ export class GenericRenderingContext extends BaseRenderingContext {
     private buffers: BufferLinkedToProgram[] = [];
     private indices: IndicesBuffer;
     private program: Program;
-
-    constructor(gl: WebGLRenderingContext) {
-        super(gl);
-    }
 
     setShader(vertex_shader_src: string, fragment_shader_src: string): this {
         this.program = new Program(this.gl);
@@ -115,9 +112,10 @@ export class SpriteRenderingContext extends BaseRenderingContext {
     private objects: Array<SpriteObject> = [];
 
     constructor(
-        gl: WebGLRenderingContext
+        gl: WebGLRenderingContext,
+        tex_loader: TextureLoader
     ) {
-        super(gl);
+        super(gl, tex_loader);
         this.program = new Program(gl);
         this.program.src(sprite_vertex_shader, sprite_fragment_shader);
     }
@@ -162,9 +160,10 @@ export class TilesRenderingContext extends BaseRenderingContext {
     private objects: Array<TilesLayer> = [];
 
     constructor(
-        gl: WebGLRenderingContext
+        gl: WebGLRenderingContext,
+        tex_loader: TextureLoader
     ) {
-        super(gl);
+        super(gl, tex_loader);
         this.program = new Program(gl);
         this.program.src(tiles_vertex_shader, tiles_fragment_shader);
     }

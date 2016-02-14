@@ -1,7 +1,7 @@
 import {Program, VertexBuffer, glDrawElements, Geom} from '../gl/gl';
 import {IndicesBuffer, BufferLinkedToProgram} from '../gl/gl';
 import {Texture} from '../gl/gl';
-import {Camera} from './camera';
+import {Camera, Obj2D} from './camera';
 
 
 // A note on how the rendering works:
@@ -71,9 +71,7 @@ export interface TilesLayerBuilder {
 
 /// This interface allows to modify
 /// an existing object made of tiles.
-export interface TilesHandle {
-    // Set the new position
-    position(pos: [number, number]): void;
+export interface TilesHandle extends Obj2D {
     // Select a specific layer.
     select(layer_index: number, chipset: number): SelectedPartialLayer;
     // The layer inserted has the new position given here.
@@ -163,7 +161,15 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
             Layer.createFromRawData(this.tile_size, [])
         );
     }
-
+    getPosition(): [number, number] {
+        return this.pos;
+    }
+    getWidth(): number {
+        return this.width * this.tile_size;
+    }
+    getHeight(): number {
+        return this.height * this.tile_size;
+    }
 
     /// Draw operation only used by a rendering context.
     draw(gl: WebGLRenderingContext, program: Program, camera: Camera) {
