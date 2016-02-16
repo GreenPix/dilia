@@ -20,9 +20,7 @@ abstract class BaseRenderingContext {
     constructor(
         protected gl: WebGLRenderingContext,
         private tex_loader: TextureLoader
-    ) {
-        this.tex_loader = new TextureLoader(this.gl);
-    }
+    ) {}
 
     protected loadTexture(path: string, cb: (t: Texture) => void): void {
         this.resources_not_yet_loaded += 1;
