@@ -26,6 +26,8 @@ export class EditorState implements MouseHandler, KeyHandler {
 
     private camera_editor: Camera = new Camera();
     private camera_palette: Camera = new Camera();
+    private mouse_pos_editor: [number, number] = [0, 0];
+    private mouse_pos_palette: [number, number] = [0, 0];
     private handles: TilesHandle[] = [];
     private sprite_under_mouse: SpriteHandle;
     private chipset_palette: SpriteHandle;
@@ -84,14 +86,14 @@ export class EditorState implements MouseHandler, KeyHandler {
 
         this.scene_editor = new SceneManager([
             this.camera_editor,
-            c2,
+            // c2,
             c3,
             c4
         ]);
 
         this.scene_palette = new SceneManager([
             this.camera_editor,
-            c2,
+            // c2,
             c3,
             this.camera_palette,
             p0,
@@ -184,17 +186,20 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     private mouseMoveEditor(event: MouseEvent): void {
-        let [x, y] = this.objectSpace(event);
-        x = Math.floor(x / 16) * 16;
-        y = Math.floor(y / 16) * 16;
-        this.sprite_under_mouse.position([x, y]);
+        if (this.sprite_under_mouse) {
+            let [x, y] = this.objectSpace(event);
+            x = Math.floor(x / 16) * 16;
+            y = Math.floor(y / 16) * 16;
+            this.sprite_under_mouse.position([x, y]);
+        }
     }
 
     private mouseWheelEditor(event: WheelEvent): void {
+        this.mouse_pos_editor = this.objectSpace(event);
         if (event.deltaY < 0) {
-            this.camera_editor.zoom(0.1);
+            this.camera_editor.zoom(0.1, this.mouse_pos_editor);
         } else {
-            this.camera_editor.zoom(-0.1);
+            this.camera_editor.zoom(-0.1, this.mouse_pos_editor);
         }
     }
 
@@ -218,14 +223,14 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     private mouseMovePalette(event: MouseEvent): void {
-        // TODO
     }
 
     private mouseWheelPalette(event: WheelEvent): void {
+        this.mouse_pos_palette = this.objectSpace(event);
         if (event.deltaY < 0) {
-            this.camera_palette.zoom(0.1);
+            this.camera_palette.zoom(0.1, this.mouse_pos_palette);
         } else {
-            this.camera_palette.zoom(-0.1);
+            this.camera_palette.zoom(-0.1, this.mouse_pos_palette);
         }
     }
 

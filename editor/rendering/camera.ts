@@ -23,22 +23,31 @@ export class Camera {
     // the scale factor is 1.
     private zoom_factor = 2.0;
 
+    // Viewport settings
+    private viewport_width: number = 1;
+    private viewport_height: number = 1;
 
+    // Camera dimensions in object space.
     // Top left corner of the camera in object space
     pos: [number, number] = [0, 0];
-    // Camera dimensions in object space.
-    wos: number = 1; // width  in object space
-    hos: number = 1; // height in object space
+    // width  in object space
+    get wos(): number { return this.viewport_width / this.zoom_factor; }
+    // height in object space
+    get hos(): number { return this.viewport_height / this.zoom_factor; }
 
     translate(x: number, y: number) {
         this.values[6] += x;
         this.values[7] += y;
     }
 
-    fromWindowCoordToObjectSpace(x: number, y: number): [number, number] {
+    fromWindowCoordToObjectSpace(mx: number, my: number): [number, number] {
+        let a = 1 / this.values[0];
+        let b = 1 / this.values[4];
+        let c = this.values[6];
+        let d = this.values[7];
         return [
-            - this.pos[0] - 0.5 * this.wos + x / this.zoom_factor,
-            - this.pos[1] + 0.5 * this.hos - y / this.zoom_factor
+            a * (2 * mx / this.viewport_width - 1) - c * a,
+            b * (1 - 2 * my / this.viewport_height) - d * b
         ];
     }
 
@@ -52,9 +61,9 @@ export class Camera {
     }
 
     // TODO: Write a test for this function.
-    zoom(sign: number) {
+    zoom(sign: number, invariant: [number, number] = [0, 0]) {
         let value = Math.sign(sign);
-        let f = 1 / this.zoom_factor;
+        let old_z = this.zoom_factor;
         if (Math.abs(this.zoom_factor - 1) <= 0.1) {
             if (value === -1) {
                 this.zoom_factor = 0.5;
@@ -77,15 +86,18 @@ export class Camera {
             return;
         }
 
-        this.values[0] *= this.zoom_factor * f;
-        this.values[4] *= this.zoom_factor * f;
-        this.wos /= this.zoom_factor * f;
-        this.hos /= this.zoom_factor * f;
+        this.translate(
+            invariant[0] * this.values[0] / old_z * (old_z - this.zoom_factor),
+            invariant[1] * this.values[4] / old_z * (old_z - this.zoom_factor)
+        );
+
+        this.values[0] *= this.zoom_factor / old_z;
+        this.values[4] *= this.zoom_factor / old_z;
     }
 
     viewport(width: number, height: number) {
-        this.wos = width / this.zoom_factor;
-        this.hos = height / this.zoom_factor;
+        this.viewport_width = width;
+        this.viewport_height = height;
         let o0 = this.values[0];
         let o4 = this.values[4];
         this.values[0] = 2 * this.zoom_factor / width;
