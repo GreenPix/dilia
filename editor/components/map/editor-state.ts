@@ -28,14 +28,18 @@ export class EditorState implements MouseHandler, KeyHandler {
     private camera_palette: Camera = new Camera();
     private mouse_pos_editor: [number, number] = [0, 0];
     private mouse_pos_palette: [number, number] = [0, 0];
+
     private handles: TilesHandle[] = [];
     private sprite_under_mouse: SpriteHandle;
     private chipset_palette: SpriteHandle;
+
     private scene_editor: SceneManager;
     private scene_palette: SceneManager;
     private state: State = State.Editor;
-    private surface: WebGLSurface;
+    private is_mouse_pressed: boolean = false;
     private tile_id: number = 93;
+
+    private surface: WebGLSurface;
 
     init(surface: WebGLSurface) {
 
@@ -126,6 +130,7 @@ export class EditorState implements MouseHandler, KeyHandler {
                 this.surface.setSceneManager(this.scene_editor);
             }
         }
+        this.is_mouse_pressed = false;
     }
 
     //////////////////////////////////////////////
@@ -176,20 +181,31 @@ export class EditorState implements MouseHandler, KeyHandler {
     //////////////////////////////////////////////
 
     private mouseUpEditor(event: MouseEvent): void {
-
+        this.is_mouse_pressed = false;
     }
 
     private mouseDownEditor(event: MouseEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.handles[0].select(0, 0)
+        if (event.button === 0) {
+            let [x, y] = this.objectSpace(event);
+            this.handles[0].select(0, 0)
             .setTileId(x, y, this.tile_id);
+            this.is_mouse_pressed = true;
+        } else if (event.button === 1) {
+            // TODO: Pan should be done here
+        }
     }
 
     private mouseMoveEditor(event: MouseEvent): void {
+        let [x, y] = this.objectSpace(event);
+        x = Math.floor(x / 16) * 16;
+        y = Math.floor(y / 16) * 16;
+
+        if (this.is_mouse_pressed && this.handles.length > 0) {
+            this.handles[0].select(0, 0)
+            .setTileId(x, y, this.tile_id);
+        }
+
         if (this.sprite_under_mouse) {
-            let [x, y] = this.objectSpace(event);
-            x = Math.floor(x / 16) * 16;
-            y = Math.floor(y / 16) * 16;
             this.sprite_under_mouse.position([x, y]);
         }
     }
