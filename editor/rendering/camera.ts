@@ -1,3 +1,4 @@
+import {Program} from '../gl/gl';
 
 export interface Obj2D {
     // Set the new position
@@ -36,8 +37,16 @@ export class Camera {
     get hos(): number { return this.viewport_height / this.zoom_factor; }
 
     translate(x: number, y: number) {
-        this.values[6] += x;
-        this.values[7] += y;
+        this.values[6] += x * this.values[0];
+        this.values[7] += y * this.values[4];
+        this.pos[0] += x;
+        this.pos[1] += y;
+    }
+
+    applyFor(program: Program) {
+        program.setUniforms({
+            proj: this.values
+        });
     }
 
     fromWindowCoordToObjectSpace(mx: number, my: number): [number, number] {
@@ -87,8 +96,8 @@ export class Camera {
         }
 
         this.translate(
-            invariant[0] * this.values[0] / old_z * (old_z - this.zoom_factor),
-            invariant[1] * this.values[4] / old_z * (old_z - this.zoom_factor)
+            invariant[0] / old_z * (old_z - this.zoom_factor),
+            invariant[1] / old_z * (old_z - this.zoom_factor)
         );
 
         this.values[0] *= this.zoom_factor / old_z;

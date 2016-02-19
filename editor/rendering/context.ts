@@ -83,8 +83,8 @@ export class GenericRenderingContext extends BaseRenderingContext {
 
             // make sure the program is active
             this.program.use();
-            this.uniforms_values['proj'] = (camera as any).values;
             this.program.setUniforms(this.uniforms_values);
+            camera.applyFor(this.program);
 
             if (this.indices) {
                 glDrawElements(
@@ -138,10 +138,9 @@ export class SpriteRenderingContext extends BaseRenderingContext {
     }
 
     protected drawImpl(camera: Camera) {
+
         this.program.use();
-        this.program.setUniforms({
-            'proj': (camera as any).values
-        });
+        camera.applyFor(this.program);
 
         for (let object of this.objects) {
             object.draw(this.gl, this.program);
@@ -196,9 +195,7 @@ export class TilesRenderingContext extends BaseRenderingContext {
     protected drawImpl(camera: Camera) {
 
         this.program.use();
-        this.program.setUniforms({
-            'proj': (camera as any).values
-        });
+        camera.applyFor(this.program);
 
         for (let object of this.objects) {
             object.draw(this.gl, this.program, camera);

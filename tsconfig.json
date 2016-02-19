@@ -47,6 +47,7 @@
         "./editor/components/toolbar/toolbar.ts",
         "./editor/components/upload/upload.ts",
         "./editor/components/webgl/surface.ts",
+        "./editor/components/webgl/zoom.ts",
         "./editor/gl/buffer.ts",
         "./editor/gl/draw.ts",
         "./editor/gl/gl.ts",

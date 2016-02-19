@@ -1,6 +1,7 @@
 import {WebGLSurface} from '../webgl/surface';
 import {MouseHandler, KeyHandler} from '../webgl/surface';
 import {Camera} from '../../rendering/camera';
+import {ZoomBehavior} from '../webgl/zoom';
 import {SceneManager} from '../../rendering/scene';
 import {TilesHandle} from '../../rendering/tiles';
 import {SpriteHandle} from '../../rendering/sprite';
@@ -26,8 +27,9 @@ export class EditorState implements MouseHandler, KeyHandler {
 
     private camera_editor: Camera = new Camera();
     private camera_palette: Camera = new Camera();
-    private mouse_pos_editor: [number, number] = [0, 0];
-    private mouse_pos_palette: [number, number] = [0, 0];
+
+    private zbehavior_editor: ZoomBehavior;
+    private zbehavior_palette: ZoomBehavior;
 
     private handles: TilesHandle[] = [];
     private sprite_under_mouse: SpriteHandle;
@@ -40,6 +42,11 @@ export class EditorState implements MouseHandler, KeyHandler {
     private tile_id: number = 93;
 
     private surface: WebGLSurface;
+
+    constructor() {
+        this.zbehavior_editor = new ZoomBehavior(this.camera_editor);
+        this.zbehavior_palette = new ZoomBehavior(this.camera_palette);
+    }
 
     init(surface: WebGLSurface) {
 
@@ -125,8 +132,10 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.state = state;
         if (this.surface && this.scene_editor && this.scene_palette) {
             if (this.state == State.Palette) {
+                this.zbehavior_editor.desactivate();
                 this.surface.setSceneManager(this.scene_palette);
             } else {
+                this.zbehavior_palette.desactivate();
                 this.surface.setSceneManager(this.scene_editor);
             }
         }
@@ -181,22 +190,24 @@ export class EditorState implements MouseHandler, KeyHandler {
     //////////////////////////////////////////////
 
     private mouseUpEditor(event: MouseEvent): void {
+        let [x, y] = this.objectSpace(event);
+        this.zbehavior_editor.mouseUp(event.button, x, y);
         this.is_mouse_pressed = false;
     }
 
     private mouseDownEditor(event: MouseEvent): void {
+        let [x, y] = this.objectSpace(event);
+        this.zbehavior_editor.mouseDown(event.button, x, y);
         if (event.button === 0) {
-            let [x, y] = this.objectSpace(event);
             this.handles[0].select(0, 0)
             .setTileId(x, y, this.tile_id);
             this.is_mouse_pressed = true;
-        } else if (event.button === 1) {
-            // TODO: Pan should be done here
         }
     }
 
     private mouseMoveEditor(event: MouseEvent): void {
         let [x, y] = this.objectSpace(event);
+        this.zbehavior_editor.mouseMove(event, x, y);
         x = Math.floor(x / 16) * 16;
         y = Math.floor(y / 16) * 16;
 
@@ -211,12 +222,8 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     private mouseWheelEditor(event: WheelEvent): void {
-        this.mouse_pos_editor = this.objectSpace(event);
-        if (event.deltaY < 0) {
-            this.camera_editor.zoom(0.1, this.mouse_pos_editor);
-        } else {
-            this.camera_editor.zoom(-0.1, this.mouse_pos_editor);
-        }
+        let [x, y] = this.objectSpace(event);
+        this.zbehavior_editor.mouseWheel(event.deltaY, x, y);
     }
 
     //////////////////////////////////////////////
@@ -224,11 +231,13 @@ export class EditorState implements MouseHandler, KeyHandler {
     //////////////////////////////////////////////
 
     private mouseUpPalette(event: MouseEvent): void {
-
+        let [x, y] = this.objectSpace(event);
+        this.zbehavior_palette.mouseUp(event.button, x, y);
     }
 
     private mouseDownPalette(event: MouseEvent): void {
         let [x, y] = this.objectSpace(event);
+        this.zbehavior_palette.mouseDown(event.button, x, y);
         let new_id = this.chipset_palette.getTileIdFor(x, y, 16);
         if (new_id != 0) {
             this.tile_id = new_id;
@@ -239,15 +248,13 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     private mouseMovePalette(event: MouseEvent): void {
+        let [x, y] = this.objectSpace(event);
+        this.zbehavior_palette.mouseMove(event, x, y);
     }
 
     private mouseWheelPalette(event: WheelEvent): void {
-        this.mouse_pos_palette = this.objectSpace(event);
-        if (event.deltaY < 0) {
-            this.camera_palette.zoom(0.1, this.mouse_pos_palette);
-        } else {
-            this.camera_palette.zoom(-0.1, this.mouse_pos_palette);
-        }
+        let [x, y] = this.objectSpace(event);
+        this.zbehavior_palette.mouseWheel(event.deltaY, x, y);
     }
 
     private objectSpace(event: MouseEvent): [number, number] {
