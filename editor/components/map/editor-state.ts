@@ -17,6 +17,9 @@ class Brush {
 
     position(x: number, y: number): void {
         if (this.sprite) {
+            x = Math.floor(x / 16) * 16;
+            y = Math.floor(y / 16) * 16;
+
             let w = this.width;
             let h = this.tiles_ids.length / w;
             this.sprite.position([
@@ -63,6 +66,7 @@ export class EditorState implements MouseHandler, KeyHandler {
 
     private map_handle: TilesHandle;
     private brush: Brush = new Brush();
+    private brush_area: SpriteHandle;
     private chipset_palette: SpriteHandle;
 
     private scene_editor: SceneManager;
@@ -79,13 +83,20 @@ export class EditorState implements MouseHandler, KeyHandler {
 
     init(surface: WebGLSurface) {
 
+        let p0 = surface.createGenericRenderingContext()
+            .setShader(vertex_shader_overlay_src, fragment_shader_overlay_src)
+            .addVertexBuffer('position', [-1, -1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1], 2);
+
         let p1 = surface.createSpriteRenderingContext()
             .addSpriteObject('/api/chipset/0', builder => {
                 this.chipset_palette = builder.buildWithEntireTexture();
                 this.camera_palette.centerOn(this.chipset_palette);
+            })
+            .addSpriteObject([51, 122, 183, 178], builder => {
+                this.brush_area = builder.buildWithSize(16, 16);
             });
 
-        let c3 = surface.createTilesRenderingContext()
+        let c1 = surface.createTilesRenderingContext()
             .addTileLayerObject(['/api/chipset/0'], (chipsets, builder) => {
                 this.map_handle = builder.setWidth(10)
                     .setHeight(4)
@@ -107,7 +118,7 @@ export class EditorState implements MouseHandler, KeyHandler {
                 this.camera_editor.centerOn(this.map_handle);
             });
 
-        let c4 = surface.createSpriteRenderingContext()
+        let c2 = surface.createSpriteRenderingContext()
             .addSpriteObject('/api/chipset/0', builder => {
                 this.brush.sprite = builder
                     .overlayFlag(true)
@@ -116,22 +127,18 @@ export class EditorState implements MouseHandler, KeyHandler {
                 surface.setMouseHandler(this);
             });
 
-        let p0 = surface.createGenericRenderingContext()
-            .setShader(vertex_shader_overlay_src, fragment_shader_overlay_src)
-            .addVertexBuffer('position', [-1, -1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1], 2);
-
         this.scene_editor = new SceneManager([
             this.camera_editor,
-            c3,
-            c4
+            c1,
+            c2
         ]);
 
         this.scene_palette = new SceneManager([
             this.camera_editor,
-            c3,
+            c1,
             this.camera_palette,
             p0,
-            p1,
+            p1
         ]);
 
         surface.setSceneManager(this.scene_editor);
@@ -233,8 +240,6 @@ export class EditorState implements MouseHandler, KeyHandler {
     private mouseMoveEditor(event: MouseEvent): void {
         let [x, y] = this.objectSpace(event);
         this.zbehavior_editor.mouseMove(event, x, y);
-        x = Math.floor(x / 16) * 16;
-        y = Math.floor(y / 16) * 16;
 
         if (this.is_mouse_pressed && this.map_handle) {
             // TODO: Should only be applied every
@@ -275,6 +280,10 @@ export class EditorState implements MouseHandler, KeyHandler {
     private mouseMovePalette(event: MouseEvent): void {
         let [x, y] = this.objectSpace(event);
         this.zbehavior_palette.mouseMove(event, x, y);
+        // TODO: Refactor this part
+        x = Math.floor(x / 16) * 16;
+        y = Math.floor(y / 16) * 16;
+        this.brush_area.position([x, y]);
     }
 
     private mouseWheelPalette(event: WheelEvent): void {
