@@ -25,9 +25,7 @@ export class Dialog {
 
     show() {
         this.clearAll();
-        this.timeid_shown = setTimeout(() => {
-            this.is_shown = true;
-        }, 30);
+        this.timeid_shown = setTimeout(() => this.is_shown = true, 30);
         this.is_visible = true;
     }
 
@@ -38,9 +36,7 @@ export class Dialog {
         }
         this.clearAll();
         this.is_shown = false;
-        this.timeid_visible = setTimeout(() => {
-            this.is_visible = false;
-        }, 500);
+        this.timeid_visible = setTimeout(() => this.is_visible = false, 500);
     }
 
     private clearAll() {

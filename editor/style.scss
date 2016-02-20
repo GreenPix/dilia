@@ -42,6 +42,10 @@ body {
     padding-top: 58px;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Source Sans Pro';
+}
+
 .close-glyph {
     font-size: 18px; // 13px
 }
@@ -59,4 +63,17 @@ header.navbar-empty {
 header.navbar.navbar-fixed-top.navbar-empty {
     background: $navbar-background-color none repeat scroll 0% 0%;
     border-bottom: 1px solid $navbar-border-bottom-color;
+}
+
+.all-editor--nav-background {
+    background: $navbar-background-color-darker;
+    border-bottom: 1px solid $navbar-border-bottom-color;
+    border-top: 1px solid $navbar-border-bottom-color;
+    position: absolute;
+    width: 100vw;
+    left: 0;
+    // TODO: This should really not be a magic number
+    // Find a way to load bootstrap values
+    top: $navbar-height + 12px;
+    height: 56px; // Same for this value
 }

@@ -32,9 +32,9 @@ export class Camera {
     // Top left corner of the camera in object space
     pos: [number, number] = [0, 0];
     // width  in object space
-    get wos(): number { return this.viewport_width / this.zoom_factor; }
+    get wos(): number { return 2 * this.viewport_width / this.zoom_factor; }
     // height in object space
-    get hos(): number { return this.viewport_height / this.zoom_factor; }
+    get hos(): number { return 2 * this.viewport_height / this.zoom_factor; }
 
     translate(x: number, y: number) {
         this.values[6] += x * this.values[0];

@@ -37,8 +37,8 @@ export class AutocompleteFiles {
 
     constructor(
         private io: SocketIOService,
-        private http: HttpService)
-    {
+        private http: HttpService
+    ) {
         this.io.get<AaribaFile>('/api/aariba/new')
             .subscribe(f => this.file_list.push(f));
 

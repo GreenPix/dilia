@@ -48,13 +48,19 @@ export class MapManager {
     private map_list: Array<Map> = [];
 
 
+    constructor() {
+        this.map_list.push(new Map(10, 4));
+    }
+
     openMap(sth: any) {
         // TODO
     }
 
-    selectLayer(index: number) {
-        if (this.current_map > -1 && this.current_map < this.map_list.length) {
-            this.map_list[this.current_map].selectLayer(index);
-        }
+    commit() {
+        // TODO
+    }
+
+    currentMap(): Map {
+        return this.map_list[this.current_map];
     }
 }

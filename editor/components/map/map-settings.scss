@@ -1,0 +1,20 @@
+@import "theme/constants";
+
+.map-settings--button {
+    color: $map-settings-unselected-color;
+    padding-top: 6px;
+    padding-bottom: 18px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.map-settings--button .fa {
+    width: 1.75em;
+}
+
+.map-settings--button.selected {
+    color: $map-settings-selected-color;
+    border-bottom: 2px solid $map-settings-underline-color;
+}
