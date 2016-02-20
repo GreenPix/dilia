@@ -3,15 +3,45 @@ import {MouseHandler, KeyHandler} from '../webgl/surface';
 import {Camera} from '../../rendering/camera';
 import {ZoomBehavior} from '../webgl/zoom';
 import {SceneManager} from '../../rendering/scene';
-import {TilesHandle} from '../../rendering/tiles';
+import {TilesHandle, SelectedPartialLayer} from '../../rendering/tiles';
 import {SpriteHandle} from '../../rendering/sprite';
 
 let vertex_shader_overlay_src = require<string>('./shaders/dark_overlay.vs');
 let fragment_shader_overlay_src = require<string>('./shaders/dark_overlay.fs');
 
 class Brush {
-    width: number;
-    tiles_ids: Uint16Array;
+
+    width: number = 1;
+    tiles_ids: Uint16Array = new Uint16Array([93]);
+    sprite: SpriteHandle;
+
+    position(x: number, y: number): void {
+        if (this.sprite) {
+            let w = this.width;
+            let h = this.tiles_ids.length / w;
+            this.sprite.position([
+                x - Math.floor(w / 2) ,
+                y + Math.floor(h / 2)
+            ]);
+        }
+    }
+
+    paint(selected_layer: SelectedPartialLayer, x: number, y: number) {
+        let w = this.width;
+        let h = this.tiles_ids.length / w;
+        for (let i = 0; i < this.tiles_ids.length; ++i) {
+            let dx = (i % w) - Math.floor(w / 2);
+            let dy = Math.floor(i / w) + Math.floor(h / 2);
+            let tile_id = this.tiles_ids[i];
+            selected_layer.setTileId(x + dx, y + dy, tile_id);
+        }
+    }
+
+    replaceWith(width: number, tile_id: number) {
+        this.tiles_ids[0] = tile_id;
+        // Ugly hack fix this and have a proper function.
+        (this.sprite as any).buildFromTileId(16, tile_id);
+    }
 }
 
 class DynamicMap {
@@ -31,15 +61,14 @@ export class EditorState implements MouseHandler, KeyHandler {
     private zbehavior_editor: ZoomBehavior;
     private zbehavior_palette: ZoomBehavior;
 
-    private handles: TilesHandle[] = [];
-    private sprite_under_mouse: SpriteHandle;
+    private map_handle: TilesHandle;
+    private brush: Brush = new Brush();
     private chipset_palette: SpriteHandle;
 
     private scene_editor: SceneManager;
     private scene_palette: SceneManager;
     private state: State = State.Editor;
     private is_mouse_pressed: boolean = false;
-    private tile_id: number = 93;
 
     private surface: WebGLSurface;
 
@@ -56,37 +85,33 @@ export class EditorState implements MouseHandler, KeyHandler {
                 this.camera_palette.centerOn(this.chipset_palette);
             });
 
-        let c2 = surface.createSpriteRenderingContext()
-            .addSpriteObject('img/logo.png', b => b.buildWithEntireTexture());
-
         let c3 = surface.createTilesRenderingContext()
             .addTileLayerObject(['/api/chipset/0'], (chipsets, builder) => {
-                let handle = builder.setWidth(10)
+                this.map_handle = builder.setWidth(10)
                     .setHeight(4)
                     .tileSize(16)
                     .addLayer([{
                         tiles_id: new Uint16Array([
-                             0, 92, 92, 92, 91, 91, 91, 91, 91, 91,
-                            91,  0, 91,  0,  0, 91, 91, 91, 91, 91,
-                            91, 91,  0,  0,  0, 91, 91, 91, 91, 91,
-                            92, 92, 92, 92, 92, 92, 92, 92, 92, 92
+                            457, 287, 287, 61, 62, 63, 92, 61, 62, 63,
+                            314, 317, 347, 314, 318, 314, 314, 318, 314, 314,
+                            374, 347, 377, 374, 378, 374, 374, 378, 0, 374,
+                            373, 377, 377, 373, 373, 373, 373, 373, 373, 373
                         ]),
                         chipset: chipsets[0]
                     }])
                     .build();
-                let s = handle.select(0, 0);
+                let s = this.map_handle.select(0, 0);
                 s.setTileId(0.5, 0.5, 93);
                 s.setTileId(17, 17, 93);
                 s.setTileId(3 * 16 +1, 16 + 1, 93);
-                this.handles.push(handle);
-                this.camera_editor.centerOn(handle);
+                this.camera_editor.centerOn(this.map_handle);
             });
 
         let c4 = surface.createSpriteRenderingContext()
             .addSpriteObject('/api/chipset/0', builder => {
-                this.sprite_under_mouse = builder
+                this.brush.sprite = builder
                     .overlayFlag(true)
-                    .buildFromTileId(16, this.tile_id);
+                    .buildFromTileId(16, this.brush.tiles_ids[0]);
 
                 surface.setMouseHandler(this);
             });
@@ -97,14 +122,12 @@ export class EditorState implements MouseHandler, KeyHandler {
 
         this.scene_editor = new SceneManager([
             this.camera_editor,
-            // c2,
             c3,
             c4
         ]);
 
         this.scene_palette = new SceneManager([
             this.camera_editor,
-            // c2,
             c3,
             this.camera_palette,
             p0,
@@ -119,8 +142,8 @@ export class EditorState implements MouseHandler, KeyHandler {
     cleanUp() {
         this.surface.setSceneManager(undefined);
         this.surface.setMouseHandler(undefined);
-        this.handles.splice(0, this.handles.length);
-        this.sprite_under_mouse = undefined;
+        this.map_handle = undefined;
+        this.brush.sprite = undefined;
         this.surface = undefined;
     }
 
@@ -199,8 +222,10 @@ export class EditorState implements MouseHandler, KeyHandler {
         let [x, y] = this.objectSpace(event);
         this.zbehavior_editor.mouseDown(event.button, x, y);
         if (event.button === 0) {
-            this.handles[0].select(0, 0)
-            .setTileId(x, y, this.tile_id);
+            // TODO: Instead of always picking the same
+            // layer, we should select the appropriate one
+            let selected_layer = this.map_handle.select(0, 0);
+            this.brush.paint(selected_layer, x, y);
             this.is_mouse_pressed = true;
         }
     }
@@ -211,14 +236,16 @@ export class EditorState implements MouseHandler, KeyHandler {
         x = Math.floor(x / 16) * 16;
         y = Math.floor(y / 16) * 16;
 
-        if (this.is_mouse_pressed && this.handles.length > 0) {
-            this.handles[0].select(0, 0)
-            .setTileId(x, y, this.tile_id);
+        if (this.is_mouse_pressed && this.map_handle) {
+            // TODO: Should only be applied every
+            // x that are distant from at least width
+            // (same for y) to avoid erasing the
+            // previous brush
+            let selected_layer = this.map_handle.select(0, 0);
+            this.brush.paint(selected_layer, x, y);
         }
 
-        if (this.sprite_under_mouse) {
-            this.sprite_under_mouse.position([x, y]);
-        }
+        this.brush.position(x, y);
     }
 
     private mouseWheelEditor(event: WheelEvent): void {
@@ -240,9 +267,7 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.zbehavior_palette.mouseDown(event.button, x, y);
         let new_id = this.chipset_palette.getTileIdFor(x, y, 16);
         if (new_id != 0) {
-            this.tile_id = new_id;
-            // Ugly hack fix this and have a proper function.
-            (this.sprite_under_mouse as any).buildFromTileId(16, new_id);
+            this.brush.replaceWith(1, new_id);
             this.switchToState(State.Editor);
         }
     }
