@@ -15,6 +15,19 @@ export class TextureLoader {
 
     constructor(private gl: WebGLRenderingContext) {}
 
+    loadSingleColorTexture(color: Uint8Array, cb: (tex: Texture) => void) {
+        let gl = this.gl;
+        let tex_id = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, tex_id);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
+            gl.UNSIGNED_BYTE, color);
+        let tex = new Texture();
+        tex.tex_id = tex_id;
+        tex.width = 1;
+        tex.height = 1;
+        cb(tex);
+    }
+
     loadTexture(path: string, cb: (tex: Texture) => void) {
 
         if (!(path in this.cache)) {

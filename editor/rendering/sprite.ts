@@ -9,8 +9,9 @@ import {Obj2D} from './camera';
 /// This requires first to
 export interface SpriteBuilder {
     position(pos: [number, number]): this;
-    buildWithEntireTexture(): SpriteHandle;
     overlayFlag(overlay: boolean): this;
+    buildWithEntireTexture(): SpriteHandle;
+    buildWithSize(width: number, height: number): SpriteHandle;
     buildFromTileId(tile_size: number, id: number): SpriteHandle;
 }
 
@@ -69,49 +70,45 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
     position(pos: [number, number]): this { this.pos = pos; return this; }
     overlayFlag(overlay: boolean): this   { this.is_overlay = overlay; return this;}
     buildWithEntireTexture(): this {
-        let values = [
+        return this.buildFrom([
             0, 0,
             this.tex.width, 0,
             this.tex.width, this.tex.height,
             0, this.tex.height
-        ];
-        let vec_size = 2;
-        let buffer;
-        buffer = new VertexBuffer(this.gl)
-            .fill(values).numberOfComponents(vec_size);
-        this.vertex_linked = new BufferLinkedToProgram(
-            this.program, buffer, 'pos');
-        buffer = new VertexBuffer(this.gl)
-            .fill([0, 0, 1, 0, 1, 1, 0, 1]).numberOfComponents(2);
-        this.texCoord_linked = new BufferLinkedToProgram(
-            this.program, buffer, 'texCoord');
-        return this;
+        ], [0, 0, 1, 0, 1, 1, 0, 1]);
+    }
+    buildWithSize(width: number, height: number): this {
+        return this.buildFrom([
+            0, 0,
+            width, 0,
+            width, height,
+            0, height
+        ], [0, 0, 1, 0, 1, 1, 0, 1]);
     }
     buildFromTileId(ts: number, id: number): this {
-        let values = [
-             0,  0,
-            ts,  0,
-            ts, ts,
-             0, ts,
-        ];
-        let vec_size = 2;
-        let buffer;
         id = id - 1;
-        buffer = new VertexBuffer(this.gl)
-        .fill(values).numberOfComponents(vec_size);
-        this.vertex_linked = new BufferLinkedToProgram(
-            this.program, buffer, 'pos');
         let w = Math.max(Math.floor(this.tex.width / ts), 1);
         let h = Math.max(Math.floor(this.tex.height / ts), 1);
         let x = id % w;
         let y = id / w;
-        buffer = new VertexBuffer(this.gl)
-        .fill([
-                  x / w, y / h,
+        return this.buildFrom([
+                0,  0,
+               ts,  0,
+               ts, ts,
+                0, ts,],
+            [     x / w, y / h,
             (x + 1) / w, y / h,
             (x + 1) / w, (y + 1) / h,
                   x / w, (y + 1) / h
-        ]).numberOfComponents(2);
+        ]);
+    }
+    private buildFrom(pos: number[], texCoord: number[]): this {
+        let buffer = new VertexBuffer(this.gl)
+            .fill(pos).numberOfComponents(2);
+        this.vertex_linked = new BufferLinkedToProgram(
+            this.program, buffer, 'pos');
+        buffer = new VertexBuffer(this.gl)
+            .fill(texCoord).numberOfComponents(2);
         this.texCoord_linked = new BufferLinkedToProgram(
             this.program, buffer, 'texCoord');
         return this;

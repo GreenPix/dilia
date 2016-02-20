@@ -22,12 +22,22 @@ abstract class BaseRenderingContext {
         private tex_loader: TextureLoader
     ) {}
 
-    protected loadTexture(path: string, cb: (t: Texture) => void): void {
-        this.resources_not_yet_loaded += 1;
-        this.tex_loader.loadTexture(path, tex => {
-            cb(tex);
-            this.resources_not_yet_loaded -= 1;
-        });
+    protected loadTexture(
+        path_or_color: string | [number, number, number, number],
+        cb: (t: Texture) => void
+    ): void {
+        if (typeof path_or_color === 'string') {
+            this.resources_not_yet_loaded += 1;
+            this.tex_loader.loadTexture(path_or_color, tex => {
+                cb(tex);
+                this.resources_not_yet_loaded -= 1;
+            });
+        } else {
+            let color = new Uint8Array(path_or_color);
+            this.tex_loader.loadSingleColorTexture(color, tex => {
+                cb(tex);
+            });
+        }
     }
 
     draw(camera: Camera) {
@@ -119,7 +129,7 @@ export class SpriteRenderingContext extends BaseRenderingContext {
     }
 
     addSpriteObject(
-        texture_path: string,
+        texture_path: string | [number, number, number, number],
         cb: (object: SpriteBuilder) => void
     ): this {
         let so = new SpriteObject(this.gl, this.program);
