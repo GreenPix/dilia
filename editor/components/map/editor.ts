@@ -53,6 +53,6 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-        this.state.init(this.surface);
+        this.state.init(this.surface, this.map_manager.currentMap());
     }
 }

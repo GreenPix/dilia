@@ -1,6 +1,7 @@
 import {WebGLSurface} from '../webgl/surface';
 import {MouseHandler, KeyHandler} from '../webgl/surface';
 import {Camera} from '../../rendering/camera';
+import {Map} from '../../models/map';
 import {ZoomBehavior} from '../webgl/zoom';
 import {SceneManager} from '../../rendering/scene';
 import {TilesHandle, SelectedPartialLayer} from '../../rendering/tiles';
@@ -81,14 +82,14 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.zbehavior_palette = new ZoomBehavior(this.camera_palette);
     }
 
-    init(surface: WebGLSurface) {
+    init(surface: WebGLSurface, map: Map) {
 
         let p0 = surface.createGenericRenderingContext()
             .setShader(vertex_shader_overlay_src, fragment_shader_overlay_src)
             .addVertexBuffer('position', [-1, -1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1], 2);
 
         let p1 = surface.createSpriteRenderingContext()
-            .addSpriteObject('/api/chipset/0', builder => {
+            .addSpriteObject(map.layers[0][0].chipset, builder => {
                 this.chipset_palette = builder.buildWithEntireTexture();
                 this.camera_palette.centerOn(this.chipset_palette);
             })
@@ -96,30 +97,39 @@ export class EditorState implements MouseHandler, KeyHandler {
                 this.brush_area = builder.buildWithSize(16, 16);
             });
 
+        // Load the map. We compute first the position of the chipset that
+        // are going to be loaded from the server.
+        let chipsets_pos: {[path: string]: number} = {};
+        let chipsets_path: string[] = [];
+        for (let l of map.layers) {
+            for (let pl of l) {
+                if (!(pl.chipset in chipsets_pos)) {
+                    chipsets_pos[pl.chipset] = chipsets_path.length;
+                    chipsets_path.push(pl.chipset);
+                }
+            }
+        }
+
         let c1 = surface.createTilesRenderingContext()
-            .addTileLayerObject(['/api/chipset/0'], (chipsets, builder) => {
-                this.map_handle = builder.setWidth(10)
-                    .setHeight(4)
-                    .tileSize(16)
-                    .addLayer([{
-                        tiles_id: new Uint16Array([
-                            457, 287, 287, 61, 62, 63, 92, 61, 62, 63,
-                            314, 317, 347, 314, 318, 314, 314, 318, 314, 314,
-                            374, 347, 377, 374, 378, 374, 374, 378, 0, 374,
-                            373, 377, 377, 373, 373, 373, 373, 373, 373, 373
-                        ]),
-                        chipset: chipsets[0]
-                    }])
-                    .build();
-                let s = this.map_handle.select(0, 0);
-                s.setTileId(0.5, 0.5, 93);
-                s.setTileId(17, 17, 93);
-                s.setTileId(3 * 16 +1, 16 + 1, 93);
+            .addTileLayerObject(chipsets_path, (chipsets, builder) => {
+                let handle = builder.setWidth(map.width)
+                    .setHeight(map.height)
+                    .tileSize(map.tile_size);
+                for (let i = 0; i < map.layers.length; ++i) {
+                    let layer = map.layers[i].map(pl => {
+                        return {
+                            tiles_id: pl.tiles_id,
+                            chipset: chipsets[chipsets_pos[pl.chipset]]
+                        };
+                    });
+                    handle.addLayer(layer);
+                }
+                this.map_handle = handle.build();
                 this.camera_editor.centerOn(this.map_handle);
             });
 
         let c2 = surface.createSpriteRenderingContext()
-            .addSpriteObject('/api/chipset/0', builder => {
+            .addSpriteObject(map.layers[0][0].chipset, builder => {
                 this.brush.sprite = builder
                     .overlayFlag(true)
                     .buildFromTileId(16, this.brush.tiles_ids[0]);
