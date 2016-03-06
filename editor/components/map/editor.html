@@ -4,7 +4,10 @@
 
 <div class="all-editor--nav-background"></div>
 
-<nav class="navbar map-editor--nav">
+<nav class="navbar map-editor--nav" [ngSwitch]="state.stateStr()">
+
+    <template [ngSwitchWhen]="'editor'">
+
     <div class="nav navbar-nav nav-option" role="search">
         <map-editor-settings (selectPanel)="openPanel($event)"></map-editor-settings>
     </div>
@@ -17,9 +20,24 @@
         <button class="btn btn-primary" (click)="createNewMap()">
             <span class="fa fa-plus"></span> Create new</button>
     </div>
+
+    </template>
+
+    <template [ngSwitchWhen]="'palette'">
+
+    <h4 class="lead text-center">Palette</h4>
+
+    </template>
+
 </nav>
 
 <alert-box></alert-box>
 
-<layer-panel [currentMap]="map_manager.currentMap()"
-             (selectLayer)="onSelectLayer($event)"></layer-panel>
+<div [ngSwitch]="state.stateStr()">
+    <template [ngSwitchWhen]="'editor'">
+
+        <layer-panel [currentMap]="map_manager.currentMap()"
+                     (selectLayer)="onSelectLayer($event)"></layer-panel>
+
+    </template>
+</div>

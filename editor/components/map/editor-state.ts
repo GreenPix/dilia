@@ -192,6 +192,13 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.active_layer = id;
     }
 
+    stateStr(): string {
+        switch (this.state) {
+            case State.Palette: return 'palette';
+            case State.Editor: return 'editor';
+        }
+    }
+
     //////////////////////////////////////////////
     ///                Wiring                  ///
     //////////////////////////////////////////////
