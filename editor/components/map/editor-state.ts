@@ -66,6 +66,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     private zbehavior_palette: ZoomBehavior;
 
     private map_handle: TilesHandle;
+    private active_layer: number = 0;
     private brush: Brush = new Brush();
     private brush_area: SpriteHandle;
     private chipset_palette: SpriteHandle;
@@ -89,7 +90,7 @@ export class EditorState implements MouseHandler, KeyHandler {
             .addVertexBuffer('position', [-1, -1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1], 2);
 
         let p1 = surface.createSpriteRenderingContext()
-            .addSpriteObject(map.layers[0][0].chipset, builder => {
+            .addSpriteObject(map.layers[0].raw[0].chipset, builder => {
                 this.chipset_palette = builder.buildWithEntireTexture();
                 this.camera_palette.centerOn(this.chipset_palette);
             })
@@ -102,7 +103,7 @@ export class EditorState implements MouseHandler, KeyHandler {
         let chipsets_pos: {[path: string]: number} = {};
         let chipsets_path: string[] = [];
         for (let l of map.layers) {
-            for (let pl of l) {
+            for (let pl of l.raw) {
                 if (!(pl.chipset in chipsets_pos)) {
                     chipsets_pos[pl.chipset] = chipsets_path.length;
                     chipsets_path.push(pl.chipset);
@@ -116,7 +117,7 @@ export class EditorState implements MouseHandler, KeyHandler {
                     .setHeight(map.height)
                     .tileSize(map.tile_size);
                 for (let i = 0; i < map.layers.length; ++i) {
-                    let layer = map.layers[i].map(pl => {
+                    let layer = map.layers[i].raw.map(pl => {
                         return {
                             tiles_id: pl.tiles_id,
                             chipset: chipsets[chipsets_pos[pl.chipset]]
@@ -129,7 +130,7 @@ export class EditorState implements MouseHandler, KeyHandler {
             });
 
         let c2 = surface.createSpriteRenderingContext()
-            .addSpriteObject(map.layers[0][0].chipset, builder => {
+            .addSpriteObject(map.layers[0].raw[0].chipset, builder => {
                 this.brush.sprite = builder
                     .overlayFlag(true)
                     .buildFromTileId(16, this.brush.tiles_ids[0]);
@@ -180,6 +181,15 @@ export class EditorState implements MouseHandler, KeyHandler {
             }
         }
         this.is_mouse_pressed = false;
+    }
+
+    /// Wiring: should be called only by the MapEditor
+    /// which in turns is only be called when a layer
+    /// is selected from the `layer-panel`
+    onSelectLayer(id: number): void {
+        // maybe?
+        // this.map_handle.setActiveLayer(id);
+        this.active_layer = id;
     }
 
     //////////////////////////////////////////////
@@ -241,7 +251,7 @@ export class EditorState implements MouseHandler, KeyHandler {
         if (event.button === 0) {
             // TODO: Instead of always picking the same
             // layer, we should select the appropriate one
-            let selected_layer = this.map_handle.select(0, 0);
+            let selected_layer = this.map_handle.select(this.active_layer, 0);
             this.brush.paint(selected_layer, x, y);
             this.is_mouse_pressed = true;
         }
@@ -256,7 +266,7 @@ export class EditorState implements MouseHandler, KeyHandler {
             // x that are distant from at least width
             // (same for y) to avoid erasing the
             // previous brush
-            let selected_layer = this.map_handle.select(0, 0);
+            let selected_layer = this.map_handle.select(this.active_layer, 0);
             this.brush.paint(selected_layer, x, y);
         }
 

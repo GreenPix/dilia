@@ -52,6 +52,12 @@ export class MapEditor implements AfterViewInit, OnDestroy {
         // TODO
     }
 
+    /// This is a hook to be used only by
+    /// the template when a layer is being selected
+    onSelectLayer(id: number): void {
+        this.state.onSelectLayer(id);
+    }
+
     ngAfterViewInit(): void {
         this.state.init(this.surface, this.map_manager.currentMap());
     }

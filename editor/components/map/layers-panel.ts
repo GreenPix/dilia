@@ -1,7 +1,8 @@
+import {Output, EventEmitter} from 'angular2/core';
 import {Component, View, Input} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {PanelState, Panel} from './panel-state';
-import {Map} from '../../models/map';
+import {Map, Layer} from '../../models/map';
 
 
 let layerPanelCss = require<Webpack.Scss>('./layers-panel.scss');
@@ -19,13 +20,9 @@ export class LayersPanel {
 
     private is_visible: boolean = false;
     private is_shown: boolean = false;
-    private layer_list: any[] = [
-        {select: (e: Event) => console.log(e.preventDefault() || 1)},
-        {select: (e: Event) => console.log(e.preventDefault() || 2)},
-        {select: (e: Event) => console.log(e.preventDefault() || 3)},
-    ];
 
     @Input('currentMap') current_map: Map;
+    @Output('selectLayer') select_layer = new EventEmitter<number>();
 
     constructor(
         private state: PanelState
@@ -46,7 +43,15 @@ export class LayersPanel {
     }
 
     layerList(): any[] {
-        return this.layer_list;
+        return this.current_map.layers;
+    }
+
+    selectLayer(layer: Layer, event: Event) {
+        event.preventDefault();
+        let index = layer.select();
+        if (index >= 0) {
+            this.select_layer.emit(index);
+        }
     }
 
     hide() {

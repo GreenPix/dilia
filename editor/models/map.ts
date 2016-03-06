@@ -11,7 +11,17 @@ export interface ChipsetLayer {
     chipset: string;
 }
 
-export type Layer = ChipsetLayer[];
+export class Layer {
+
+    constructor(
+        private owner: Map,
+        public raw: ChipsetLayer[]
+    ) {}
+
+    select(): number {
+        return this.owner.selectLayer(this);
+    }
+}
 
 export class Map {
 
@@ -24,8 +34,8 @@ export class Map {
         public tile_size: number = 16
     ) {}
 
-    addLayer(layer: Layer): void {
-        this.layers.push(layer);
+    addLayer(layer: ChipsetLayer[]): void {
+        this.layers.push(new Layer(this, layer));
     }
 
     tileSize(): number {
@@ -40,10 +50,12 @@ export class Map {
         return this.current_layer;
     }
 
-    selectLayer(index: number) {
+    selectLayer(layer: Layer): number {
+        let index = this.layers.findIndex(l => l === layer);
         if (index > -1 && index < this.layers.length) {
             this.current_layer = index;
         }
+        return index;
     }
 }
 
