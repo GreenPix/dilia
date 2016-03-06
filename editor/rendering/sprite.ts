@@ -90,7 +90,7 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         let w = Math.max(Math.floor(this.tex.width / ts), 1);
         let h = Math.max(Math.floor(this.tex.height / ts), 1);
         let x = id % w;
-        let y = id / w;
+        let y = Math.floor(id / w);
         return this.buildFrom([
                 0,  0,
                ts,  0,
