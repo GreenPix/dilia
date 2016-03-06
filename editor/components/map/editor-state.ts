@@ -290,10 +290,13 @@ export class EditorState implements MouseHandler, KeyHandler {
     private mouseDownPalette(event: MouseEvent): void {
         let [x, y] = this.objectSpace(event);
         this.zbehavior_palette.mouseDown(event.button, x, y);
-        let new_id = this.chipset_palette.getTileIdFor(x, y, 16);
-        if (new_id != 0) {
-            this.brush.replaceWith(1, new_id);
-            this.switchToState(State.Editor);
+        // Prevent selection if button is not left mouse button.
+        if (event.button === 0) {
+            let new_id = this.chipset_palette.getTileIdFor(x, y, 16);
+            if (new_id != 0) {
+                this.brush.replaceWith(1, new_id);
+                this.switchToState(State.Editor);
+            }
         }
     }
 
