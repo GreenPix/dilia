@@ -16,3 +16,4 @@ declare module Webpack {
 
 declare var VERSION: number;
 declare var IS_PRODUCTION: boolean;
+declare var require: NodeRequire;

@@ -116,7 +116,8 @@ export class AutocompleteFiles {
 
     isInputInvalid() {
         if (!this.input_search) return false;
-        return this.input_value && this.input_value.length > this.minlength &&
+        return (this.input_value || false) &&
+            this.input_value.length > this.minlength &&
             this.file_filtered.length === 0 &&
             this.input_search.getHtmlElement() === document.activeElement;
     }
@@ -127,7 +128,6 @@ export class AutocompleteFiles {
 
     tryAcceptInput() {
         if (this.isInputValid()) {
-            this.form.dirty = false;
             this.openFile.next(this.selected);
         }
     }

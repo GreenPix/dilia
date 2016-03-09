@@ -18,7 +18,7 @@ export class UniqueId {
 }
 
 export interface RxObservable<R> {
-    subscribe(subscriber: (res: R) => void, error?: (err: any) => void): Subscription<R>;
+    subscribe(subscriber: (res: R) => void, error?: (err: any) => void): Subscription;
     map<U>(mapper: (res: R) => U): RxObservable<U>;
 }
 
