@@ -21,7 +21,7 @@
     "filesGlob": [
         "./editor/**/*.ts",
         "./shared/**/*.ts",
-        "./typings/**/*.ts",
+        "./typings/browser.d.ts",
         "./custom_typings/**/*.ts",
         "./editor/**/*.tsx",
         "!./node_modules/**/*"
@@ -76,10 +76,7 @@
         "./editor/util/requestAnimationFrame.ts",
         "./shared/aariba.ts",
         "./shared/socket.ts",
-        "./typings/ace/ace.d.ts",
-        "./typings/lodash/lodash.d.ts",
-        "./typings/socket.io-client/socket.io-client.d.ts",
-        "./typings/tsd.d.ts",
+        "./typings/browser.d.ts",
         "./custom_typings/ace-custom.d.ts",
         "./custom_typings/webpack.d.ts"
     ],
