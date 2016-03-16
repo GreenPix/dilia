@@ -35,7 +35,7 @@ export class RuleEditor implements AfterViewInit {
     text_area_height: number;
     editor: AceAjax.Editor;
     interpreter: AaribaInterpreter;
-    content_observable: Subscription<string> = null;
+    content_observable: Subscription = null;
 
     @ViewChild(CommitModal)
     commit_modal: CommitModal;
