@@ -1,0 +1,53 @@
+<dialog-modal>
+    <dialog-header>Create a new map</dialog-header>
+    <dialog-body>
+    <form #createMapForm="ngForm">
+        <div class="form-group has-feedback"
+            [ngClass]="{
+               'has-error': mapName.invalid &&
+                   mapName.dirty &&
+                   mapName.touched,
+               'has-success': mapName.valid && mapName.dirty }">
+            <label for="mapName">Map name</label>
+            <input class="form-control" required
+                [(ngModel)]="new_map.name"
+                #mapName="ngForm"
+                ngControl="mapName"
+                placeholder="Name">
+        </div>
+        <div class="form-group has-feedback"
+            [ngClass]="{
+                'has-error': mapWidth.invalid &&
+                    mapWidth.dirty &&
+                    mapWidth.touched,
+                'has-success': mapWidth.valid && mapWidth.dirty }">
+            <label for="mapWidth">Width</label>
+            <input type="number" class="form-control" required
+                [(ngModel)]="new_map.width"
+                #mapWidth="ngForm"
+                ngControl="mapWidth"
+                placeholder="Width in tiles">
+        </div>
+        <div class="form-group has-feedback"
+            [ngClass]="{
+                'has-error': mapHeight.invalid &&
+                    mapHeight.dirty &&
+                    mapHeight.touched,
+                'has-success': mapHeight.valid && mapHeight.dirty }">
+            <label for="mapHeight">Height</label>
+            <input type="number" class="form-control" required
+                [(ngModel)]="new_map.height"
+                #mapHeight="ngForm"
+                ngControl="mapHeight"
+                placeholder="Height in tiles">
+        </div>
+    </form>
+    </dialog-body>
+    <dialog-footer>
+        <button type="button" class="btn btn-default"
+            (click)="hide($event)">Cancel</button>
+        <button type="button" class="btn btn-primary"
+            [disabled]="!createMapForm.form.valid"
+            (click)="create()">Create</button>
+    </dialog-footer>
+</dialog-modal>

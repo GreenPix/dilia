@@ -46,6 +46,10 @@ export class LayersPanel {
         return this.current_map.layers;
     }
 
+    isMapValid(): boolean {
+        return this.current_map !== undefined;
+    }
+
     selectLayer(layer: Layer, event: Event) {
         event.preventDefault();
         let index = layer.select();

@@ -32,6 +32,7 @@
         "./editor/components/autocomplete/autocomplete.ts",
         "./editor/components/login/form.ts",
         "./editor/components/map/chipset.ts",
+        "./editor/components/map/createnewmap.ts",
         "./editor/components/map/editor-state.ts",
         "./editor/components/map/editor.ts",
         "./editor/components/map/layers-panel.ts",

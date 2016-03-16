@@ -65,25 +65,10 @@ export class MapManager {
     private current_map: number = -1;
     private map_list: Array<Map> = [];
 
-
-    constructor() {
-        let map = new Map(10, 4);
+    createMap(name: string, width: number, height: number): void {
+        let map = new Map(width, height);
         map.addLayer([{
-            tiles_id: new Uint16Array([
-                457, 287, 287, 61, 62, 63, 92, 61, 62, 63,
-                314, 317, 347, 314, 318, 314, 314, 318, 314, 314,
-                374, 347, 377, 374, 378, 374, 374, 378, 0, 374,
-                373, 377, 377, 373, 373, 373, 373, 373, 373, 373
-            ]),
-            chipset: '/api/chipset/0'
-        }]);
-        map.addLayer([{
-            tiles_id: new Uint16Array([
-                0, 0, 389, 0, 389, 0, 0, 0, 0, 0,
-                0, 0, 419, 0, 419, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-            ]),
+            tiles_id: new Uint16Array(width * height),
             chipset: '/api/chipset/0'
         }]);
         this.map_list.push(map);
@@ -99,6 +84,10 @@ export class MapManager {
     }
 
     currentMap(): Map {
-        return this.map_list[this.current_map];
+        if (this.current_map < 0) {
+            return undefined;
+        } else {
+            return this.map_list[this.current_map];
+        }
     }
 }

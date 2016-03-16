@@ -1,6 +1,10 @@
 $fa-font-path: "~font-awesome/fonts";
 @import "~font-awesome/scss/font-awesome";
 $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+
+// Font default
+$font-family-sans-serif:  "Source Sans Pro";
+$font-family-serif:       "Source Sans Pro";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap";
 @import "theme/constants";
