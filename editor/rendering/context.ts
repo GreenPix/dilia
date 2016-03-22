@@ -183,16 +183,12 @@ export class TilesRenderingContext extends BaseRenderingContext {
         let nb_chipset = chipset_paths.length;
         let chipset_datas = new Array(nb_chipset);
         for (let i = 0; i < nb_chipset; ++i) {
-            // TODO: Remove this once TypeScript 1.8 is released
-            ((i: number) => {
             this.loadTexture(chipset_paths[i], tex => {
                 chipset_datas[i] = tex;
                 if (--nb_chipset === 0) {
                     cb(chipset_datas, tl);
                 }
             });
-            // TODO: Remove this once TypeScript 1.8 is released
-            })(i);
         }
         this.objects.push(tl);
         return this;

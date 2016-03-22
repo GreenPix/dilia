@@ -73,15 +73,9 @@ export class Program {
             if (attrib_info) {
                 let loc = gl.getAttribLocation(program, attrib_info.name);
 
-                // TODO: Remove when Typescript 1.8 is released
-                ((loc: number, attrib_info: WebGLActiveInfo) => {
-
                 this.attrs_to_buffer[attrib_info.name] = (buffer: VertexBuffer) => {
                     buffer.bindAtLocation(loc);
                 };
-
-                // TODO: Remove when TypesScript 1.8 is released
-                })(loc, attrib_info);
             }
         }
     }
