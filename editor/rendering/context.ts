@@ -1,19 +1,13 @@
 import {TextureLoader, Geom, glDrawBuffers, glDrawElements} from '../gl/gl';
 import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
-import {Camera} from './camera';
+import {Context, PipelineEl} from './pipeline/interfaces';
 import {TilesLayer, TilesLayerBuilder, TilesHandle} from './tiles';
 import {SpriteObject, SpriteBuilder, SpriteHandle} from './sprite';
 import {Texture} from '../gl/tex';
 
-// A rendering context offers some
-// common API to allow drawing of things.
-export interface RenderingContext {
-    draw(camera: Camera);
-}
 
-
-abstract class BaseRenderingContext {
+abstract class BaseRenderingContext implements PipelineEl {
 
     private resources_not_yet_loaded: number = 0;
 
@@ -40,13 +34,19 @@ abstract class BaseRenderingContext {
         }
     }
 
-    draw(camera: Camera) {
+    execute(ctx: Context) {
         if (this.resources_not_yet_loaded === 0) {
-            this.drawImpl(camera);
+            this.drawImpl(ctx);
         }
     }
 
-    protected abstract drawImpl(camera: Camera);
+    protected abstract drawImpl(ctx: Context);
+
+    protected applyCameraFor(ctx: Context, program: Program) {
+        program.setUniforms({
+            proj: ctx.active_camera
+        });
+    }
 }
 
 export class GenericRenderingContext extends BaseRenderingContext {
@@ -87,14 +87,14 @@ export class GenericRenderingContext extends BaseRenderingContext {
         return this;
     }
 
-    protected drawImpl(camera: Camera) {
+    protected drawImpl(ctx: Context) {
 
         if (this.buffers.length > 0) {
 
             // make sure the program is active
             this.program.use();
             this.program.setUniforms(this.uniforms_values);
-            camera.applyFor(this.program);
+            this.applyCameraFor(ctx, this.program);
 
             if (this.indices) {
                 glDrawElements(
@@ -141,16 +141,30 @@ export class SpriteRenderingContext extends BaseRenderingContext {
         return this;
     }
 
+    addSpriteObjectFromTex(
+        texture: Texture,
+        cb: (object: SpriteBuilder) => void
+    ): this {
+        let so = new SpriteObject(this.gl, this.program);
+        so.initWith(texture);
+        cb(so);
+        this.objects.push(so);
+        return this;
+    }
+
     removeSprite(sprite_handle: SpriteHandle) {
         this.objects.splice(
             this.objects.indexOf(sprite_handle as SpriteObject),
             1);
     }
 
-    protected drawImpl(camera: Camera) {
+    protected drawImpl(ctx: Context) {
 
         this.program.use();
-        camera.applyFor(this.program);
+        this.program.setUniforms({
+            flip_y: ctx.flip_y
+        });
+        this.applyCameraFor(ctx, this.program);
 
         for (let object of this.objects) {
             object.draw(this.gl, this.program);
@@ -198,13 +212,16 @@ export class TilesRenderingContext extends BaseRenderingContext {
         this.objects.splice(this.objects.indexOf(tile_handle as TilesLayer), 1);
     }
 
-    protected drawImpl(camera: Camera) {
+    protected drawImpl(ctx: Context) {
 
         this.program.use();
-        camera.applyFor(this.program);
+        this.program.setUniforms({
+            flip_y: ctx.flip_y
+        });
+        this.applyCameraFor(ctx, this.program);
 
         for (let object of this.objects) {
-            object.draw(this.gl, this.program, camera);
+            object.draw(this.gl, this.program, ctx.active_camera_props);
         }
     }
 }

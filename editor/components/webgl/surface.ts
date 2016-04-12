@@ -1,7 +1,9 @@
 import {Component, View, AfterViewInit, OnDestroy} from 'angular2/core';
+import {CORE_DIRECTIVES} from 'angular2/common';
 import {TextureLoader} from '../../gl/gl';
 import {UniqueId} from '../../services/index';
-import {SceneManager} from '../../rendering/scene';
+import {Pipeline} from '../../rendering/pipeline/index';
+import {ViewportListener} from '../../rendering/viewport';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
 import {GenericRenderingContext} from '../../rendering/context';
 import {SpriteRenderingContext} from '../../rendering/context';
@@ -22,24 +24,34 @@ export interface KeyHandler {
     selector: 'webgl-surface'
 })
 @View({
-    styles: [`canvas { width: 100%; height: 100% }`],
+    styles: [
+        `canvas { width: 100%; height: 100% }`,
+        `.diplay-none { display: none; }`
+    ],
     template: `<canvas id="{{id}}" tabindex="1"
         (keydown)="keyPressed($event)"
         (wheel)="wheelEvent($event)"
         (mousemove)="mouseMove($event)"
         (mousedown)="mouseDown($event)"
-        (mouseup)="mouseUp($event)"></canvas>`
+        (mouseup)="mouseUp($event)"
+        [ngClass] = "{
+            'display-none': gl_not_supported
+        }"></canvas>
+        <h3 *ngIf="gl_not_supported">WebGL isn't supported by your browser. :(</h3>`,
+    directives: [CORE_DIRECTIVES]
 })
 export class WebGLSurface implements AfterViewInit, OnDestroy {
 
     private id: string;
     private gl: WebGLRenderingContext;
+    private gl_not_supported: boolean = false;
     private tex_loader: TextureLoader;
     private canvas: HTMLCanvasElement;
     private _loop: () => void;
     private mouse_handler: MouseHandler;
     private key_handler: KeyHandler;
-    private scene: SceneManager = undefined;
+    private pipeline: Pipeline = undefined;
+    private viewports_listeners: Array<ViewportListener> = [];
 
     constructor(id: UniqueId) {
         this.id = id.get();
@@ -53,15 +65,33 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         this.key_handler = key_handler;
     }
 
-    setSceneManager(scene_manager: SceneManager) {
-        if (this.scene === undefined) {
-            this.scene = scene_manager;
+    getGLContext(): WebGLRenderingContext {
+        return this.gl;
+    }
+
+    setPipeline(pipeline: Pipeline) {
+        if (this.pipeline === undefined) {
+            this.pipeline = pipeline;
             this.start();
-        } else if (scene_manager != undefined){
-            this.scene = scene_manager;
+        } else if (pipeline != undefined){
+            this.pipeline = pipeline;
             this.viewport();
         } else {
-            this.scene = new SceneManager([]);
+            this.pipeline = new Pipeline([]);
+        }
+    }
+
+    addViewportListener(viewport: ViewportListener) {
+        let index = this.viewports_listeners.indexOf(viewport);
+        if (index == -1) {
+            this.viewports_listeners.push(viewport);
+        }
+    }
+
+    removeViewportListener(viewport: ViewportListener) {
+        let index = this.viewports_listeners.indexOf(viewport);
+        if (index >= 0) {
+            this.viewports_listeners.splice(index, 1);
         }
     }
 
@@ -91,6 +121,12 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         this.canvas = document.getElementById(this.id) as HTMLCanvasElement;
         this.gl = (this.canvas.getContext('webgl') ||
             this.canvas.getContext('experimental-webgl')) as WebGLRenderingContext;
+
+        if (!this.gl) {
+            this.gl_not_supported = true;
+            return;
+        }
+
         this.tex_loader = new TextureLoader(this.gl);
 
         window.onresize = () => this.viewport();
@@ -119,15 +155,13 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     private viewport() {
         this.canvas.width = this.canvas.clientWidth;
         this.canvas.height = this.canvas.clientHeight;
-        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-        this.scene.viewport(this.canvas.width, this.canvas.height);
+        for (let vp of this.viewports_listeners) {
+            vp.viewport(this.canvas.width, this.canvas.height);
+        }
     }
 
     private loop() {
-        this.gl.clearColor(1.0, 1.0, 1.0, 1.0);
-        this.gl.clearDepth(1.0);
-        this.gl.clear(this.gl.DEPTH_BUFFER_BIT | this.gl.COLOR_BUFFER_BIT);
-        this.scene.draw();
+        this.pipeline.execute(this.gl);
     }
 
     wheelEvent(event: WheelEvent) {

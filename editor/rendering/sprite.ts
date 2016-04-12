@@ -1,7 +1,7 @@
 import {glDrawElements, Geom, Texture} from '../gl/gl';
 import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
-import {Obj2D} from './camera';
+import {Obj2D} from './pipeline/interfaces';
 
 
 /// Sprite builder to customize

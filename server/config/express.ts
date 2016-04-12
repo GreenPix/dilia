@@ -14,12 +14,15 @@ import passport = require('passport');
 // import csrf = require('csurf');
 import winston = require('winston');
 import socket_io = require('socket.io');
+import multer = require('multer');
 
 
 let expressApp = express();
+
 export var server = createServer(expressApp);
 export var io = socket_io(server);
 export var app = wrap(expressApp, io);
+export var upload = multer();
 
 let MongoStore = connectMongo(session);
 let cookieParserM = cookieParser();

@@ -1,5 +1,9 @@
 <dialog-modal>
-    <dialog-header>Create a new map</dialog-header>
+    <dialog-header>
+        <span *ngIf="new_map.name.length == 0">Create a new map</span>
+        <span *ngIf="new_map.name.length > 0">Create <code>{{new_map.name}}</code></span>
+        <code style="visibility: hidden;">Placeholder</code>
+    </dialog-header>
     <dialog-body>
     <form #createMapForm="ngForm">
         <div class="form-group has-feedback"

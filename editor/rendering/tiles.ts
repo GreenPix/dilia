@@ -1,7 +1,7 @@
 import {Program, VertexBuffer, glDrawElements, Geom} from '../gl/gl';
 import {IndicesBuffer, BufferLinkedToProgram} from '../gl/gl';
 import {Texture} from '../gl/gl';
-import {Camera, Obj2D} from './camera';
+import {CameraProperties, Obj2D} from './pipeline/interfaces';
 
 
 // A note on how the rendering works:
@@ -172,7 +172,7 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
     }
 
     /// Draw operation only used by a rendering context.
-    draw(gl: WebGLRenderingContext, program: Program, camera: Camera) {
+    draw(gl: WebGLRenderingContext, program: Program, camera: CameraProperties) {
 
         // Init dynamic_layers if needed
         this.initDynamicLayers(gl);
@@ -203,7 +203,7 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
         }
     }
 
-    private updateBuffers(camera: Camera) {
+    private updateBuffers(camera: CameraProperties) {
 
         // Check if the update is needed or not.
         let new_ij: [number, number] = [0, 0];
@@ -216,23 +216,27 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
         ];
 
         // Compute the new position of the camera in tile space
-        new_ij[0] = Math.min(
-            Math.max(Math.ceil(diff[1] / f), 0) * CFP,
-            this.height
-        );
-        new_ij[1] = Math.min(
-            Math.max(Math.ceil(diff[0] / f), 0) * CFP,
-            this.width
-        );
-        new_hw[0] = Math.max(
-            Math.min(Math.floor((diff[1] + camera.hos) / f) * CFP, this.height),
-            0
-        );
-        new_hw[1] = Math.max(
-            Math.min(Math.floor((diff[0] + camera.wos) / f) * CFP, this.width),
-            0
-        );
+        // new_ij[0] = Math.min(
+        //     Math.max(Math.ceil(diff[1] / f), 0) * CFP,
+        //     this.height
+        // );
+        // new_ij[1] = Math.min(
+        //     Math.max(Math.ceil(diff[0] / f), 0) * CFP,
+        //     this.width
+        // );
+        // new_hw[0] = Math.max(
+        //     Math.min(Math.floor((diff[1] + camera.hos) / f) * CFP, this.height),
+        //     0
+        // );
+        // new_hw[1] = Math.max(
+        //     Math.min(Math.floor((diff[0] + camera.wos) / f) * CFP, this.width),
+        //     0
+        // );
 
+        new_ij[0] = 0;
+        new_ij[1] = 0;
+        new_hw[0] = this.height;
+        new_hw[1] = this.width;
 
         if (new_ij[0] !== this.old_cam_ij[0] || new_ij[1] !== this.old_cam_ij[1]
          || new_hw[0] !== this.old_cam_hw[0] || new_hw[1] !== this.old_cam_hw[1]
@@ -251,22 +255,22 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
             // Vertex buffer
             let index = 0;
             let indices_index = 0;
-            let eps = 0.1;
+
             for (let i = new_ij[0]; i < new_hw[0]; ++i) {
                 for (let j = new_ij[1]; j < new_hw[1]; ++j) {
                     let first_index = index / 2;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * j - eps;
-                    vertices[index++] = this.pos[1] + this.tile_size * i - eps;
+                    vertices[index++] = this.pos[0] + this.tile_size * j;
+                    vertices[index++] = this.pos[1] + this.tile_size * i;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1) + eps;
-                    vertices[index++] = this.pos[1] + this.tile_size * i - eps;
+                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1);
+                    vertices[index++] = this.pos[1] + this.tile_size * i;
 
-                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1) + eps;
-                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1) + eps;
+                    vertices[index++] = this.pos[0] + this.tile_size * (j + 1);
+                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1);
 
-                    vertices[index++] = this.pos[0] + this.tile_size * j - eps;
-                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1) + eps;
+                    vertices[index++] = this.pos[0] + this.tile_size * j;
+                    vertices[index++] = this.pos[1] + this.tile_size * (i + 1);
 
                     indices[indices_index++] = first_index + 0;
                     indices[indices_index++] = first_index + 1;
@@ -284,7 +288,8 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
                     origin,
                     new_ij, new_hw,
                     nb_tiles,
-                    this.width);
+                    this.width
+                );
             }
 
             this.index_buffer.fillTyped(indices);
@@ -368,7 +373,6 @@ class PartialLayer {
                     tex_ids[index++] = 0;
                     tex_ids[index++] = 0;
                 } else {
-
                     let tex_coord_x = tex_id - 1;
                     let tex_coord_y = Math.floor(tex_coord_x / tex_wts);
                     tex_coord_x = tex_coord_x % tex_wts;
@@ -482,7 +486,8 @@ class Layer {
                 pl,
                 new_ij, new_hw,
                 nb_tiles,
-                width_ts);
+                width_ts
+            );
         }
     }
 

@@ -11,10 +11,10 @@ import winston = require('winston');
 winston.info(`Starting server in ${process.env.NODE_ENV} mode...`);
 
 // Prepare mongodb configuration
-require('./db/index');
+import './db/index';
 
 // Register apis
-require('./apis/index');
+import './apis/index';
 
 // Listen
 server.listen(port, () => {

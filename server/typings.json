@@ -1,23 +1,23 @@
 {
   "ambientDependencies": {
-    "express": "github:DefinitelyTyped/DefinitelyTyped/express/express.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
-    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1",
-    "serve-static": "github:DefinitelyTyped/DefinitelyTyped/serve-static/serve-static.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
-    "mime": "github:DefinitelyTyped/DefinitelyTyped/mime/mime.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
-    "passport": "github:DefinitelyTyped/DefinitelyTyped/passport/passport.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
-    "passport-local": "github:DefinitelyTyped/DefinitelyTyped/passport-local/passport-local.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
     "body-parser": "github:DefinitelyTyped/DefinitelyTyped/body-parser/body-parser.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
-    "cookie-parser": "github:DefinitelyTyped/DefinitelyTyped/cookie-parser/cookie-parser.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
-    "express-session": "github:DefinitelyTyped/DefinitelyTyped/express-session/express-session.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
-    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#4356af494c045299110677b21e62000957e7a72e",
-    "mongoose": "github:DefinitelyTyped/DefinitelyTyped/mongoose/mongoose.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
-    "winston": "github:DefinitelyTyped/DefinitelyTyped/winston/winston.d.ts#66f88ec51858bb21bc375fa91a963c04bc09401e",
-    "csurf": "github:DefinitelyTyped/DefinitelyTyped/csurf/csurf.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
-    "multer": "github:DefinitelyTyped/DefinitelyTyped/multer/multer.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
-    "passport-google-oauth": "github:DefinitelyTyped/DefinitelyTyped/passport-google-oauth/passport-google-oauth.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
     "compression": "github:DefinitelyTyped/DefinitelyTyped/compression/compression.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
     "connect-mongo": "github:DefinitelyTyped/DefinitelyTyped/connect-mongo/connect-mongo.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
+    "cookie-parser": "github:DefinitelyTyped/DefinitelyTyped/cookie-parser/cookie-parser.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "csurf": "github:DefinitelyTyped/DefinitelyTyped/csurf/csurf.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
+    "express": "github:DefinitelyTyped/DefinitelyTyped/express/express.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
+    "express-session": "github:DefinitelyTyped/DefinitelyTyped/express-session/express-session.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
+    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#4356af494c045299110677b21e62000957e7a72e",
+    "mime": "github:DefinitelyTyped/DefinitelyTyped/mime/mime.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
     "mongodb": "github:DefinitelyTyped/DefinitelyTyped/mongodb/mongodb.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
-    "socket.io": "github:DefinitelyTyped/DefinitelyTyped/socket.io/socket.io.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1"
+    "mongoose": "github:DefinitelyTyped/DefinitelyTyped/mongoose/mongoose.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
+    "multer": "registry:dt/multer#0.0.0+20160317120654",
+    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1",
+    "passport": "github:DefinitelyTyped/DefinitelyTyped/passport/passport.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
+    "passport-google-oauth": "github:DefinitelyTyped/DefinitelyTyped/passport-google-oauth/passport-google-oauth.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
+    "passport-local": "github:DefinitelyTyped/DefinitelyTyped/passport-local/passport-local.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "serve-static": "github:DefinitelyTyped/DefinitelyTyped/serve-static/serve-static.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
+    "socket.io": "github:DefinitelyTyped/DefinitelyTyped/socket.io/socket.io.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1",
+    "winston": "github:DefinitelyTyped/DefinitelyTyped/winston/winston.d.ts#66f88ec51858bb21bc375fa91a963c04bc09401e"
   }
 }

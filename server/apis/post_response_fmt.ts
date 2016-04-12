@@ -33,7 +33,7 @@ export function badReq(res: Response, msg?: string, errors?: any): Response {
     warn(msg || 'Bad request');
     return res.status(400).json({
         message: msg || 'Bad request',
-        errors: errors
+        errors: errors || {}
     });
 }
 

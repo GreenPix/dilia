@@ -27,8 +27,8 @@
     ],
     "files": [
         "./apis/aariba.ts",
-        "./apis/assets.ts",
         "./apis/auth.ts",
+        "./apis/chipsets.ts",
         "./apis/index.ts",
         "./apis/lycan.ts",
         "./apis/map.ts",

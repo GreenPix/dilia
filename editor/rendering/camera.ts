@@ -1,17 +1,25 @@
-import {Program} from '../gl/gl';
+import {PipelineEl, Context, Obj2D} from './pipeline/interfaces';
+import {ViewportListener} from './viewport';
 
-export interface Obj2D {
-    // Set the new position
-    position(pos: [number, number]): void;
-    // Returns the width of this object.
-    getWidth(): number;
-    // Returns the height of this object.
-    getHeight(): number;
-    // Returns the position of this object.
-    getPosition(): [number, number];
-}
+export const FixedCamera = (width: number, height: number) => {
+    const identity_values = new Float32Array([
+        2 / width, 0,  0,
+        0, 2 / height, 0,
+        0, 0, 0,
+    ]);
+    return (ctx: Context) => {
+        ctx.gl.viewport(0, 0, width, height);
+        ctx.active_camera = identity_values;
+        // TODO: Fix this (buggy)
+        ctx.active_camera_props = {
+            pos: [0, 0],
+            wos: 0,
+            hos: 0,
+        };
+    };
+};
 
-export class Camera {
+export class Camera implements PipelineEl, ViewportListener {
 
     // Values, the actual matrix is the transposed of that one
     private values: Float32Array = new Float32Array([
@@ -43,10 +51,10 @@ export class Camera {
         this.pos[1] += y;
     }
 
-    applyFor(program: Program) {
-        program.setUniforms({
-            proj: this.values
-        });
+    execute(ctx: Context) {
+        ctx.gl.viewport(0, 0, this.viewport_width, this.viewport_height);
+        ctx.active_camera = this.values;
+        ctx.active_camera_props = this;
     }
 
     fromWindowCoordToObjectSpace(mx: number, my: number): [number, number] {
@@ -100,8 +108,7 @@ export class Camera {
             invariant[1] / old_z * (old_z - this.zoom_factor)
         );
 
-        this.values[0] *= this.zoom_factor / old_z;
-        this.values[4] *= this.zoom_factor / old_z;
+        this.updateScaleValues(old_z);
     }
 
     viewport(width: number, height: number) {
@@ -109,9 +116,13 @@ export class Camera {
         this.viewport_height = height;
         let o0 = this.values[0];
         let o4 = this.values[4];
-        this.values[0] = 2 * this.zoom_factor / width;
-        this.values[4] = 2 * this.zoom_factor / height;
+        this.updateScaleValues();
         this.values[6] *= this.values[0] / o0;
         this.values[7] *= this.values[4] / o4;
+    }
+
+    private updateScaleValues(old_z?: number) {
+        this.values[0] = this.zoom_factor * 2.0 / this.viewport_width; // old_z;
+        this.values[4] = this.zoom_factor * 2.0 / this.viewport_height; // old_z;
     }
 }

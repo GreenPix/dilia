@@ -1,9 +1,10 @@
 import {WebGLSurface} from '../webgl/surface';
 import {MouseHandler, KeyHandler} from '../webgl/surface';
-import {Camera} from '../../rendering/camera';
+import {Camera, FixedCamera} from '../../rendering/camera';
 import {Map} from '../../models/map';
+import {DefaultFBO, FBO} from '../../rendering/fbo';
 import {ZoomBehavior} from '../webgl/zoom';
-import {SceneManager} from '../../rendering/scene';
+import {Pipeline, ClearAll, FlipY} from '../../rendering/pipeline/index';
 import {TilesHandle, SelectedPartialLayer} from '../../rendering/tiles';
 import {SpriteHandle} from '../../rendering/sprite';
 
@@ -71,8 +72,8 @@ export class EditorState implements MouseHandler, KeyHandler {
     private brush_area: SpriteHandle;
     private chipset_palette: SpriteHandle;
 
-    private scene_editor: SceneManager;
-    private scene_palette: SceneManager;
+    private scene_editor: Pipeline;
+    private scene_palette: Pipeline;
     private state: State = State.Editor;
     private is_mouse_pressed: boolean = false;
 
@@ -83,8 +84,15 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.zbehavior_palette = new ZoomBehavior(this.camera_palette);
     }
 
-    init(surface: WebGLSurface, map: Map) {
+    init(surface: WebGLSurface) {
+        this.surface = surface;
+        this.surface.setKeyHandler(this);
+        this.surface.addViewportListener(this.camera_editor);
+        this.surface.addViewportListener(this.camera_palette);
+    }
 
+    edit(map: Map) {
+        let surface = this.surface;
         let p0 = surface.createGenericRenderingContext()
             .setShader(vertex_shader_overlay_src, fragment_shader_overlay_src)
             .addVertexBuffer('position', [-1, -1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1], 2);
@@ -138,13 +146,52 @@ export class EditorState implements MouseHandler, KeyHandler {
                 surface.setMouseHandler(this);
             });
 
-        this.scene_editor = new SceneManager([
+        let map_w_px = map.width * map.tile_size;
+        let map_h_px = map.height * map.tile_size;
+
+        let full_map_fbo = new FBO(this.surface.getGLContext());
+        full_map_fbo.setSize(map_w_px, map_h_px);
+
+        let c1_quad = surface.createSpriteRenderingContext()
+            .addSpriteObjectFromTex(full_map_fbo.getTexture(), builder => {
+                builder.buildWithEntireTexture();
+            });
+
+        let update = new Pipeline([
+            full_map_fbo,
+            ClearAll,
+            FixedCamera(map_w_px, map_h_px),
+            c1,
+            DefaultFBO,
+            ClearAll,
+            this.camera_editor,
+            c1_quad,
+            FlipY,
+            c2
+        ]);
+
+        let editor_untouched = new Pipeline([
+            ClearAll,
+            FlipY,
+            this.camera_editor,
+            c1_quad,
+            c2
+        ]);
+
+        // TODO: Remove this and replace with a mixed
+        // of the two above.
+        this.scene_editor = new Pipeline([
+            ClearAll,
+            FlipY,
             this.camera_editor,
             c1,
             c2
         ]);
+        this.scene_editor = update;
 
-        this.scene_palette = new SceneManager([
+        this.scene_palette = new Pipeline([
+            ClearAll,
+            FlipY,
             this.camera_editor,
             c1,
             this.camera_palette,
@@ -152,14 +199,17 @@ export class EditorState implements MouseHandler, KeyHandler {
             p1
         ]);
 
-        surface.setSceneManager(this.scene_editor);
-        surface.setKeyHandler(this);
-        this.surface = surface;
+        surface.setPipeline(this.scene_editor);
     }
 
     cleanUp() {
-        this.surface.setSceneManager(undefined);
-        this.surface.setMouseHandler(undefined);
+        if (this.surface) {
+            this.surface.removeViewportListener(this.camera_editor);
+            this.surface.removeViewportListener(this.camera_palette);
+            this.surface.setPipeline(undefined);
+            this.surface.setMouseHandler(undefined);
+            this.surface.setKeyHandler(undefined);
+        }
         this.map_handle = undefined;
         this.brush.sprite = undefined;
         this.surface = undefined;
@@ -174,10 +224,10 @@ export class EditorState implements MouseHandler, KeyHandler {
         if (this.surface && this.scene_editor && this.scene_palette) {
             if (this.state == State.Palette) {
                 this.zbehavior_editor.desactivate();
-                this.surface.setSceneManager(this.scene_palette);
+                this.surface.setPipeline(this.scene_palette);
             } else {
                 this.zbehavior_palette.desactivate();
-                this.surface.setSceneManager(this.scene_editor);
+                this.surface.setPipeline(this.scene_editor);
             }
         }
         this.is_mouse_pressed = false;

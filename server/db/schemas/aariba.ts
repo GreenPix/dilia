@@ -37,9 +37,20 @@ export interface AaribaScriptProperties {
     contributors: Types.ObjectId[];
 }
 
+export interface AaribaScriptJsmap {
+    name: string;
+    created_on: Date;
+    content: string;
+    revisions: Array<{
+        author: Types.ObjectId;
+        date: Date;
+        comment: string;
+    }>;
+}
+
 export interface AaribaScriptSchema extends AaribaScriptProperties {
-    // Form usefull for the client
-    toJsonResponse(): any;
+
+    toJsmap(): AaribaScriptJsmap;
     getRevision(id: number): Revision;
     getLatest(): Revision;
     commitRevision(rev: Revision, cb: (err: any) => void): void;
@@ -77,10 +88,10 @@ mongooseAaribaScriptSchema.path('name').validate(function (name, cb) {
 
 mongooseAaribaScriptSchema.method({
 
-    toJsonResponse: function (): any {
+    toJsmap: function (): AaribaScriptJsmap {
 
         let self: AaribaScriptSchema = this;
-        let res =  _.pick<any, AaribaScriptSchema>(self,
+        let res: AaribaScriptJsmap =  _.pick<any, AaribaScriptSchema>(self,
             ['name', 'created_on']
         );
 

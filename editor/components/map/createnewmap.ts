@@ -29,7 +29,7 @@ export class CreateNewMapModal {
     @Output('newMap')
     private emitter = new EventEmitter<NewMap>();
 
-    private new_map: NewMap = {} as any;
+    private new_map: NewMap = { name: '' } as any;
 
     constructor(
         private map_manager: MapManager

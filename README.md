@@ -13,6 +13,7 @@ In order to work properly, the server has a few requirements:
 
 * Some packages:
   * **[required]** `mongodb`
+  * **[required]** `libkrb5-dev`
 * Some environment variables:
   * **[required]** `NODE_ENV` set to `production`.
   * **[optional]** `GOOGLE_SECRET` and `GOOGLE_CLIENTID` API token in order to allow google oauth

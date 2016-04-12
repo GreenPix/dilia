@@ -11,3 +11,6 @@ import './aariba';
 
 // Maps
 import './map';
+
+// Assets
+import './chipsets';

@@ -1,4 +1,5 @@
 
+
 var webpack = require('webpack');
 var path = require('path');
 
@@ -22,7 +23,8 @@ module.exports = {
         publicPath: '/',
         port: 8001,
         proxy: {
-          '/api/*': 'http://localhost:3000/'
+          '/api/*': 'http://localhost:3000/',
+          '/socket.io/': 'http://localhost:3000/',
         }
     },
     entry: {

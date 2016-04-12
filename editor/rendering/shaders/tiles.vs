@@ -11,7 +11,6 @@ void main() {
         v_tex_coords = vec2(0.0);
     } else {
         gl_Position = vec4(proj * vec3(tile_pos, 1.0), 1.0);
-        // gl_Position = proj * vec4(tile_pos, 0.0, 1.0);
         v_tex_coords = vec2(tile_tex_coord.x - 1.0, tile_tex_coord.y - 1.0);
     }
 }

@@ -3,7 +3,7 @@ import {authenticate} from 'passport';
 import {logRequest} from '../logger/helpers';
 import {unauthorized} from './post_response_fmt';
 
-require('../config/passport');
+import '../config/passport';
 
 
 // Verify
