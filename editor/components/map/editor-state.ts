@@ -4,9 +4,12 @@ import {Camera, FixedCamera} from '../../rendering/camera';
 import {Map} from '../../models/map';
 import {DefaultFBO, FBO} from '../../rendering/fbo';
 import {ZoomBehavior} from '../webgl/zoom';
-import {Pipeline, ClearAll, FlipY} from '../../rendering/pipeline/index';
+// import {TmpLinearFiltering} from '../../rendering/pipeline';
+import {Pipeline, ClearAll, FlipY} from '../../rendering/pipeline';
 import {TilesHandle, SelectedPartialLayer} from '../../rendering/tiles';
-import {SpriteHandle} from '../../rendering/sprite';
+import {SpriteHandle, SpriteBuilder} from '../../rendering/sprite';
+import {genPixelsForTextureWithBorder} from '../../rendering/util';
+import {TileProgram, SpriteProgram} from '../../rendering/shaders';
 
 let vertex_shader_overlay_src = require<string>('./shaders/dark_overlay.vs');
 let fragment_shader_overlay_src = require<string>('./shaders/dark_overlay.fs');
@@ -49,6 +52,24 @@ class Brush {
     }
 }
 
+class GridHandle {
+    constructor(
+        private grid: SpriteBuilder,
+        private map: Map
+    ) {}
+
+    updateGrid(new_zoom_level: number) {
+        this.grid.updateTexture(
+            genPixelsForTextureWithBorder(this.map.tile_size * new_zoom_level)
+        )
+        .buildWithSize(
+            this.map.widthInPx() * new_zoom_level,
+            this.map.heightInPx() * new_zoom_level,
+            true
+        );
+    }
+}
+
 class DynamicMap {
     handles: TilesHandle[] = [];
 }
@@ -71,6 +92,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     private brush: Brush = new Brush();
     private brush_area: SpriteHandle;
     private chipset_palette: SpriteHandle;
+    private grid: GridHandle;
 
     private scene_editor: Pipeline;
     private scene_palette: Pipeline;
@@ -93,18 +115,15 @@ export class EditorState implements MouseHandler, KeyHandler {
 
     edit(map: Map) {
         let surface = this.surface;
-        let p0 = surface.createGenericRenderingContext()
+        let overlay = surface.createGenericRenderingContext()
             .setShader(vertex_shader_overlay_src, fragment_shader_overlay_src)
             .addVertexBuffer('position', [-1, -1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1], 2);
 
-        let p1 = surface.createSpriteRenderingContext()
-            .addSpriteObject(map.layers[0].raw[0].chipset, builder => {
-                this.chipset_palette = builder.buildWithEntireTexture();
-                this.camera_palette.centerOn(this.chipset_palette);
-            })
-            .addSpriteObject([51, 122, 183, 178], builder => {
-                this.brush_area = builder.buildWithSize(16, 16);
-            });
+        let palette = surface.createSpriteRenderEl();
+        palette.loadSpriteObject(map.layers[0].raw[0].chipset, builder => {
+            this.chipset_palette = builder.buildWithEntireTexture();
+            this.camera_palette.centerOn(this.chipset_palette);
+        });
 
         // Load the map. We compute first the position of the chipset that
         // are going to be loaded from the server.
@@ -119,84 +138,88 @@ export class EditorState implements MouseHandler, KeyHandler {
             }
         }
 
-        let c1 = surface.createTilesRenderingContext()
-            .addTileLayerObject(chipsets_path, (chipsets, builder) => {
-                let handle = builder.setWidth(map.width)
-                    .setHeight(map.height)
-                    .tileSize(map.tile_size);
-                for (let i = 0; i < map.layers.length; ++i) {
-                    let layer = map.layers[i].raw.map(pl => {
-                        return {
-                            tiles_id: pl.tiles_id,
-                            chipset: chipsets[chipsets_pos[pl.chipset]]
-                        };
-                    });
-                    handle.addLayer(layer);
-                }
-                this.map_handle = handle.build();
-                this.camera_editor.centerOn(this.map_handle);
-            });
+        let map_tiled = surface.createTilesRenderEl();
+        map_tiled.loadTileLayerObject(chipsets_path, (chipsets, builder) => {
+            let handle = builder.setWidth(map.width)
+                .setHeight(map.height)
+                .tileSize(map.tile_size);
+            for (let i = 0; i < map.layers.length; ++i) {
+                let layer = map.layers[i].raw.map(pl => {
+                    return {
+                        tiles_id: pl.tiles_id,
+                        chipset: chipsets[chipsets_pos[pl.chipset]]
+                    };
+                });
+                handle.addLayer(layer);
+            }
+            this.map_handle = handle.build();
+            this.camera_editor.centerOn(this.map_handle);
+        });
 
-        let c2 = surface.createSpriteRenderingContext()
-            .addSpriteObject(map.layers[0].raw[0].chipset, builder => {
-                this.brush.sprite = builder
-                    .overlayFlag(true)
-                    .buildFromTileId(16, this.brush.tiles_ids[0]);
+        let brush = surface.createSpriteRenderEl();
+        brush.loadSpriteObject(map.layers[0].raw[0].chipset, builder => {
+            this.brush.sprite = builder
+                .overlayFlag(true)
+                .buildFromTileId(16, this.brush.tiles_ids[0]);
 
-                surface.setMouseHandler(this);
-            });
-
-        let map_w_px = map.width * map.tile_size;
-        let map_h_px = map.height * map.tile_size;
+            surface.setMouseHandler(this);
+        });
 
         let full_map_fbo = new FBO(this.surface.getGLContext());
-        full_map_fbo.setSize(map_w_px, map_h_px);
+        full_map_fbo.setSize(map.widthInPx(), map.heightInPx());
 
-        let c1_quad = surface.createSpriteRenderingContext()
-            .addSpriteObjectFromTex(full_map_fbo.getTexture(), builder => {
-                builder.buildWithEntireTexture();
-            });
+        let map_quad = surface.createSpriteRenderEl();
+        map_quad.loadSpriteObject(full_map_fbo.getTexture(),
+            builder => builder.buildWithEntireTexture()
+        );
 
-        let update = new Pipeline([
+        let zoom = this.camera_editor.zoom_lvl;
+        let grid = surface.createSpriteRenderEl();
+        grid.loadSpriteObject(
+            genPixelsForTextureWithBorder(map.tile_size * zoom),
+            builder => {
+                this.grid = new GridHandle(
+                    builder,
+                    map
+                );
+                this.grid.updateGrid(zoom);
+        });
+
+        // TODO: Have a version "untouched" where
+        //       we don't perform the rendering
+        //       against the FBO (not needed when the map hasn't changed)
+        this.scene_editor = new Pipeline([
             full_map_fbo,
             ClearAll,
-            FixedCamera(map_w_px, map_h_px),
-            c1,
+            FixedCamera(map.widthInPx(), map.heightInPx()),
+            TileProgram,
+            map_tiled,// new TmpLinearFiltering(map_tiled),
             DefaultFBO,
             ClearAll,
+            this.camera_editor.as_camera_with_scale_ignored(),
+            SpriteProgram,
+            grid,
             this.camera_editor,
-            c1_quad,
+            SpriteProgram,
+            map_quad,
             FlipY,
-            c2
+            brush
         ]);
-
-        let editor_untouched = new Pipeline([
-            ClearAll,
-            FlipY,
-            this.camera_editor,
-            c1_quad,
-            c2
-        ]);
-
-        // TODO: Remove this and replace with a mixed
-        // of the two above.
-        this.scene_editor = new Pipeline([
-            ClearAll,
-            FlipY,
-            this.camera_editor,
-            c1,
-            c2
-        ]);
-        this.scene_editor = update;
 
         this.scene_palette = new Pipeline([
             ClearAll,
             FlipY,
             this.camera_editor,
-            c1,
+            TileProgram,
+            map_tiled,
             this.camera_palette,
-            p0,
-            p1
+            overlay,
+            SpriteProgram,
+            palette,
+            surface.createSpriteRenderEl().loadSpriteObject(
+                [51, 122, 183, 178],
+                builder => this.brush_area = builder.buildWithSize(16, 16)
+            )
         ]);
 
         surface.setPipeline(this.scene_editor);
@@ -333,6 +356,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     private mouseWheelEditor(event: WheelEvent): void {
         let [x, y] = this.objectSpace(event);
         this.zbehavior_editor.mouseWheel(event.deltaY, x, y);
+        this.grid.updateGrid(this.camera_editor.zoom_lvl);
     }
 
     //////////////////////////////////////////////

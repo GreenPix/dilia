@@ -1,7 +1,8 @@
-import {glDrawElements, Geom, Texture} from '../gl/gl';
-import {Program, VertexBuffer} from '../gl/gl';
+import {Program, VertexBuffer, texRepeat, Pixels} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
-import {Obj2D} from './pipeline/interfaces';
+import {glDrawElements, Geom, Texture} from '../gl/gl';
+import {updateTextureFromPixels} from '../gl/gl';
+import {Obj2D} from './interfaces';
 
 
 /// Sprite builder to customize
@@ -10,8 +11,9 @@ import {Obj2D} from './pipeline/interfaces';
 export interface SpriteBuilder {
     position(pos: [number, number]): this;
     overlayFlag(overlay: boolean): this;
+    updateTexture(pixels: Pixels): this;
     buildWithEntireTexture(): SpriteHandle;
-    buildWithSize(width: number, height: number): SpriteHandle;
+    buildWithSize(width: number, height: number, tex_repeat?: boolean): SpriteHandle;
     buildFromTileId(tile_size: number, id: number): SpriteHandle;
 }
 
@@ -23,17 +25,16 @@ export interface SpriteHandle extends Obj2D {
 
 export class SpriteObject implements SpriteBuilder, SpriteHandle {
 
-    private tex: Texture;
-    private vertex_linked: BufferLinkedToProgram;
-    private texCoord_linked: BufferLinkedToProgram;
+    tex: Texture;
+    private vertex_linked: BufferLinkedToProgram | VertexBuffer;
+    private texCoord_linked: BufferLinkedToProgram | VertexBuffer;
     private pos: [number, number] = [0, 0];
     private indices: IndicesBuffer;
     private is_overlay: boolean = false;
     private is_hidden: boolean = false;
 
     constructor(
-        private gl: WebGLRenderingContext,
-        private program: Program
+        private gl: WebGLRenderingContext
     ) {
         this.indices = new IndicesBuffer(gl).fill([0, 1, 2, 0, 2, 3]);
     }
@@ -77,13 +78,26 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
             0, this.tex.height
         ], [0, 0, 1, 0, 1, 1, 0, 1]);
     }
-    buildWithSize(width: number, height: number): this {
+    updateTexture(pixels: Pixels): this {
+        updateTextureFromPixels(this.gl, this.tex, pixels);
+        return this;
+    }
+    buildWithSize(width: number, height: number, tex_repeat?: boolean): this {
+        let tex_coord_w, tex_coord_h;
+        if (tex_repeat) {
+            texRepeat(this.gl, this.tex.tex_id);
+            tex_coord_w = width / this.tex.width;
+            tex_coord_h = height / this.tex.height;
+        } else {
+            tex_coord_w = 1;
+            tex_coord_h = 1;
+        }
         return this.buildFrom([
             0, 0,
             width, 0,
             width, height,
             0, height
-        ], [0, 0, 1, 0, 1, 1, 0, 1]);
+        ], [0, 0, tex_coord_w, 0, tex_coord_w, tex_coord_h, 0, tex_coord_h]);
     }
     buildFromTileId(ts: number, id: number): this {
         id = id - 1;
@@ -105,12 +119,10 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
     private buildFrom(pos: number[], texCoord: number[]): this {
         let buffer = new VertexBuffer(this.gl)
             .fill(pos).numberOfComponents(2);
-        this.vertex_linked = new BufferLinkedToProgram(
-            this.program, buffer, 'pos');
+        this.vertex_linked = buffer;
         buffer = new VertexBuffer(this.gl)
             .fill(texCoord).numberOfComponents(2);
-        this.texCoord_linked = new BufferLinkedToProgram(
-            this.program, buffer, 'texCoord');
+        this.texCoord_linked = buffer;
         return this;
     }
 
@@ -122,6 +134,14 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         // Don't draw if this sprite is hidden.
         if (this.is_hidden) return;
 
+        if (this.vertex_linked instanceof VertexBuffer &&
+            this.texCoord_linked instanceof VertexBuffer) {
+            this.vertex_linked = new BufferLinkedToProgram(
+                program, this.vertex_linked as VertexBuffer, 'pos');
+            this.texCoord_linked = new BufferLinkedToProgram(
+                program, this.texCoord_linked as VertexBuffer, 'texCoord');
+        }
+
         program.setUniforms({
             texture: this.tex.tex_id,
             obj_pos: this.pos,
@@ -131,6 +151,7 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
             Geom.TRIANGLES,
             gl,
             this.indices,
-            this.vertex_linked, this.texCoord_linked);
+            this.vertex_linked as BufferLinkedToProgram,
+            this.texCoord_linked as BufferLinkedToProgram);
     }
 }

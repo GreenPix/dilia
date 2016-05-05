@@ -2,12 +2,12 @@ import {Component, View, AfterViewInit, OnDestroy} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {TextureLoader} from '../../gl/gl';
 import {UniqueId} from '../../services/index';
-import {Pipeline} from '../../rendering/pipeline/index';
+import {Pipeline} from '../../rendering/pipeline';
 import {ViewportListener} from '../../rendering/viewport';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
-import {GenericRenderingContext} from '../../rendering/context';
-import {SpriteRenderingContext} from '../../rendering/context';
-import {TilesRenderingContext} from '../../rendering/context';
+import {GenericRenderEl} from '../../rendering/draw';
+import {SpriteRenderEl} from '../../rendering/draw';
+import {TilesRenderEl} from '../../rendering/draw';
 
 export interface MouseHandler {
     mouseWheel(event: WheelEvent): void;
@@ -95,18 +95,18 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         }
     }
 
-    createGenericRenderingContext(): GenericRenderingContext {
-        let render_ctx = new GenericRenderingContext(this.gl, this.tex_loader);
+    createGenericRenderingContext(): GenericRenderEl {
+        let render_ctx = new GenericRenderEl(this.gl, this.tex_loader);
         return render_ctx;
     }
 
-    createTilesRenderingContext(): TilesRenderingContext {
-        let render_ctx = new TilesRenderingContext(this.gl, this.tex_loader);
+    createTilesRenderEl(): TilesRenderEl {
+        let render_ctx = new TilesRenderEl(this.gl, this.tex_loader);
         return render_ctx;
     }
 
-    createSpriteRenderingContext(): SpriteRenderingContext {
-        let render_ctx = new SpriteRenderingContext(this.gl, this.tex_loader);
+    createSpriteRenderEl(): SpriteRenderEl {
+        let render_ctx = new SpriteRenderEl(this.gl, this.tex_loader);
         return render_ctx;
     }
 

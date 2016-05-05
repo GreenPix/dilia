@@ -1,10 +1,51 @@
 
 export class Texture {
-    width: number;
-    height: number;
-    tex_id: WebGLTexture;
+    width: number = 1;
+    height: number = 1;
+    tex_id: WebGLTexture = undefined;
 }
 
+export class Pixels {
+    width: number = 1;
+    raw: Uint32Array = new Uint32Array(0);
+}
+
+export function texRepeat(gl: WebGLRenderingContext, tex_id: WebGLTexture) {
+    gl.bindTexture(gl.TEXTURE_2D, tex_id);
+    gl.texParameteri(
+        gl.TEXTURE_2D,
+        gl.TEXTURE_WRAP_S,
+        gl.REPEAT
+    );
+    gl.texParameteri(
+        gl.TEXTURE_2D,
+        gl.TEXTURE_WRAP_T,
+        gl.REPEAT
+    );
+    gl.texParameteri(
+        gl.TEXTURE_2D,
+        gl.TEXTURE_MIN_FILTER,
+        gl.NEAREST
+    );
+    gl.texParameteri(
+        gl.TEXTURE_2D,
+        gl.TEXTURE_MAG_FILTER,
+        gl.NEAREST
+    );
+}
+
+export function updateTextureFromPixels(
+    gl: WebGLRenderingContext,
+    tex: Texture,
+    pixels: Pixels): void
+{
+    tex.width = pixels.width;
+    tex.height = pixels.raw.length / pixels.width;
+    gl.bindTexture(gl.TEXTURE_2D, tex.tex_id);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, tex.width, tex.height,
+        0, gl.RGBA,
+        gl.UNSIGNED_BYTE, new Uint8Array(pixels.raw.buffer));
+}
 
 export class TextureLoader {
 
@@ -25,6 +66,15 @@ export class TextureLoader {
         tex.tex_id = tex_id;
         tex.width = 1;
         tex.height = 1;
+        cb(tex);
+    }
+
+    loadTextureFromPixels(pixels: Pixels, cb: (tex: Texture) => void) {
+        let gl = this.gl;
+        let tex_id = gl.createTexture();
+        let tex = new Texture();
+        tex.tex_id = tex_id;
+        updateTextureFromPixels(gl, tex, pixels);
         cb(tex);
     }
 

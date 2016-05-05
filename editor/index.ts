@@ -1,3 +1,9 @@
+import {enableProdMode} from 'angular2/core';
+
+if (IS_PRODUCTION) {
+    enableProdMode();
+}
+
 import {HTTP_PROVIDERS} from 'angular2/http';
 import {bootstrap} from 'angular2/platform/browser';
 import {provide} from 'angular2/core';

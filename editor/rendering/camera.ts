@@ -1,11 +1,16 @@
-import {PipelineEl, Context, Obj2D} from './pipeline/interfaces';
+import {PipelineEl, Obj2D} from './interfaces';
+import {Context} from './context';
 import {ViewportListener} from './viewport';
 
 export const FixedCamera = (width: number, height: number) => {
+    // TODO: Figure out the reason behind
+    //       the inversion of the y axis.
+    //       This is surprising as in OpenGL
+    //       the y axis point up
     const identity_values = new Float32Array([
         2 / width, 0,  0,
-        0, 2 / height, 0,
-        0, 0, 0,
+        0, -2 / height, 0,
+        -1, 1, 0,
     ]);
     return (ctx: Context) => {
         ctx.gl.viewport(0, 0, width, height);
@@ -43,12 +48,26 @@ export class Camera implements PipelineEl, ViewportListener {
     get wos(): number { return 2 * this.viewport_width / this.zoom_factor; }
     // height in object space
     get hos(): number { return 2 * this.viewport_height / this.zoom_factor; }
+    // Zoom level
+    get zoom_lvl(): number { return this.zoom_factor; }
 
     translate(x: number, y: number) {
         this.values[6] += x * this.values[0];
         this.values[7] += y * this.values[4];
         this.pos[0] += x;
         this.pos[1] += y;
+    }
+
+    as_camera_with_scale_ignored(): (ctx: Context) => void {
+
+        return (ctx) => {
+            ctx.gl.viewport(0, 0, this.viewport_width, this.viewport_height);
+            let values = new Float32Array(this.values);
+            values[0] = 2 / this.viewport_width;
+            values[4] = 2 / this.viewport_height;
+            ctx.active_camera = values;
+            ctx.active_camera_props = this;
+        };
     }
 
     execute(ctx: Context) {
@@ -81,25 +100,17 @@ export class Camera implements PipelineEl, ViewportListener {
     zoom(sign: number, invariant: [number, number] = [0, 0]) {
         let value = Math.sign(sign);
         let old_z = this.zoom_factor;
-        if (Math.abs(this.zoom_factor - 1) <= 0.1) {
-            if (value === -1) {
-                this.zoom_factor = 0.5;
-            } else {
-                this.zoom_factor += 1;
-            }
-        } else if (Math.abs(this.zoom_factor - 0.5) <= 0.1) {
-            if (value === 1) {
-                this.zoom_factor = 1;
-            } else {
-                return;
-            }
-        } else if (this.zoom_factor < 5) {
-            this.zoom_factor += value;
-        } else if (this.zoom_factor < 10) {
-            this.zoom_factor += 2 * value;
-        } else if (this.zoom_factor >= 10 && value === -1) {
-            this.zoom_factor -= 2;
+        if (value === 1) {
+            this.zoom_factor *= 2;
         } else {
+            this.zoom_factor /= 2;
+        }
+        if (this.zoom_factor < 0.5) {
+            this.zoom_factor = 0.5;
+            return;
+        }
+        if (this.zoom_factor > 8) {
+            this.zoom_factor = 8;
             return;
         }
 

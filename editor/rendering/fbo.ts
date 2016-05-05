@@ -1,4 +1,5 @@
-import {Context, PipelineEl} from './pipeline/interfaces';
+import {PipelineEl} from './interfaces';
+import {Context} from './context';
 import {Texture} from '../gl/tex';
 
 
@@ -16,11 +17,8 @@ export class FBO implements PipelineEl {
         private gl: WebGLRenderingContext
     ) {
         this.fbo = this.gl.createFramebuffer();
-        this.texture = {
-            tex_id: this.gl.createTexture(),
-            width: 1,
-            height: 1,
-        };
+        this.texture = new Texture();
+        this.texture.tex_id = this.gl.createTexture();
     }
 
     getTexture(): Texture {

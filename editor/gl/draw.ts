@@ -57,6 +57,11 @@ export class BufferLinkedToProgram {
         attr_name: string
     ) {
         let cb = prog.getBindBufferCallback(attr_name);
+        if (!IS_PRODUCTION) {
+            if (cb === undefined) {
+                throw new Error(`Debug: The program does not use '${attr_name}'`);
+            }
+        }
         this.bindBuffer = () => cb(buffer);
         this.count = buffer.numberOfVertices();
     }

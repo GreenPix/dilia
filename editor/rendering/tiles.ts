@@ -1,7 +1,7 @@
 import {Program, VertexBuffer, glDrawElements, Geom} from '../gl/gl';
 import {IndicesBuffer, BufferLinkedToProgram} from '../gl/gl';
 import {Texture} from '../gl/gl';
-import {CameraProperties, Obj2D} from './pipeline/interfaces';
+import {CameraProperties, Obj2D} from './interfaces';
 
 
 // A note on how the rendering works:
@@ -135,6 +135,17 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
         this.vertex_linked = undefined;
     }
 
+    getTextures(): Array<WebGLTexture> {
+        let texs = new Array();
+        for (let sl of this.static_layers) {
+            for (let pl of sl.partial_layers) {
+                if (texs.indexOf(pl.texture) === -1) {
+                    texs.push(pl.texture);
+                }
+            }
+        }
+        return texs;
+    }
 
     // TilesLayerBuilder interface
     setWidth(w: number): this { this.width = w; return this; }
@@ -208,13 +219,14 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
         // Check if the update is needed or not.
         let new_ij: [number, number] = [0, 0];
         let new_hw: [number, number] = [0, 0];
-        let f = CFP * this.tile_size;
 
-        let diff: [number, number] = [
-            camera.pos[0] - this.pos[0],
-            camera.pos[1] - this.pos[1]
-        ];
-
+        // let f = CFP * this.tile_size;
+        //
+        // let diff: [number, number] = [
+        //     camera.pos[0] - this.pos[0],
+        //     camera.pos[1] - this.pos[1]
+        // ];
+        //
         // Compute the new position of the camera in tile space
         // new_ij[0] = Math.min(
         //     Math.max(Math.ceil(diff[1] / f), 0) * CFP,
@@ -337,7 +349,7 @@ class PartialLayer {
     }
 
     constructor(
-        private texture: WebGLTexture
+        public texture: WebGLTexture
     ) {}
 
     setTileId(width: number, i: number, j: number, tile_id: number): void {
@@ -428,7 +440,7 @@ class Layer {
 
     // In a partial layers all tiles share the same texture
     // and tiles_ids are relative to that texture.
-    private partial_layers: Array<PartialLayer> = [];
+    partial_layers: Array<PartialLayer> = [];
 
     static createForRendering(
         gl: WebGLRenderingContext,

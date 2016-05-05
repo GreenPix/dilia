@@ -1,3 +1,5 @@
+import {Context} from './context';
+
 
 export interface CameraProperties {
     pos: [number, number];
@@ -5,13 +7,6 @@ export interface CameraProperties {
     wos: number;
     // height in object space
     hos: number;
-}
-
-export interface Context {
-    active_camera_props: CameraProperties;
-    active_camera: Float32Array;
-    flip_y: boolean;
-    gl: WebGLRenderingContext;
 }
 
 /// Pipeline element. Each element is executed
@@ -27,6 +22,10 @@ export interface PipelineEl {
     /// Execute this element. This can modify the context
     /// as well as changing the WebGL state.
     execute(ctx: Context);
+}
+
+export interface TextureGetter {
+    getTextures(): Array<WebGLTexture>;
 }
 
 export interface Obj2D {

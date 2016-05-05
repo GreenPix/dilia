@@ -42,6 +42,14 @@ export class Map {
         return this.tile_size;
     }
 
+    widthInPx(): number {
+        return this.width * this.tile_size;
+    }
+
+    heightInPx(): number {
+        return this.height * this.tile_size;
+    }
+
     numberOfLayers(): number {
         return this.layers.length;
     }
