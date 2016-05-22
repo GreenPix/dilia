@@ -60,6 +60,8 @@ export interface SelectedPartialLayer {
 }
 
 export interface TileIdSetter {
-    setTileId(width: number, i: number, j: number, tile_id: number): void;
+    setTileId(
+        width: number, tile_size: number,
+        i: number, j: number, tile_id: number): void;
     update(gl: WebGLRenderingContext, width: number, height: number): void;
 }

@@ -47,7 +47,7 @@ export class TilesLayer2 implements TilesLayerBuilder, TilesHandle {
     tileSize(ts: number): this { this.tile_size = ts; return this;  }
     position(pos: [number, number]): this { this.pos = pos; return this;  }
     addLayer(layer_per_texture: ChipsetLayer[]): this {
-        let l = new Layer(this.gl, this.width, layer_per_texture);
+        let l = new Layer(this.gl, this.width, this.tile_size, layer_per_texture);
         this.layers.push(l);
         return this;
     }
@@ -109,7 +109,7 @@ export class TilesLayer2 implements TilesLayerBuilder, TilesHandle {
     }
     insertEmptyLayer(layer_index: number): void {
         this.layers.splice(layer_index, 0,
-            new Layer(this.gl, this.width, [])
+            new Layer(this.gl, this.width, this.tile_size, [])
         );
     }
     getPosition(): [number, number] {
@@ -130,11 +130,12 @@ class Layer {
     constructor(
         gl: WebGLRenderingContext,
         width_map: number,
+        tile_size: number,
         layer_per_texture: ChipsetLayer[]
     ) {
         for (let cl of layer_per_texture) {
             this.partial_layers.push(
-                new PartialLayer(gl, width_map, cl)
+                new PartialLayer(gl, width_map, tile_size, cl)
             );
         }
     }
@@ -152,6 +153,7 @@ class PartialLayer implements TileIdSetter {
     constructor(
         gl: WebGLRenderingContext,
         width_map: number,
+        tile_size: number,
         chipset_layer: ChipsetLayer
     ) {
         this.tex = chipset_layer.chipset;
@@ -166,7 +168,7 @@ class PartialLayer implements TileIdSetter {
         let index = 0;
         for (let i = 0; i < width_map; ++i) {
             for (let j = 0; j < height; ++j) {
-                this.setTileId(width_map, i, j, chipset_layer.tiles_id[index]);
+                this.setTileId(width_map, tile_size, i, j, chipset_layer.tiles_id[index]);
                 ++index;
             }
         }
@@ -175,21 +177,25 @@ class PartialLayer implements TileIdSetter {
 
     setTileId(
         width: number,
+        tile_size: number,
         i: number,
         j: number,
         tile_id: number
     ): void {
+        let index = i * width * 4 + j * 4;
         if (tile_id === 0) {
-            this.tile_ids[i * width * 4 + j * 4 + 0] = 255;
-            this.tile_ids[i * width * 4 + j * 4 + 1] = 255;
-            this.tile_ids[i * width * 4 + j * 4 + 2] = 0;
-            this.tile_ids[i * width * 4 + j * 4 + 3] = 0;
+            this.tile_ids[index + 0] = 255;
+            this.tile_ids[index + 1] = 255;
+            this.tile_ids[index + 2] = 0;
+            this.tile_ids[index + 3] = 0;
         } else {
+            let tw = this.tex.width / tile_size;
+            let th = this.tex.height / tile_size;
             tile_id = tile_id - 1;
-            this.tile_ids[i * width * 4 + j * 4 + 0] = tile_id % width;
-            this.tile_ids[i * width * 4 + j * 4 + 1] = Math.floor(tile_id / width);
-            this.tile_ids[i * width * 4 + j * 4 + 2] = 0;
-            this.tile_ids[i * width * 4 + j * 4 + 3] = 0;
+            this.tile_ids[index + 0] = tile_id % tw;
+            this.tile_ids[index + 1] = th - Math.floor(tile_id / tw) - 1;
+            this.tile_ids[index + 2] = 0;
+            this.tile_ids[index + 3] = 0;
         }
     }
 

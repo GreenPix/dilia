@@ -23,7 +23,7 @@ void main(void) {
         discard;
     }
     vec2 tile_coord = floor(tile.xy * 256.0) * tile_size;
-    vec2 offset_in_tile = mod(pixel_coord, tile_size);
+    vec2 offset_in_tile = tile_size - mod(pixel_coord, tile_size);
     vec2 final_tex_coord = (tile_coord + offset_in_tile) * inverse_tiles_tex_size;
     gl_FragColor = texture2D(tiles_tex, final_tex_coord);
 }

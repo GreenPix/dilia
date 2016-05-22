@@ -44,6 +44,7 @@ export class Camera implements Command, ViewportListener {
     // Camera dimensions in object space.
     // Top left corner of the camera in object space
     pos: [number, number] = [0, 0];
+    private scaled_pos: [number, number] = [0, 0];
     // width  in object space
     get wos(): number { return 2 * this.viewport_width / this.zoom_factor; }
     // height in object space
@@ -54,9 +55,9 @@ export class Camera implements Command, ViewportListener {
     translate(x: number, y: number) {
         this.values[6] += x * this.values[0];
         this.values[7] += y * this.values[4];
-
         this.pos[0] += x;
         this.pos[1] += y;
+        this.updateSaledPos();
     }
 
     as_camera_with_scale_ignored(): (ctx: Context) => void {
@@ -67,6 +68,9 @@ export class Camera implements Command, ViewportListener {
             values[0] = 2 / this.viewport_width;
             values[4] = 2 / this.viewport_height;
             ctx.active_camera = values;
+            ctx.active_program.setUniforms({
+                proj: values
+            });
             ctx.active_camera_props = this;
         };
     }
@@ -78,7 +82,7 @@ export class Camera implements Command, ViewportListener {
                 this.viewport_width / this.zoom_factor,
                 this.viewport_height / this.zoom_factor
             ],
-            view_pos: this.pos,
+            view_pos: this.scaled_pos,
             flip_y: ctx.flip_y,
             proj: this.values,
         });
@@ -104,6 +108,7 @@ export class Camera implements Command, ViewportListener {
         this.pos = [-x -w / 2, -y -h / 2];
         this.values[6] = Math.floor(this.pos[0]) * this.values[0];
         this.values[7] = Math.floor(this.pos[1]) * this.values[4];
+        this.updateSaledPos();
     }
 
     // TODO: Write a test for this function.
@@ -145,5 +150,10 @@ export class Camera implements Command, ViewportListener {
     private updateScaleValues(old_z?: number) {
         this.values[0] = this.zoom_factor * 2.0 / this.viewport_width; // old_z;
         this.values[4] = this.zoom_factor * 2.0 / this.viewport_height; // old_z;
+    }
+
+    private updateSaledPos() {
+        this.scaled_pos[0] = Math.floor(this.pos[0] / this.zoom_factor) * this.zoom_factor;
+        this.scaled_pos[1] = Math.floor(this.pos[1] / this.zoom_factor) * this.zoom_factor;
     }
 }

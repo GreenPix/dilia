@@ -428,7 +428,7 @@ class Layer {
             height,
             tile_size,
             {
-                setTileId: (width: number, i: number, j: number, tile_id: number) => {
+                setTileId: (width: number, ts: number, i: number, j: number, tile_id: number) => {
                     this.partial_layers[chipset].setTileId(width, i, j, tile_id);
                 },
                 update: (gl: WebGLRenderingContext, width: number, height: number) => {

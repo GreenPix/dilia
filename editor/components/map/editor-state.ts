@@ -166,13 +166,13 @@ export class EditorState implements MouseHandler, KeyHandler {
             surface.setMouseHandler(this);
         });
 
-        let full_map_fbo = new FBO(this.surface.getGLContext());
-        full_map_fbo.setSize(map.widthInPx(), map.heightInPx());
+        // let full_map_fbo = new FBO(this.surface.getGLContext());
+        // full_map_fbo.setSize(map.widthInPx(), map.heightInPx());
 
-        let map_quad = surface.createSpriteRenderEl();
-        map_quad.loadSpriteObject(full_map_fbo.getTexture(),
-            builder => builder.buildWithEntireTexture()
-        );
+        // let map_quad = surface.createSpriteRenderEl();
+        // map_quad.loadSpriteObject(full_map_fbo.getTexture(),
+        //     builder => builder.buildWithEntireTexture()
+        // );
 
         let zoom = this.camera_editor.zoom_lvl;
         let grid = surface.createSpriteRenderEl();
@@ -192,16 +192,15 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.scene_editor = new CommandBuffer([
             DefaultFBO,
             ClearAll,
-            FlipY,
-            Tile2Program,
-            this.camera_editor,
-            map_tiled,
             SpriteProgram,
             this.camera_editor.as_camera_with_scale_ignored(),
             grid,
+            Tile2Program,
             this.camera_editor,
-            map_quad,
+            map_tiled,
             FlipY,
+            SpriteProgram,
+            this.camera_editor,
             brush
         ]);
         // new CommandBuffer([
@@ -229,9 +228,9 @@ export class EditorState implements MouseHandler, KeyHandler {
             TileProgram,
             this.camera_editor,
             map_tiled,
-            this.camera_palette,
             overlay,
             SpriteProgram,
+            this.camera_palette,
             palette,
             surface.createSpriteRenderEl().loadSpriteObject(
                 [51, 122, 183, 178],
