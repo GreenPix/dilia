@@ -1,4 +1,4 @@
-import {PipelineEl} from './interfaces';
+import {Command} from './interfaces';
 import {Context} from './context';
 import {Texture} from '../gl/tex';
 
@@ -8,7 +8,7 @@ export const DefaultFBO = (ctx: Context) => {
 };
 
 
-export class FBO implements PipelineEl {
+export class FBO implements Command {
 
     private fbo: WebGLFramebuffer;
     private texture: Texture;

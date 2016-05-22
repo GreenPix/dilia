@@ -2,6 +2,7 @@ import {Program, VertexBuffer, texRepeat, Pixels} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
 import {glDrawElements, Geom, Texture} from '../gl/gl';
 import {updateTextureFromPixels} from '../gl/gl';
+import {genQuadI, genQuadData} from '../gl/gl';
 import {Obj2D} from './interfaces';
 
 
@@ -36,7 +37,7 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
     constructor(
         private gl: WebGLRenderingContext
     ) {
-        this.indices = new IndicesBuffer(gl).fill([0, 1, 2, 0, 2, 3]);
+        this.indices = new IndicesBuffer(gl).fill(genQuadI());
     }
 
     // SpirteHandle interface
@@ -71,12 +72,9 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
     position(pos: [number, number]): this { this.pos = pos; return this; }
     overlayFlag(overlay: boolean): this   { this.is_overlay = overlay; return this;}
     buildWithEntireTexture(): this {
-        return this.buildFrom([
-            0, 0,
-            this.tex.width, 0,
-            this.tex.width, this.tex.height,
-            0, this.tex.height
-        ], [0, 0, 1, 0, 1, 1, 0, 1]);
+        return this.buildFrom(
+            genQuadData(0, 0, this.tex.width, this.tex.height),
+            genQuadData(0, 0, 1, 1));
     }
     updateTexture(pixels: Pixels): this {
         updateTextureFromPixels(this.gl, this.tex, pixels);
@@ -92,12 +90,9 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
             tex_coord_w = 1;
             tex_coord_h = 1;
         }
-        return this.buildFrom([
-            0, 0,
-            width, 0,
-            width, height,
-            0, height
-        ], [0, 0, tex_coord_w, 0, tex_coord_w, tex_coord_h, 0, tex_coord_h]);
+        return this.buildFrom(
+            genQuadData(0, 0, width, height),
+            genQuadData(0, 0, tex_coord_w, tex_coord_h));
     }
     buildFromTileId(ts: number, id: number): this {
         id = id - 1;
@@ -105,16 +100,9 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         let h = Math.max(Math.floor(this.tex.height / ts), 1);
         let x = id % w;
         let y = Math.floor(id / w);
-        return this.buildFrom([
-                0,  0,
-               ts,  0,
-               ts, ts,
-                0, ts,],
-            [     x / w, y / h,
-            (x + 1) / w, y / h,
-            (x + 1) / w, (y + 1) / h,
-                  x / w, (y + 1) / h
-        ]);
+        return this.buildFrom(
+            genQuadData(0,  0, ts, ts),
+            genQuadData(x / w, y / h, 1 / w, 1 / h));
     }
     private buildFrom(pos: number[], texCoord: number[]): this {
         let buffer = new VertexBuffer(this.gl)

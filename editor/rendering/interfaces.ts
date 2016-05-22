@@ -9,15 +9,15 @@ export interface CameraProperties {
     hos: number;
 }
 
-/// Pipeline element. Each element is executed
+/// CommandBuffer element. Each element is executed
 /// one after another with a precised order controlled
-/// by the Pipeline. When executed, the element can
+/// by the CommandBuffer. When executed, the element can
 /// modify the WebGL state without consideration
 /// for going back to the previous state. Furthermore,
 /// it can modify the context interface that include
 /// some usefull metadata additionally to the WebGL inner
 /// state.
-export interface PipelineEl {
+export interface Command {
 
     /// Execute this element. This can modify the context
     /// as well as changing the WebGL state.

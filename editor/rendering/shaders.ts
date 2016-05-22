@@ -1,4 +1,4 @@
-import {PipelineEl} from './interfaces';
+import {Command} from './interfaces';
 import {Context} from './context';
 import {Program} from '../gl/program';
 
@@ -8,8 +8,11 @@ let sprite_fragment_shader = require<string>('./shaders/sprite.fs');
 let tiles_vertex_shader = require<string>('./shaders/tiles.vs');
 let tiles_fragment_shader = require<string>('./shaders/tiles.fs');
 
+let tiles2_vertex_shader = require<string>('./shaders/tiles2.vs');
+let tiles2_fragment_shader = require<string>('./shaders/tiles2.fs');
 
-export class ProgramEl implements PipelineEl {
+
+export class ProgramEl implements Command {
 
     private program: Program = undefined;
 
@@ -25,16 +28,17 @@ export class ProgramEl implements PipelineEl {
         }
         ctx.active_program = this.program;
         this.program.use();
-        this.program.setUniforms({
-            flip_y: ctx.flip_y,
-            proj: ctx.active_camera
-        });
     }
 }
 
 export const TileProgram = new ProgramEl(
     tiles_vertex_shader,
     tiles_fragment_shader
+);
+
+export const Tile2Program = new ProgramEl(
+    tiles2_vertex_shader,
+    tiles2_fragment_shader
 );
 
 export const SpriteProgram = new ProgramEl(

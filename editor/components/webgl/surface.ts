@@ -2,7 +2,7 @@ import {Component, View, AfterViewInit, OnDestroy} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {TextureLoader} from '../../gl/gl';
 import {UniqueId} from '../../services/index';
-import {Pipeline} from '../../rendering/pipeline';
+import {CommandBuffer} from '../../rendering/pipeline';
 import {ViewportListener} from '../../rendering/viewport';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
 import {GenericRenderEl} from '../../rendering/draw';
@@ -50,7 +50,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     private _loop: () => void;
     private mouse_handler: MouseHandler;
     private key_handler: KeyHandler;
-    private pipeline: Pipeline = undefined;
+    private pipeline: CommandBuffer = undefined;
     private viewports_listeners: Array<ViewportListener> = [];
 
     constructor(id: UniqueId) {
@@ -69,7 +69,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         return this.gl;
     }
 
-    setPipeline(pipeline: Pipeline) {
+    setCommandBuffer(pipeline: CommandBuffer) {
         if (this.pipeline === undefined) {
             this.pipeline = pipeline;
             this.start();
@@ -77,7 +77,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
             this.pipeline = pipeline;
             this.viewport();
         } else {
-            this.pipeline = new Pipeline([]);
+            this.pipeline = new CommandBuffer([]);
         }
     }
 

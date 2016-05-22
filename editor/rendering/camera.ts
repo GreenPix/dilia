@@ -1,4 +1,4 @@
-import {PipelineEl, Obj2D} from './interfaces';
+import {Command, Obj2D} from './interfaces';
 import {Context} from './context';
 import {ViewportListener} from './viewport';
 
@@ -24,7 +24,7 @@ export const FixedCamera = (width: number, height: number) => {
     };
 };
 
-export class Camera implements PipelineEl, ViewportListener {
+export class Camera implements Command, ViewportListener {
 
     // Values, the actual matrix is the transposed of that one
     private values: Float32Array = new Float32Array([
@@ -54,6 +54,7 @@ export class Camera implements PipelineEl, ViewportListener {
     translate(x: number, y: number) {
         this.values[6] += x * this.values[0];
         this.values[7] += y * this.values[4];
+
         this.pos[0] += x;
         this.pos[1] += y;
     }
@@ -72,6 +73,15 @@ export class Camera implements PipelineEl, ViewportListener {
 
     execute(ctx: Context) {
         ctx.gl.viewport(0, 0, this.viewport_width, this.viewport_height);
+        ctx.active_program.setUniforms({
+            viewport_size: [
+                this.viewport_width / this.zoom_factor,
+                this.viewport_height / this.zoom_factor
+            ],
+            view_pos: this.pos,
+            flip_y: ctx.flip_y,
+            proj: this.values,
+        });
         ctx.active_camera = this.values;
         ctx.active_camera_props = this;
     }
@@ -92,8 +102,8 @@ export class Camera implements PipelineEl, ViewportListener {
         let w = object.getWidth();
         let h = object.getHeight();
         this.pos = [-x -w / 2, -y -h / 2];
-        this.values[6] = this.pos[0] * this.values[0];
-        this.values[7] = this.pos[1] * this.values[4];
+        this.values[6] = Math.floor(this.pos[0]) * this.values[0];
+        this.values[7] = Math.floor(this.pos[1]) * this.values[4];
     }
 
     // TODO: Write a test for this function.

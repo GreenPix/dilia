@@ -1,16 +1,16 @@
 import {TextureLoader, Geom, glDrawBuffers, glDrawElements} from '../gl/gl';
 import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
-import {PipelineEl, TextureGetter} from './interfaces';
+import {Command, TextureGetter} from './interfaces';
 import {Context} from './context';
-import {TilesLayer, TilesLayerBuilder} from './tiles';
+import {TilesLayer2, TilesLayerBuilder} from './tiles';
 import {SpriteObject, SpriteBuilder} from './sprite';
 import {Texture, Pixels} from '../gl/tex';
 import * as _ from 'lodash';
 
 
 
-abstract class BaseRenderEl implements PipelineEl, TextureGetter {
+abstract class BaseRenderEl implements Command, TextureGetter {
 
     private resources_not_yet_loaded: number = 0;
 
@@ -163,7 +163,7 @@ export class SpriteRenderEl extends BaseRenderEl {
 
 export class TilesRenderEl extends BaseRenderEl {
 
-    private tile_el: TilesLayer;
+    private tile_el: TilesLayer2;
 
     constructor(
         gl: WebGLRenderingContext,
@@ -176,7 +176,7 @@ export class TilesRenderEl extends BaseRenderEl {
         chipset_paths: string[],
         cb: (chipset_datas: Texture[], object: TilesLayerBuilder) => void
     ): this {
-        this.tile_el = new TilesLayer(this.gl);
+        this.tile_el = new TilesLayer2(this.gl);
         let nb_chipset = chipset_paths.length;
         let chipset_datas = new Array(nb_chipset);
         for (let i = 0; i < nb_chipset; ++i) {
@@ -191,7 +191,7 @@ export class TilesRenderEl extends BaseRenderEl {
     }
 
     getTextures(): Array<WebGLTexture> {
-        return this.tile_el.getTextures();
+        return [];//this.tile_el.getTextures();
     }
 
     protected drawImpl(ctx: Context) {
