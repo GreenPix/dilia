@@ -1,5 +1,5 @@
 import {Subscription} from 'rxjs';
-import {Component, View, AfterViewInit} from 'angular2/core';
+import {Component, AfterViewInit} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {ViewChild} from 'angular2/core';
 import {ROUTER_DIRECTIVES} from 'angular2/router';
@@ -19,9 +19,7 @@ let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<Webpack.Scss>('./editor.scss');
 
 @Component({
-    selector: 'rule-editor'
-})
-@View({
+    selector: 'rule-editor',
     styles: [ruleEditorCss.toString()],
     directives: [
         CORE_DIRECTIVES, ROUTER_DIRECTIVES, AutocompleteFiles,

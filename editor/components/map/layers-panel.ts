@@ -1,5 +1,5 @@
 import {Output, EventEmitter} from 'angular2/core';
-import {Component, View, Input} from 'angular2/core';
+import {Component, Input} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {PanelState, Panel} from './panel-state';
 import {Map, Layer} from '../../models/map';
@@ -9,9 +9,7 @@ let layerPanelCss = require<Webpack.Scss>('./layers-panel.scss');
 let layerPanelTemplate = require<string>('./layers-panel.html');
 
 @Component({
-    selector: 'layer-panel'
-})
-@View({
+    selector: 'layer-panel',
     styles: [layerPanelCss.toString()],
     templateUrl: layerPanelTemplate,
     directives: [CORE_DIRECTIVES]

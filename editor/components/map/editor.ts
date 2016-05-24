@@ -1,4 +1,4 @@
-import {Component, View, ViewChild} from 'angular2/core';
+import {Component, ViewChild} from 'angular2/core';
 import {AfterViewInit, OnDestroy} from 'angular2/core';
 import {WebGLSurface} from '../webgl/surface';
 import {ChipsetModal} from './chipset';
@@ -14,9 +14,7 @@ let mapEditorScss = require<Webpack.Scss>('./editor.scss');
 
 @Component({
     selector: 'map-editor',
-    viewProviders: [PanelState]
-})
-@View({
+    viewProviders: [PanelState],
     styles: [mapEditorScss.toString()],
     templateUrl: mapEditorTemplate,
     directives: [

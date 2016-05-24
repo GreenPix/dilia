@@ -1,13 +1,11 @@
-import {Component, View} from 'angular2/core';
+import {Component} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {ViewChild} from 'angular2/core';
 import {Dialog} from '../modal/dialog';
 import {Upload} from '../upload/upload';
 
 @Component({
-    selector: 'chipset-modal'
-})
-@View({
+    selector: 'chipset-modal',
     template: `
         <dialog-modal>
             <dialog-header>Edit a chipset</dialog-header>

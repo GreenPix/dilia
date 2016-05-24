@@ -1,12 +1,10 @@
-import {Component, View, ViewChild} from 'angular2/core';
+import {Component, ViewChild} from 'angular2/core';
 import {FORM_DIRECTIVES, CORE_DIRECTIVES} from 'angular2/common';
 import {Dialog} from '../modal/dialog';
 import {FileTab, FileManager} from '../../models/scripting';
 
 @Component({
     selector: 'commit-modal',
-})
-@View({
     template: `
         <dialog-modal>
             <dialog-header>Commit your changes for <code>{{filename}}</code></dialog-header>

@@ -1,4 +1,4 @@
-import {Component, View} from 'angular2/core';
+import {Component} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {User} from '../../models/user';
 
@@ -6,9 +6,7 @@ import {User} from '../../models/user';
 let profileTemplate = require<string>('./profile.html');
 
 @Component({
-    selector: 'user-profile'
-})
-@View({
+    selector: 'user-profile',
     templateUrl: profileTemplate,
     directives: [CORE_DIRECTIVES]
 })

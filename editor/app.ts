@@ -1,6 +1,7 @@
-import {Component, View} from 'angular2/core';
+import {Component} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
-import {RouteConfig, ROUTER_DIRECTIVES, Router, Location} from 'angular2/router';
+import {RouteConfig, ROUTER_DIRECTIVES, Router} from 'angular2/router';
+import {Location} from 'angular2/platform/common';
 import {MapEditor} from './components/map/editor';
 import {LoginForm} from './components/login/form';
 import {RuleEditor} from './components/rules/editor';
@@ -12,9 +13,7 @@ let appTemplate = require<string>('./app.html');
 let appCss = require<Webpack.Scss>('./app.scss');
 
 @Component({
-    selector: 'app'
-})
-@View({
+    selector: 'app',
     templateUrl: appTemplate,
     styles: [appCss.toString()],
     directives: [CORE_DIRECTIVES, ROUTER_DIRECTIVES, RuleEditorToolbar]

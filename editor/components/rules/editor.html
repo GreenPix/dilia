@@ -20,7 +20,7 @@
 
 <div>
   <ul class="nav nav-tabs" [ngClass]="{ 'hidden': currentFile() === null }">
-    <li *ngFor="#file of fileList()" role="presentation" [ngClass]="{ 'active': file.active }">
+    <li *ngFor="let file of fileList()" role="presentation" [ngClass]="{ 'active': file.active }">
       <a href="#" (click)="edit($event, file)" [ngSwitch]="file.isNew">
         <span class="fa" [ngClass]="{
           'fa-pencil': !file.readonly,

@@ -1,11 +1,9 @@
-import {Component, View} from 'angular2/core';
+import {Component} from 'angular2/core';
 
 let uploadCss = require<Webpack.Scss>('./upload.scss');
 
 @Component({
-    selector: 'upload'
-})
-@View({
+    selector: 'upload',
     styles: [uploadCss.toString()],
     template: `
     <span class="btn btn-default btn-file">

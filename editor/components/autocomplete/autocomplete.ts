@@ -1,4 +1,4 @@
-import {Component, View, ViewChild} from 'angular2/core';
+import {Component, ViewChild} from 'angular2/core';
 import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm} from 'angular2/common';
 import {Output, EventEmitter} from 'angular2/core';
 import {SocketIOService, HttpService} from '../../services/index';
@@ -11,9 +11,7 @@ let autocompleteScss = require<Webpack.Scss>('./autocomplete.scss');
 
 
 @Component({
-    selector: 'autocomplete-files'
-})
-@View({
+    selector: 'autocomplete-files',
     templateUrl: autocompleteTemplate,
     styles: [autocompleteScss.toString()],
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SelectEl]

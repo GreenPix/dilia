@@ -1,4 +1,4 @@
-import {Component, View} from 'angular2/core';
+import {Component} from 'angular2/core';
 import {Output, EventEmitter} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {NgModel} from 'angular2/common';
@@ -15,9 +15,7 @@ export interface NewMap {
 }
 
 @Component({
-    selector: 'create-map-modal'
-})
-@View({
+    selector: 'create-map-modal',
     templateUrl: templateUrl,
     directives: [Dialog, CORE_DIRECTIVES, NgModel]
 })

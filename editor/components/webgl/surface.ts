@@ -1,4 +1,4 @@
-import {Component, View, AfterViewInit, OnDestroy} from 'angular2/core';
+import {Component, AfterViewInit, OnDestroy} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 import {TextureLoader} from '../../gl/gl';
 import {UniqueId} from '../../services/index';
@@ -21,9 +21,7 @@ export interface KeyHandler {
 }
 
 @Component({
-    selector: 'webgl-surface'
-})
-@View({
+    selector: 'webgl-surface',
     styles: [
         `canvas { width: 100%; height: 100% }`,
         `.diplay-none { display: none; }`

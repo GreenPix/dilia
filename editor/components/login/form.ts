@@ -1,4 +1,4 @@
-import {Component, View} from 'angular2/core';
+import {Component} from 'angular2/core';
 import {FormBuilder, Validators, ControlGroup} from 'angular2/common';
 import {FORM_DIRECTIVES, CORE_DIRECTIVES} from 'angular2/common';
 import {Router, OnActivate, ComponentInstruction} from 'angular2/router';
@@ -22,8 +22,6 @@ class HasLoginDetails extends ControlGroup {
 @Component({
     selector: 'login',
     viewProviders: [FormBuilder],
-})
-@View({
     templateUrl: template,
     styles: [style.toString()],
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SERVICE_DIRECTIVES]

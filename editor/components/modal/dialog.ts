@@ -1,4 +1,4 @@
-import {Component, View} from 'angular2/core';
+import {Component} from 'angular2/core';
 import {CORE_DIRECTIVES} from 'angular2/common';
 
 let dialogTemplate = require<string>('./dialog.html');
@@ -6,8 +6,6 @@ let dialogCss = require<Webpack.Scss>('./dialog.scss');
 
 @Component({
     selector: 'dialog-modal',
-})
-@View({
     templateUrl: dialogTemplate,
     styles: [dialogCss.toString()],
     directives: [CORE_DIRECTIVES]
