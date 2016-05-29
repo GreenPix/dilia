@@ -83,6 +83,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         let index = this.viewports_listeners.indexOf(viewport);
         if (index == -1) {
             this.viewports_listeners.push(viewport);
+            this.viewport(viewport);
         }
     }
 
@@ -150,11 +151,15 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         }, 200);
     }
 
-    private viewport() {
+    private viewport(viewport?: ViewportListener) {
         this.canvas.width = this.canvas.clientWidth;
         this.canvas.height = this.canvas.clientHeight;
-        for (let vp of this.viewports_listeners) {
-            vp.viewport(this.canvas.width, this.canvas.height);
+        if (viewport) {
+            viewport.viewport(this.canvas.width, this.canvas.height);
+        } else {
+            for (let vp of this.viewports_listeners) {
+                vp.viewport(this.canvas.width, this.canvas.height);
+            }
         }
     }
 

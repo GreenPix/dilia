@@ -370,8 +370,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     private mouseWheelEditor(event: WheelEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.zbehavior_editor.mouseWheel(event.deltaY, x, y);
+        this.zbehavior_editor.mouseWheel(event);
         this.grid.updateGrid(this.camera_editor.zoom_lvl);
     }
 
@@ -407,8 +406,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     private mouseWheelPalette(event: WheelEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.zbehavior_palette.mouseWheel(event.deltaY, x, y);
+        this.zbehavior_palette.mouseWheel(event);
     }
 
     private objectSpace(event: MouseEvent): [number, number] {

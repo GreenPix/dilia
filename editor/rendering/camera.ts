@@ -55,8 +55,8 @@ export class Camera implements Command, ViewportListener {
     translate(x: number, y: number) {
         this.values[6] += x * this.values[0];
         this.values[7] += y * this.values[4];
-        this.pos[0] += x;
-        this.pos[1] += y;
+        this.pos[0] -= x;
+        this.pos[1] -= y;
         this.updateSaledPos();
     }
 
@@ -105,9 +105,13 @@ export class Camera implements Command, ViewportListener {
         let [x, y] = object.getPosition();
         let w = object.getWidth();
         let h = object.getHeight();
-        this.pos = [-x -w / 2, -y -h / 2];
-        this.values[6] = Math.floor(this.pos[0]) * this.values[0];
-        this.values[7] = Math.floor(this.pos[1]) * this.values[4];
+        let z = this.zoom_factor;
+        this.values[6] = (-x -w / 2) * this.values[0];
+        this.values[7] = (-y -h / 2) * this.values[4];
+        this.pos = [
+            w / 2 - this.viewport_width  / (2 * z),
+            h / 2 - this.viewport_height / (2 * z)
+        ];
         this.updateSaledPos();
     }
 
@@ -115,25 +119,27 @@ export class Camera implements Command, ViewportListener {
     zoom(sign: number, invariant: [number, number] = [0, 0]) {
         let value = Math.sign(sign);
         let old_z = this.zoom_factor;
+        let new_z = this.zoom_factor;
         if (value === 1) {
-            this.zoom_factor *= 2;
+            new_z *= 2;
         } else {
-            this.zoom_factor /= 2;
+            new_z /= 2;
         }
-        if (this.zoom_factor < 0.5) {
-            this.zoom_factor = 0.5;
+        if (new_z < 0.5) {
             return;
         }
-        if (this.zoom_factor > 8) {
-            this.zoom_factor = 8;
+        if (new_z > 8) {
             return;
         }
-
-        this.translate(
-            invariant[0] / old_z * (old_z - this.zoom_factor),
-            invariant[1] / old_z * (old_z - this.zoom_factor)
-        );
-
+        let vos = this.fromWindowCoordToObjectSpace(invariant[0], invariant[1]);
+        this.values[6] += vos[0] / old_z * (old_z - new_z) * this.values[0];
+        this.values[7] += vos[1] / old_z * (old_z - new_z) * this.values[4];
+        let v = new Float32Array(invariant);
+        v[1] = this.viewport_height - v[1];
+        this.pos[0] += v[0] / old_z - v[0] / new_z;
+        this.pos[1] += v[1] / old_z - v[1] / new_z;
+        this.zoom_factor = new_z;
+        this.updateSaledPos();
         this.updateScaleValues(old_z);
     }
 
@@ -153,7 +159,7 @@ export class Camera implements Command, ViewportListener {
     }
 
     private updateSaledPos() {
-        this.scaled_pos[0] = Math.floor(this.pos[0] / this.zoom_factor) * this.zoom_factor;
-        this.scaled_pos[1] = Math.floor(this.pos[1] / this.zoom_factor) * this.zoom_factor;
+        this.scaled_pos[0] = Math.floor(this.pos[0]); // this.zoom_factor) * this.zoom_factor;
+        this.scaled_pos[1] = Math.floor(this.pos[1]); // this.zoom_factor) * this.zoom_factor;
     }
 }

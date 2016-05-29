@@ -4,7 +4,7 @@ export interface MouseObjectSpace {
     mouseUp(button: number, mx: number, my: number);
     mouseDown(button: number, mx: number, my: number);
     mouseMove(event: MouseEvent, mx: number, my: number);
-    mouseWheel(deltaY: number, mx: number, my: number);
+    mouseWheel(event: WheelEvent);
 }
 
 
@@ -43,18 +43,22 @@ export class ZoomBehavior implements MouseObjectSpace {
         }
     }
 
-    mouseWheel(deltaY: number, mx: number, my: number) {
+    mouseWheel(event: WheelEvent) {
+        let [mx, my] = this.objectSpace(event);
         this.last_mouse_pos = [mx, my];
-        if (deltaY < 0) {
-            this.camera.zoom(0.1, this.last_mouse_pos);
+        if (event.deltaY < 0) {
+            this.camera.zoom(0.1, this.mouseCoord(event));
         } else {
-            this.camera.zoom(-0.1, this.last_mouse_pos);
+            this.camera.zoom(-0.1, this.mouseCoord(event));
         }
     }
 
     private objectSpace(event: MouseEvent): [number, number] {
-        return this.camera.fromWindowCoordToObjectSpace(
-            event.clientX, event.clientY - 63
-        );
+        let [x, y] = this.mouseCoord(event);
+        return this.camera.fromWindowCoordToObjectSpace(x, y);
+    }
+
+    private mouseCoord(event: MouseEvent): [number, number] {
+        return [event.clientX, event.clientY - 63];
     }
 }
