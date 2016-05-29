@@ -51,7 +51,7 @@ an user by sending a POST request directly to the Dilia server.
 curl -H "Content-Type: application/json"      \
      -X POST                                  \
      -d '{"username": "test","password": "test", "email": "test@gg.com"}' \
-     http://localhost:3000/api/users
+     http://localhost:8000/api/users
 ```
 
 The server response —in case of success— is `OK`.
@@ -74,7 +74,7 @@ cd /vagrant
 export NODE_ENV='development' && npm run server
 ```
 
-And navigate to http://localhost:3000/.
+And navigate to http://localhost:8000/.
 
 ### Text editor setup
 
