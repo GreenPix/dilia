@@ -1,5 +1,5 @@
-import {Component, AfterViewInit, OnDestroy} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
+import {Component, AfterViewInit, OnDestroy} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
 import {TextureLoader} from '../../gl/gl';
 import {UniqueId} from '../../services/index';
 import {CommandBuffer} from '../../rendering/pipeline';

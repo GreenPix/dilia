@@ -1,6 +1,6 @@
-import {Output, EventEmitter} from 'angular2/core';
-import {Component, Input} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
+import {Output, EventEmitter} from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
 import {PanelState, Panel} from './panel-state';
 import {Map, Layer} from '../../models/map';
 

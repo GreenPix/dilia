@@ -1,5 +1,5 @@
-import {Component} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
+import {Component} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
 
 let dialogTemplate = require<string>('./dialog.html');
 let dialogCss = require<Webpack.Scss>('./dialog.scss');

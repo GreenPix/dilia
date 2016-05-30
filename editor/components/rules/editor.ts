@@ -1,8 +1,8 @@
 import {Subscription} from 'rxjs';
-import {Component, AfterViewInit} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
-import {ViewChild} from 'angular2/core';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component, AfterViewInit} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
+import {ViewChild} from '@angular/core';
+import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';

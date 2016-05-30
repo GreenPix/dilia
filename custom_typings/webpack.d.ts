@@ -14,6 +14,6 @@ declare module Webpack {
     interface Scss extends ToStr {}
 }
 
-declare var VERSION: number;
+declare var VERSION: string;
 declare var IS_PRODUCTION: boolean;
 declare var require: NodeRequire;

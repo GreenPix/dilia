@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 
 /// This ChipsetLayer is the high level view
 /// of the ChipsetLayer present in the `tile.ts` file.

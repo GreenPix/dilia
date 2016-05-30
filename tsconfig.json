@@ -1,5 +1,5 @@
 {
-    "version": "1.7.5",
+    "version": "1.8.10",
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
@@ -7,6 +7,7 @@
         "jsx": "react",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "noEmitHelpers": true,
         "declaration": false,
         "noImplicitAny": false,
         "removeComments": true,
@@ -17,6 +18,16 @@
         "suppressImplicitAnyIndexErrors": true,
         "moduleResolution": "node"
     },
+    "awesomeTypescriptLoaderOptions": {
+        "resolveGlobs": true,
+        "forkChecker": true
+    },
+    "exclude": [
+        "./node_modules",
+        "./typings/main.d.ts",
+        "./typings/main"
+    ],
+    "buildOnSave": false,
     "compileOnSave": false,
     "filesGlob": [
         "./editor/**/*.ts",
@@ -64,6 +75,7 @@
         "./editor/models/map.ts",
         "./editor/models/scripting.ts",
         "./editor/models/user.ts",
+        "./editor/polyfills.ts",
         "./editor/rendering/camera.ts",
         "./editor/rendering/context.ts",
         "./editor/rendering/draw.ts",
@@ -87,6 +99,7 @@
         "./editor/util/injector.ts",
         "./editor/util/mouse.ts",
         "./editor/util/requestAnimationFrame.ts",
+        "./editor/vendor.ts",
         "./shared/aariba.ts",
         "./shared/map.ts",
         "./shared/socket.ts",
@@ -94,7 +107,6 @@
         "./custom_typings/ace-custom.d.ts",
         "./custom_typings/webpack.d.ts"
     ],
-    "exclude": [],
     "atom": {
         "rewriteTsconfig": true
     }

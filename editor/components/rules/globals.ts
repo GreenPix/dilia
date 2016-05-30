@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 
 let globalsCss = require<string>('./globals.css');
 let globalsTemplate = require<string>('./globals.html');

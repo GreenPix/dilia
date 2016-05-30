@@ -1,6 +1,6 @@
-import {Component, ViewChild} from 'angular2/core';
-import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm} from 'angular2/common';
-import {Output, EventEmitter} from 'angular2/core';
+import {Component, ViewChild} from '@angular/core';
+import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm} from '@angular/common';
+import {Output, EventEmitter} from '@angular/core';
 import {SocketIOService, HttpService} from '../../services/index';
 import {AaribaFileList, AaribaFile} from '../../shared';
 import {SelectEl} from '../../services/directives';

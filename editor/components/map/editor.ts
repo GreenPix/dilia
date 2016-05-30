@@ -1,5 +1,5 @@
-import {Component, ViewChild} from 'angular2/core';
-import {AfterViewInit, OnDestroy} from 'angular2/core';
+import {Component, ViewChild} from '@angular/core';
+import {AfterViewInit, OnDestroy} from '@angular/core';
 import {WebGLSurface} from '../webgl/surface';
 import {ChipsetModal} from './chipset';
 import {CreateNewMapModal, NewMap} from './createnewmap';

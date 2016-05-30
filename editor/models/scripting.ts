@@ -1,5 +1,5 @@
-import {Injectable} from 'angular2/core';
-import {Response} from 'angular2/http';
+import {Injectable} from '@angular/core';
+import {Response} from '@angular/http';
 import {AaribaFile} from '../shared';
 import {HttpService, RxObservable, SocketIOService} from '../services/index';
 

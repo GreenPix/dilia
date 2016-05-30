@@ -1,7 +1,7 @@
-import {Component} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
-import {Router, RouterLink} from 'angular2/router';
-import {Location} from 'angular2/platform/common';
+import {Component} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
+import {Router, RouterLink} from '@angular/router-deprecated';
+import {Location} from '@angular/common';
 import {HttpService} from '../../services/index';
 import {SERVICE_DIRECTIVES} from '../../services/directives';
 

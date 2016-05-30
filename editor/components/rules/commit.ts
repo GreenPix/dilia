@@ -1,5 +1,5 @@
-import {Component, ViewChild} from 'angular2/core';
-import {FORM_DIRECTIVES, CORE_DIRECTIVES} from 'angular2/common';
+import {Component, ViewChild} from '@angular/core';
+import {FORM_DIRECTIVES, CORE_DIRECTIVES} from '@angular/common';
 import {Dialog} from '../modal/dialog';
 import {FileTab, FileManager} from '../../models/scripting';
 

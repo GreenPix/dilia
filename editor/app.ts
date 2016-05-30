@@ -1,7 +1,7 @@
-import {Component} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
-import {RouteConfig, ROUTER_DIRECTIVES, Router} from 'angular2/router';
-import {Location} from 'angular2/platform/common';
+import {Component} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
+import {RouteConfig, ROUTER_DIRECTIVES, Router} from '@angular/router-deprecated';
+import {Location} from '@angular/common';
 import {MapEditor} from './components/map/editor';
 import {LoginForm} from './components/login/form';
 import {RuleEditor} from './components/rules/editor';

@@ -1,6 +1,6 @@
-import {Component} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
-import {ViewChild} from 'angular2/core';
+import {Component} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
+import {ViewChild} from '@angular/core';
 import {Dialog} from '../modal/dialog';
 import {Upload} from '../upload/upload';
 

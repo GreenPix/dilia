@@ -1,7 +1,7 @@
-import {Component} from 'angular2/core';
-import {FormBuilder, Validators, ControlGroup} from 'angular2/common';
-import {FORM_DIRECTIVES, CORE_DIRECTIVES} from 'angular2/common';
-import {Router, OnActivate, ComponentInstruction} from 'angular2/router';
+import {Component} from '@angular/core';
+import {FormBuilder, Validators, ControlGroup} from '@angular/common';
+import {FORM_DIRECTIVES, CORE_DIRECTIVES} from '@angular/common';
+import {Router, OnActivate, ComponentInstruction} from '@angular/router-deprecated';
 import {HttpService} from '../../services/index';
 import {User} from '../../models/user';
 import {SERVICE_DIRECTIVES} from '../../services/directives';

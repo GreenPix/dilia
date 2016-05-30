@@ -1,8 +1,8 @@
-import {Component} from 'angular2/core';
-import {Output, EventEmitter} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
-import {NgModel} from 'angular2/common';
-import {ViewChild} from 'angular2/core';
+import {Component} from '@angular/core';
+import {Output, EventEmitter} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
+import {NgModel} from '@angular/common';
+import {ViewChild} from '@angular/core';
 import {Dialog} from '../modal/dialog';
 import {MapManager} from '../../models/map';
 

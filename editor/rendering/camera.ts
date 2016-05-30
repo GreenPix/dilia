@@ -154,12 +154,12 @@ export class Camera implements Command, ViewportListener {
     }
 
     private updateScaleValues(old_z?: number) {
-        this.values[0] = this.zoom_factor * 2.0 / this.viewport_width; // old_z;
-        this.values[4] = this.zoom_factor * 2.0 / this.viewport_height; // old_z;
+        this.values[0] = this.zoom_factor * 2.0 / this.viewport_width;
+        this.values[4] = this.zoom_factor * 2.0 / this.viewport_height;
     }
 
     private updateSaledPos() {
-        this.scaled_pos[0] = Math.floor(this.pos[0]); // this.zoom_factor) * this.zoom_factor;
-        this.scaled_pos[1] = Math.floor(this.pos[1]); // this.zoom_factor) * this.zoom_factor;
+        this.scaled_pos[0] = Math.floor(this.pos[0]);
+        this.scaled_pos[1] = Math.floor(this.pos[1]);
     }
 }

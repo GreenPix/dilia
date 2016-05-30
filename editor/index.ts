@@ -1,14 +1,14 @@
-import {enableProdMode} from 'angular2/core';
+import {enableProdMode} from '@angular/core';
 
 if (IS_PRODUCTION) {
     enableProdMode();
 }
 
-import {HTTP_PROVIDERS} from 'angular2/http';
-import {bootstrap} from 'angular2/platform/browser';
-import {provide} from 'angular2/core';
-import {ROUTER_PROVIDERS} from 'angular2/router';
-import {LocationStrategy, HashLocationStrategy} from 'angular2/platform/common';
+import {HTTP_PROVIDERS} from '@angular/http';
+import {bootstrap} from '@angular/platform-browser-dynamic';
+import {provide} from '@angular/core';
+import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
+import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {UniqueId, HttpService, SocketIOService} from './services/index';
 import {App} from './app';
 import {User, AaribaScriptSettings} from './models/user';

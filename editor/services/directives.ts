@@ -1,6 +1,6 @@
-import {Directive, ElementRef} from 'angular2/core';
-import {Component} from 'angular2/core';
-import {NgStyle} from 'angular2/common';
+import {Directive, ElementRef} from '@angular/core';
+import {Component} from '@angular/core';
+import {NgStyle} from '@angular/common';
 import {Observable} from 'rxjs';
 
 
