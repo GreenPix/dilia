@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import {uniqueId} from 'lodash';
 import * as io from 'socket.io-client';
 import {SocketPacket, SocketMethod} from '../shared';
 import {Injectable} from '@angular/core';
@@ -14,7 +14,7 @@ export class UniqueId {
     private id: string;
 
     constructor() {
-        this.id = _.uniqueId();
+        this.id = uniqueId();
     }
 
     get(): string {

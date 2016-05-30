@@ -6,7 +6,7 @@ import {Context} from './context';
 import {TilesLayer2, TilesLayerBuilder} from './tiles';
 import {SpriteObject, SpriteBuilder} from './sprite';
 import {Texture, Pixels} from '../gl/tex';
-import * as _ from 'lodash';
+import {values} from 'lodash';
 
 
 
@@ -91,7 +91,7 @@ export class GenericRenderEl extends BaseRenderEl {
     }
 
     getTextures(): Array<WebGLTexture> {
-        return _.values<any>(this.uniforms_values)
+        return values<any>(this.uniforms_values)
             .filter(val => val instanceof Texture);
     }
 

@@ -4,7 +4,7 @@ import {Output, EventEmitter} from '@angular/core';
 import {SocketIOService, HttpService} from '../../services/index';
 import {AaribaFileList, AaribaFile} from '../../shared';
 import {SelectEl} from '../../services/directives';
-import * as _ from 'lodash';
+import {filter, sortBy, throttle} from 'lodash';
 
 let autocompleteTemplate = require<string>('./autocomplete.html');
 let autocompleteScss = require<Webpack.Scss>('./autocomplete.scss');
@@ -42,7 +42,7 @@ export class AutocompleteFiles {
 
         this.io.get<AaribaFile>('/api/aariba/lock_status')
             .subscribe(fl => {
-                let file = _.filter(this.file_list, f => f.name == fl.name);
+                let file = filter(this.file_list, f => f.name == fl.name);
                 if (file.length > 0) file[0].locked = fl.locked;
             });
 
@@ -54,7 +54,7 @@ export class AutocompleteFiles {
     }
 
     ngAfterViewInit() {
-        let throttled = _.throttle(value => this.filterFiles(value.search), 10);
+        let throttled = throttle(value => this.filterFiles(value.search), 10);
         this.form.control.valueChanges
             .filter(_ => this.form.valid &&
                 this.input_search.getHtmlElement() === document.activeElement)
@@ -142,11 +142,11 @@ export class AutocompleteFiles {
         name = name.toLowerCase();
 
         // Filter by matching
-        this.file_filtered = _.filter(this.file_list,
+        this.file_filtered = filter(this.file_list,
               file => this.match(name, file.name.toLowerCase()));
 
         // Sort by lexical order
-        this.file_filtered = _.sortBy(this.file_filtered, 'name');
+        this.file_filtered = sortBy(this.file_filtered, 'name');
 
         // We limit the number of completions to 8,
         // we might want to always list everything but that still

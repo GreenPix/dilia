@@ -32,7 +32,7 @@
     "filesGlob": [
         "./editor/**/*.ts",
         "./shared/**/*.ts",
-        "./typings/browser.d.ts",
+        "./typings/index.d.ts",
         "./custom_typings/**/*.ts",
         "./editor/**/*.tsx",
         "!./node_modules/**/*"
@@ -103,7 +103,7 @@
         "./shared/aariba.ts",
         "./shared/map.ts",
         "./shared/socket.ts",
-        "./typings/browser.d.ts",
+        "./typings/index.d.ts",
         "./custom_typings/ace-custom.d.ts",
         "./custom_typings/webpack.d.ts"
     ],

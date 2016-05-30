@@ -1,4 +1,4 @@
-import _ = require('lodash');
+import {clone} from 'lodash';
 
 let pegParser = require<any>('./parser.pegjs');
 
@@ -23,7 +23,7 @@ export class AaribaInterpreter {
     }
 
     execute(content: string) {
-        let globalsInit = _.clone(this.globals);
+        let globalsInit = clone(this.globals);
         let locals = pegParser.parse(content, this.globals);
     }
 

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {Response} from '@angular/http';
 import {AaribaFile} from '../shared';
 import {HttpService, RxObservable, SocketIOService} from '../services/index';
+import {some, filter} from 'lodash';
 
 export interface FileTab {
     index: number;
@@ -55,7 +56,7 @@ export class FileManager {
     }
 
     editFilename(filename: string, previous_content: string): FileTab {
-        let file = _.filter(this.file_list, f => f.name === filename)[0];
+        let file = filter(this.file_list, f => f.name === filename)[0];
         if (file) {
             this.edit(file, previous_content);
         }
@@ -76,7 +77,7 @@ export class FileManager {
     }
 
     hasFile(filename: string): boolean {
-        return _.any(this.file_list, file => file.name === filename);
+        return some(this.file_list, file => file.name === filename);
     }
 
     commit(file: FileTab, comment: string): RxObservable<Response> {
