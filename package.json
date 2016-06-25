@@ -10,7 +10,7 @@
     "lint": "gulp lint",
     "copy": "gulp copy",
     "build": "npm run build-client && npm run build-server",
-    "build-client": "webpack",
+    "build-client": "webpack --prod",
     "server": "node ./server/build/server/server.js",
     "debug-server": "node --debug-brk ./server/build/server/server.js",
     "build-server": "cd server/ && tsc && cd .."
@@ -23,8 +23,9 @@
   "license": "MIT",
   "devDependencies": {
     "awesome-typescript-loader": "2.1.1",
-    "core-js": "2.4.1",
+    "colors": "1.1.2",
     "css-loader": "0.23.1",
+    "docopt": "0.6.2",
     "es6-promise": "3.2.1",
     "es6-shim": "0.35.1",
     "es7-reflect-metadata": "1.6.0",
@@ -66,7 +67,7 @@
     "compression": "1.6.2",
     "connect-mongo": "1.2.0",
     "cookie-parser": "1.4.3",
-    "core-js": "2.4.0",
+    "core-js": "2.4.1",
     "crypto": "0.0.3",
     "csurf": "1.9.0",
     "express": "4.13.4",
