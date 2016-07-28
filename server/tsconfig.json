@@ -17,50 +17,12 @@
         "moduleResolution": "node"
     },
     "compileOnSave": false,
-    "filesGlob": [
-        "./**/*.ts",
-        "./typings/main.d.ts",
-        "!./typings/browser.d.ts",
-        "!./typings/browser/**/*",
-        "!./typings/main/**/*",
-        "!./node_modules/**/*"
+    "buildOnSave": false,
+    "exclude": [
+        "build",
+        "../node_modules"
     ],
-    "files": [
-        "./apis/aariba.ts",
-        "./apis/auth.ts",
-        "./apis/chipsets.ts",
-        "./apis/index.ts",
-        "./apis/lycan.ts",
-        "./apis/map.ts",
-        "./apis/middlewares.ts",
-        "./apis/post_response_fmt.ts",
-        "./apis/user.ts",
-        "./apis/users.ts",
-        "./check.ts",
-        "./config/express.ts",
-        "./config/index.ts",
-        "./config/passport.ts",
-        "./config/router/index.ts",
-        "./config/socket.io.ts",
-        "./custom_typings/crypto.d.ts",
-        "./custom_typings/passport.socketio.d.ts",
-        "./db/error_helpers.ts",
-        "./db/index.ts",
-        "./db/schemas/aariba.ts",
-        "./db/schemas/chipset.ts",
-        "./db/schemas/map.ts",
-        "./db/schemas/object.ts",
-        "./db/schemas/users.ts",
-        "./errors/index.ts",
-        "./logger/helpers.ts",
-        "./resources.ts",
-        "./server.ts",
-        "./shared.ts",
-        "./typings/main.d.ts",
-        "./util/print.ts"
-    ],
-    "exclude": [],
     "atom": {
-        "rewriteTsconfig": true
+        "rewriteTsconfig": false
     }
 }
