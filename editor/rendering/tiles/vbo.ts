@@ -1,6 +1,5 @@
 import {Program, VertexBuffer, glDrawElements, Geom} from '../../gl/gl';
 import {IndicesBuffer, BufferLinkedToProgram} from '../../gl/gl';
-import {CameraProperties} from '../interfaces';
 import {ChipsetLayer, TilesLayerBuilder, TilesHandle, SelectedPartialLayer} from './common';
 import {SelectedPartialLayerImpl} from './layer';
 

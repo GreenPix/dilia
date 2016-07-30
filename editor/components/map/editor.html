@@ -7,7 +7,7 @@
 
 <nav class="navbar map-editor--nav" [ngSwitch]="state.stateStr()">
 
-    <template [ngSwitchWhen]="'editor'">
+    <template [ngSwitchCase]="'editor'">
 
     <div class="nav navbar-nav nav-option" role="search">
         <map-editor-settings (selectPanel)="openPanel($event)"></map-editor-settings>
@@ -24,7 +24,7 @@
 
     </template>
 
-    <template [ngSwitchWhen]="'palette'">
+    <template [ngSwitchCase]="'palette'">
 
     <h4 class="lead text-center">Palette</h4>
 
@@ -35,7 +35,7 @@
 <alert-box></alert-box>
 
 <div [ngSwitch]="state.stateStr()">
-    <template [ngSwitchWhen]="'editor'">
+    <template [ngSwitchCase]="'editor'">
 
         <layer-panel [currentMap]="map_manager.currentMap()"
                      (selectLayer)="onSelectLayer($event)"></layer-panel>

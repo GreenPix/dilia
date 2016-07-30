@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Response} from '@angular/http';
 import {AaribaFile} from '../shared';
-import {HttpService, RxObservable, SocketIOService} from '../services/index';
+import {HttpService, Observable, SocketIOService} from '../services';
 import {some, filter} from 'lodash';
 
 export interface FileTab {
@@ -80,7 +80,7 @@ export class FileManager {
         return some(this.file_list, file => file.name === filename);
     }
 
-    commit(file: FileTab, comment: string): RxObservable<Response> {
+    commit(file: FileTab, comment: string): Observable<Response> {
         if (file.isNew) {
             let observable = this.http.post(`/api/aariba/new`, {
                 content: file.content,

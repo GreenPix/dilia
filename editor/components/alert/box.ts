@@ -37,7 +37,7 @@ export class AlertBox {
                 }
             }
             this.alert_kind = ev.kind === 'error' ? 'danger' : ev.kind;
-        });
+        }, () => {});
     }
 
     close() {

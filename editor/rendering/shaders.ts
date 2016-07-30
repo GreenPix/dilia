@@ -5,6 +5,9 @@ import {Program} from '../gl/program';
 let sprite_vertex_shader = require<string>('./shaders/sprite.vs');
 let sprite_fragment_shader = require<string>('./shaders/sprite.fs');
 
+let sprite2_vertex_shader = require<string>('./shaders/sprite2.vs');
+let sprite2_fragment_shader = require<string>('./shaders/sprite2.fs');
+
 let tiles_vertex_shader = require<string>('./shaders/tiles.vs');
 let tiles_fragment_shader = require<string>('./shaders/tiles.fs');
 
@@ -44,4 +47,9 @@ export const Tile2Program = new ProgramEl(
 export const SpriteProgram = new ProgramEl(
     sprite_vertex_shader,
     sprite_fragment_shader
+);
+
+export const Sprite2Program = new ProgramEl(
+    sprite2_vertex_shader,
+    sprite2_fragment_shader
 );

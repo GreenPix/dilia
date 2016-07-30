@@ -1,14 +1,6 @@
 import {Context} from './context';
 
 
-export interface CameraProperties {
-    pos: [number, number];
-    // width  in object space
-    wos: number;
-    // height in object space
-    hos: number;
-}
-
 /// CommandBuffer element. Each element is executed
 /// one after another with a precised order controlled
 /// by the CommandBuffer. When executed, the element can

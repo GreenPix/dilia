@@ -2,7 +2,6 @@ import {Subscription} from 'rxjs';
 import {Component, AfterViewInit} from '@angular/core';
 import {CORE_DIRECTIVES} from '@angular/common';
 import {ViewChild} from '@angular/core';
-import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
@@ -22,7 +21,7 @@ let ruleEditorCss = require<Webpack.Scss>('./editor.scss');
     selector: 'rule-editor',
     styles: [ruleEditorCss.toString()],
     directives: [
-        CORE_DIRECTIVES, ROUTER_DIRECTIVES, AutocompleteFiles,
+        CORE_DIRECTIVES, AutocompleteFiles,
         CommitModal, AlertBox, RuleEditorExec, RuleEditorGlobals],
     templateUrl: ruleEditorTemplate
 })

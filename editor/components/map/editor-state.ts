@@ -9,7 +9,7 @@ import {CommandBuffer, ClearAll, FlipY} from '../../rendering/pipeline';
 import {TilesHandle, SelectedPartialLayer} from '../../rendering/tiles';
 import {SpriteHandle, SpriteBuilder} from '../../rendering/sprite';
 import {genPixelsForTextureWithBorder} from '../../rendering/util';
-import {TileProgram, SpriteProgram, Tile2Program} from '../../rendering/shaders';
+import {TileProgram, Sprite2Program, Tile2Program} from '../../rendering/shaders';
 
 let vertex_shader_overlay_src = require<string>('./shaders/dark_overlay.vs');
 let fragment_shader_overlay_src = require<string>('./shaders/dark_overlay.fs');
@@ -192,14 +192,14 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.scene_editor = new CommandBuffer([
             DefaultFBO,
             ClearAll,
-            SpriteProgram,
+            Sprite2Program,
             this.camera_editor.as_camera_with_scale_ignored(),
             grid,
             Tile2Program,
             this.camera_editor,
             map_tiled,
             FlipY,
-            SpriteProgram,
+            Sprite2Program,
             this.camera_editor,
             brush
         ]);
@@ -229,7 +229,7 @@ export class EditorState implements MouseHandler, KeyHandler {
             this.camera_editor,
             map_tiled,
             overlay,
-            SpriteProgram,
+            Sprite2Program,
             this.camera_palette,
             palette,
             surface.createSpriteRenderEl().loadSpriteObject(

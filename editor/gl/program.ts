@@ -24,11 +24,12 @@ export class Program {
         gl.shaderSource(fragment_shader, fragment_src);
 
         gl.compileShader(vertex_shader);
-        gl.compileShader(fragment_shader);
 
         if (!gl.getShaderParameter(vertex_shader, gl.COMPILE_STATUS)) {
             throw `Couldn't compile vertex shader: ${gl.getShaderInfoLog(vertex_shader)}`;
         }
+
+        gl.compileShader(fragment_shader);
 
         if (!gl.getShaderParameter(fragment_shader, gl.COMPILE_STATUS)) {
             throw `Couldn't compile vertex shader: ${gl.getShaderInfoLog(fragment_shader)}`;

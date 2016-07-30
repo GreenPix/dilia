@@ -15,12 +15,6 @@ export const FixedCamera = (width: number, height: number) => {
     return (ctx: Context) => {
         ctx.gl.viewport(0, 0, width, height);
         ctx.active_camera = identity_values;
-        // TODO: Fix this (buggy)
-        ctx.active_camera_props = {
-            pos: [0, 0],
-            wos: 0,
-            hos: 0,
-        };
     };
 };
 
@@ -69,9 +63,13 @@ export class Camera implements Command, ViewportListener {
             values[4] = 2 / this.viewport_height;
             ctx.active_camera = values;
             ctx.active_program.setUniforms({
-                proj: values
+                proj: values,
+                viewport_size: [
+                    this.viewport_width / this.zoom_factor,
+                    this.viewport_height / this.zoom_factor
+                ],
+                view_pos: this.scaled_pos,
             });
-            ctx.active_camera_props = this;
         };
     }
 
@@ -87,7 +85,6 @@ export class Camera implements Command, ViewportListener {
             proj: this.values,
         });
         ctx.active_camera = this.values;
-        ctx.active_camera_props = this;
     }
 
     fromWindowCoordToObjectSpace(mx: number, my: number): [number, number] {

@@ -127,7 +127,7 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
             this.vertex_linked = new BufferLinkedToProgram(
                 program, this.vertex_linked as VertexBuffer, 'pos');
             this.texCoord_linked = new BufferLinkedToProgram(
-                program, this.texCoord_linked as VertexBuffer, 'texCoord');
+                program, this.texCoord_linked as VertexBuffer, 'tex');
         }
 
         program.setUniforms({

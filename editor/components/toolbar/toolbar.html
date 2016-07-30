@@ -6,13 +6,13 @@
     </div>
     <div class="toolbar" *ngIf="!isLoginPage()">
       <div class="toolbar-options">
-          <button [routerLink]="['./ScriptEditor']"
+          <button [routerLink]="['./script-editor']"
                 class="btn btn-default fa fa-wrench" tooltip="Settings editor"></button>
-          <button [routerLink]="['./MapEditor']"
+          <button [routerLink]="['./map-editor']"
                 class="btn btn-default fa fa-fort-awesome" tooltip="Map editor"></button>
-          <button [routerLink]="['./ScriptEditor']"
+          <button [routerLink]="['./script-editor']"
                 class="btn btn-default fa fa-code" tooltip="Script editor"></button>
-          <button [routerLink]="['./Profile']"
+          <button [routerLink]="['./profile']"
                 class="btn btn-default fa fa-user" tooltip="Profile"></button>
           <button (click)="logout()" class="btn btn-default fa fa-sign-out"
             tooltip="Sign out"></button>

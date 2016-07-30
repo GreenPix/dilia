@@ -196,6 +196,6 @@ export class TilesRenderEl extends BaseRenderEl {
 
     protected drawImpl(ctx: Context) {
 
-        this.tile_el.draw(this.gl, ctx.active_program, ctx.active_camera_props);
+        this.tile_el.draw(this.gl, ctx.active_program);
     }
 }

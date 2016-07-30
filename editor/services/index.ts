@@ -2,13 +2,14 @@ import {uniqueId} from 'lodash';
 import * as io from 'socket.io-client';
 import {SocketPacket, SocketMethod} from '../shared';
 import {Injectable} from '@angular/core';
-import {Observable, Subscriber, Subscription} from 'rxjs';
+import {Observable, Subscriber} from 'rxjs';
 import {Http, Response, Headers} from '@angular/http';
 // Temporary
-import {ResponseType} from '@angular/http';
 // import {getResponseURL, isSuccess} from '@angular/http';
 // import {isPresent} from '@angular/common/facade/lang';
 // import {ResponseOptions} from 'angular2/src/http/base_response_options';
+
+export type Observable<T> = Observable<T>;
 
 export class UniqueId {
     private id: string;
@@ -20,11 +21,6 @@ export class UniqueId {
     get(): string {
         return this.id;
     }
-}
-
-export interface RxObservable<R> {
-    subscribe(subscriber: (res: R) => void, error?: (err: any) => void): Subscription;
-    map<U>(mapper: (res: R) => U): RxObservable<U>;
 }
 
 export interface HttpEvent {
@@ -49,7 +45,7 @@ export class HttpService {
         }).share();
     }
 
-    httpEvents(): RxObservable<HttpEvent> {
+    httpEvents(): Observable<HttpEvent> {
         return this.observable;
     }
 
@@ -115,7 +111,7 @@ export class HttpService {
     //     });
     // }
 
-    post(path: string, json?: any): RxObservable<Response> {
+    post(path: string, json?: any): Observable<Response> {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         let observable = this.http.post(path, JSON.stringify(json || {}), {
@@ -128,7 +124,7 @@ export class HttpService {
         return observable;
     }
 
-    get(path: string): RxObservable<Response> {
+    get(path: string): Observable<Response> {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         return this.http.get(path, {
@@ -176,7 +172,7 @@ export class SocketIOService {
         this.socket = io();
     }
 
-    get<T>(apicall: string): RxObservable<T> {
+    get<T>(apicall: string): Observable<T> {
         return new Observable<T>((subscriber: Subscriber<T>) => {
             this.socket.on(apicall, (value) => subscriber.next(value));
             this.socket.emit('data', {

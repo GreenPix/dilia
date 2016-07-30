@@ -25,7 +25,7 @@
         <span class="fa" [ngClass]="{
           'fa-pencil': !file.readonly,
           'fa-lock': file.readonly }"></span>
-        <template [ngSwitchWhen]="true">New file*</template>
+        <template [ngSwitchCase]="true">New file*</template>
         <template ngSwitchDefault>File: {{file.name}}</template>
       </a>
     </li>

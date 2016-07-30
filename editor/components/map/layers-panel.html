@@ -13,7 +13,7 @@
         <h3 class="popover-title">Layers</h3>
     </div>
     <div class="popover-content" [ngSwitch]="isMapValid()">
-        <template [ngSwitchWhen]="true">
+        <template [ngSwitchCase]="true">
             <a href="#" *ngFor="let layer of layerList()"
                         (click)="selectLayer(layer, $event)"
                         class="thumbnail">
@@ -21,7 +21,7 @@
                 style="height: 180px; width: 100%; display: block;">
             </a>
         </template>
-        <template [ngSwitchWhen]="false">
+        <template [ngSwitchCase]="false">
             Start first by creating a new map or opening an existing one.
         </template>
     </div>

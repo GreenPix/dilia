@@ -2,8 +2,6 @@ import {Program, VertexBuffer, glDrawElements, Geom} from '../../gl/gl';
 import {IndicesBuffer, BufferLinkedToProgram} from '../../gl/gl';
 import {genQuadI, genQuadData} from '../../gl/gl';
 import {Texture} from '../../gl/gl';
-
-import {CameraProperties} from '../interfaces';
 import {TilesLayerBuilder, TilesHandle} from './common';
 import {ChipsetLayer, TileIdSetter} from './common';
 import {SelectedPartialLayer} from './common';
@@ -54,7 +52,7 @@ export class TilesLayer2 implements TilesLayerBuilder, TilesHandle {
     build(): this { return this; }
 
     /// Draw
-    draw(gl: WebGLRenderingContext, program: Program, camera: CameraProperties) {
+    draw(gl: WebGLRenderingContext, program: Program) {
 
         // Initialization if not done previously
         if (this.vertex_buffer instanceof VertexBuffer) {
