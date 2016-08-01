@@ -1,19 +1,17 @@
-import {Component, View, ViewChild} from 'angular2/core';
-import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm} from 'angular2/common';
-import {Output, EventEmitter} from 'angular2/core';
+import {Component, ViewChild} from '@angular/core';
+import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm} from '@angular/common';
+import {Output, EventEmitter} from '@angular/core';
 import {SocketIOService, HttpService} from '../../services/index';
 import {AaribaFileList, AaribaFile} from '../../shared';
 import {SelectEl} from '../../services/directives';
-import * as _ from 'lodash';
+import {filter, sortBy, throttle} from 'lodash';
 
 let autocompleteTemplate = require<string>('./autocomplete.html');
 let autocompleteScss = require<Webpack.Scss>('./autocomplete.scss');
 
 
 @Component({
-    selector: 'autocomplete-files'
-})
-@View({
+    selector: 'autocomplete-files',
     templateUrl: autocompleteTemplate,
     styles: [autocompleteScss.toString()],
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SelectEl]
@@ -37,14 +35,14 @@ export class AutocompleteFiles {
 
     constructor(
         private io: SocketIOService,
-        private http: HttpService)
-    {
+        private http: HttpService
+    ) {
         this.io.get<AaribaFile>('/api/aariba/new')
             .subscribe(f => this.file_list.push(f));
 
         this.io.get<AaribaFile>('/api/aariba/lock_status')
             .subscribe(fl => {
-                let file = _.filter(this.file_list, f => f.name == fl.name);
+                let file = filter(this.file_list, f => f.name == fl.name);
                 if (file.length > 0) file[0].locked = fl.locked;
             });
 
@@ -56,7 +54,7 @@ export class AutocompleteFiles {
     }
 
     ngAfterViewInit() {
-        let throttled = _.throttle(value => this.filterFiles(value.search), 10);
+        let throttled = throttle(value => this.filterFiles(value.search), 10);
         this.form.control.valueChanges
             .filter(_ => this.form.valid &&
                 this.input_search.getHtmlElement() === document.activeElement)
@@ -116,7 +114,8 @@ export class AutocompleteFiles {
 
     isInputInvalid() {
         if (!this.input_search) return false;
-        return this.input_value && this.input_value.length > this.minlength &&
+        return (this.input_value || false) &&
+            this.input_value.length > this.minlength &&
             this.file_filtered.length === 0 &&
             this.input_search.getHtmlElement() === document.activeElement;
     }
@@ -127,7 +126,6 @@ export class AutocompleteFiles {
 
     tryAcceptInput() {
         if (this.isInputValid()) {
-            this.form.dirty = false;
             this.openFile.next(this.selected);
         }
     }
@@ -144,11 +142,11 @@ export class AutocompleteFiles {
         name = name.toLowerCase();
 
         // Filter by matching
-        this.file_filtered = _.filter(this.file_list,
+        this.file_filtered = filter(this.file_list,
               file => this.match(name, file.name.toLowerCase()));
 
         // Sort by lexical order
-        this.file_filtered = _.sortBy(this.file_filtered, 'name');
+        this.file_filtered = sortBy(this.file_filtered, 'name');
 
         // We limit the number of completions to 8,
         // we might want to always list everything but that still

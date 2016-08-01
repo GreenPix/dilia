@@ -8,25 +8,34 @@
       <div class="form-group has-feedback" [ngClass]="{
         'has-error': isLoginInvalid() &&
                      loginForm.dirty &&
-                     loginForm.controls?.login?.touched,
-        'has-success': isLoginValid() && loginForm.dirty }" >
+                     loginForm.controls?.login?.touched ||
+                     loginAttemptFailed,
+        'has-success': isLoginValid() && loginForm.dirty && !loginAttemptFailed }" >
         <input class="form-control" ngControl="login" placeholder="Username">
-        <span class="control-label" *ngIf="isLoginValid() && loginForm.dirty">
+        <span class="control-label" *ngIf="isLoginValid() && loginForm.dirty && !loginAttemptFailed">
           <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+        </span>
+        <span class="control-label" *ngIf="
+          isLoginInvalid() &&
+          loginForm.dirty &&
+          loginForm.controls?.login?.touched ||
+          loginAttemptFailed
+        ">
+            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
         </span>
         <span class="control-label" *ngIf="
           isLoginInvalid() &&
           loginForm.dirty &&
           loginForm.controls?.login?.touched
         ">
-          <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
           Login is required
         </span>
       </div>
       <div class="form-group has-feedback" [ngClass]="{
         'has-error':  isPasswordInvalid() &&
                       loginForm.dirty &&
-                      loginForm.controls?.password?.touched,
+                      loginForm.controls?.password?.touched ||
+                      loginAttemptFailed,
         'has-success': isPasswordValid() &&
                        loginForm.dirty }">
         <input class="form-control" ngControl="password" type="password" placeholder="Password">

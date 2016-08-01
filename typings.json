@@ -1,7 +1,10 @@
 {
-  "ambientDependencies": {
+  "globalDependencies": {
     "ace": "github:DefinitelyTyped/DefinitelyTyped/ace/ace.d.ts#52b0ea5c9719831eecf6ba7436660e30061a4b3c",
-    "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#4356af494c045299110677b21e62000957e7a72e",
-    "socket.io-client": "github:DefinitelyTyped/DefinitelyTyped/socket.io-client/socket.io-client.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1"
+    "es6-shim": "registry:dt/es6-shim#0.31.2+20160317120654",
+    "socket.io-client": "registry:dt/socket.io-client#1.4.4+20160317120654"
+  },
+  "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20160416211519"
   }
 }

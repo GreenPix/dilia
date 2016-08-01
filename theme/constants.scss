@@ -1,11 +1,34 @@
 
-$color_back: rgb(93, 93, 93);
+$color_back: #5d5d5d;
 $login-background-color: #FAFAFA;
 $navbar-background-color: #FFF;
 $navbar-border-bottom-color: #EEE;
+$navbar-background-color-darker: #f7f7f7;
 $overlay-background-color: rgba(#676767, 0.48);
 $autocomplete-background-color: $navbar-background-color;
-$box-shadow-color: rgba(0, 0, 0, 0.5);
+$box-shadow-color: rgba(#000000, 0.5);
+
+// Everything rely on the fact that at 100px the logo
+// is 43 pixel in height.
+$navbar-logo-height: 43px;
+$navbar-margin-top-bottom: 8px;
+$navbar-height: $navbar-logo-height + 2 * $navbar-margin-top-bottom;
+
+$margin-for-editors-navbar: 15px;
+
+// Map editor
+$map-settings-underline-color: #d26911;
+$map-settings-selected-color: #333;
+$map-settings-unselected-color: #767676;
+
+.nav-option {
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
 
 @mixin border-bot {
     border-bottom: 1px solid $navbar-border-bottom-color;

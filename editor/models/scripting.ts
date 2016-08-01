@@ -1,7 +1,8 @@
-import {Injectable} from 'angular2/core';
-import {Response} from 'angular2/http';
+import {Injectable} from '@angular/core';
+import {Response} from '@angular/http';
 import {AaribaFile} from '../shared';
-import {HttpService, RxObservable, SocketIOService} from '../services/index';
+import {HttpService, Observable, SocketIOService} from '../services';
+import {some, filter} from 'lodash';
 
 export interface FileTab {
     index: number;
@@ -55,7 +56,7 @@ export class FileManager {
     }
 
     editFilename(filename: string, previous_content: string): FileTab {
-        let file = _.filter(this.file_list, f => f.name === filename)[0];
+        let file = filter(this.file_list, f => f.name === filename)[0];
         if (file) {
             this.edit(file, previous_content);
         }
@@ -76,10 +77,10 @@ export class FileManager {
     }
 
     hasFile(filename: string): boolean {
-        return _.any(this.file_list, file => file.name === filename);
+        return some(this.file_list, file => file.name === filename);
     }
 
-    commit(file: FileTab, comment: string): RxObservable<Response> {
+    commit(file: FileTab, comment: string): Observable<Response> {
         if (file.isNew) {
             let observable = this.http.post(`/api/aariba/new`, {
                 content: file.content,

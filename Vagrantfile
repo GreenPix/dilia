@@ -18,7 +18,7 @@ Vagrant.configure(2) do |config|
   # config.vm.box_check_update = false
 
   # server
-  config.vm.network "forwarded_port", guest: 3000, host: 3000
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
   # mongo-express
   config.vm.network "forwarded_port", guest: 3001, host: 3001
   # node-inspector

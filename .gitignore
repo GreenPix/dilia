@@ -3,3 +3,4 @@ node_modules/
 typings/
 build/
 public/js/
+npm-debug.log

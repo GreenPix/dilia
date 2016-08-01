@@ -1,9 +1,9 @@
-import {Component, View} from 'angular2/core';
-import {FormBuilder, Validators, ControlGroup} from 'angular2/common';
-import {FORM_DIRECTIVES, CORE_DIRECTIVES} from 'angular2/common';
-import {Router, OnActivate, ComponentInstruction} from 'angular2/router';
+import {Component} from '@angular/core';
+import {FormBuilder, Validators, ControlGroup} from '@angular/common';
+import {FORM_DIRECTIVES, CORE_DIRECTIVES} from '@angular/common';
+import {Router} from '@angular/router';
+import {AuthService} from '../../services/auth';
 import {HttpService} from '../../services/index';
-import {User} from '../../models/user';
 import {SERVICE_DIRECTIVES} from '../../services/directives';
 
 let template = require<string>('./form.html');
@@ -18,24 +18,22 @@ class HasLoginDetails extends ControlGroup {
     value: LoginDetails;
 }
 
-
 @Component({
     selector: 'login',
     viewProviders: [FormBuilder],
-})
-@View({
     templateUrl: template,
     styles: [style.toString()],
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SERVICE_DIRECTIVES]
 })
-export class LoginForm implements OnActivate {
+export class LoginForm {
     loginForm: HasLoginDetails;
+    loginAttemptFailed: boolean = false;
 
     constructor(
         builder: FormBuilder,
         private router: Router,
         private http: HttpService,
-        private user: User) {
+        private auth: AuthService) {
         this.loginForm = builder.group(<LoginDetails>{
             login: ['', Validators.required],
             password: ['', Validators.required]
@@ -65,33 +63,25 @@ export class LoginForm implements OnActivate {
     doLogin(event: Event) {
         event.preventDefault();
         if (this.loginForm.valid) {
-
-            this.http.post('/api/login', {
-                username: this.loginForm.value.login,
-                password: this.loginForm.value.password
-            })
-            .subscribe(res => {
+            this.auth.login(
+                this.loginForm.value.login,
+                this.loginForm.value.password
+            ).subscribe(res => {
                 if (res.status === 200) {
-                    this.user.username = this.loginForm.value.login;
-                    this.router.navigate(['/ScriptEditor']);
+                    this.router.navigate([this.auth.redirectUrl()]);
                 } else {
-
+                    this.loginAttemptFailed = true;
                 }
+            }, () => {
+                this.loginAttemptFailed = true;
             });
         }
     }
 
-    routerOnActivate(next: ComponentInstruction, prev: ComponentInstruction) {
-        let promise = new Promise<void>((resolve, reject) => {
-            this.http.post('/api/verify')
-                .map(res => res.json())
-                .subscribe((res:any) => {
-                    if (res.authenticated) {
-                        this.router.navigate(['/ScriptEditor']);
-                    }
-                    resolve();
-                });
-        });
-        return promise;
-    }
+    // private loginAttemptFailed() {
+    //     this.paswd_input_state = next_input_state(
+    //         this.paswd_input_state, InputEvent.InvalidLoginAttempt);
+    //     this.login_input_state = next_input_state(
+    //         this.login_input_state, InputEvent.InvalidLoginAttempt);
+    // }
 }

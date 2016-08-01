@@ -1,11 +1,9 @@
-import {Component, View} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
+import {Component} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
 import {HttpService} from '../../services/index';
 
 @Component({
-    selector: 'alert-box'
-})
-@View({
+    selector: 'alert-box',
     template: `
         <div class="alert alert-{{alert_kind}}" role="alert"
             [ngStyle]="{ 'display': last_error ? 'block': 'none' }"
@@ -39,7 +37,7 @@ export class AlertBox {
                 }
             }
             this.alert_kind = ev.kind === 'error' ? 'danger' : ev.kind;
-        });
+        }, () => {});
     }
 
     close() {

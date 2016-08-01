@@ -1,5 +1,6 @@
 
-export var port = 3000;
+export var port = 8000;
+export var max_file_size = 5 * 1024 * 1024; // in bytes
 
 let configDev: Config = {
     mongodb: 'mongodb://localhost/diliaDev',

@@ -1,5 +1,7 @@
 <commit-modal></commit-modal>
 
+<div class="all-editor--nav-background"></div>
+
 <nav class="navbar rule-editor">
   <div class="nav navbar-nav nav-option open-search-file" role="search">
       <autocomplete-files (openFile)="open($event)"></autocomplete-files>
@@ -17,13 +19,13 @@
 <alert-box></alert-box>
 
 <div>
-  <ul class="nav nav-tabs">
-    <li *ngFor="#file of fileList()" role="presentation" [ngClass]="{ 'active': file.active }">
+  <ul class="nav nav-tabs" [ngClass]="{ 'hidden': currentFile() === null }">
+    <li *ngFor="let file of fileList()" role="presentation" [ngClass]="{ 'active': file.active }">
       <a href="#" (click)="edit($event, file)" [ngSwitch]="file.isNew">
         <span class="fa" [ngClass]="{
           'fa-pencil': !file.readonly,
           'fa-lock': file.readonly }"></span>
-        <template [ngSwitchWhen]="true">New file*</template>
+        <template [ngSwitchCase]="true">New file*</template>
         <template ngSwitchDefault>File: {{file.name}}</template>
       </a>
     </li>

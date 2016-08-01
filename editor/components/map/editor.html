@@ -1,2 +1,44 @@
-<h2>Map editor</h2>
-<canvas class="map-editor"></canvas>
+<chipset-modal></chipset-modal>
+<create-map-modal (newMap)="onNewMap($event)"></create-map-modal>
+
+<webgl-surface class="map-editor--canvas"></webgl-surface>
+
+<div class="all-editor--nav-background"></div>
+
+<nav class="navbar map-editor--nav" [ngSwitch]="state.stateStr()">
+
+    <template [ngSwitchCase]="'editor'">
+
+    <div class="nav navbar-nav nav-option" role="search">
+        <map-editor-settings (selectPanel)="openPanel($event)"></map-editor-settings>
+    </div>
+    <div class="nav navbar-nav navbar-right nav-option">
+        <button class="btn btn-default"
+            (click)="uploadChipset()">Upload Chipset</button>
+        <button class="btn btn-success"
+            [ngClass]="{ 'disabled': currentMapIsReadOnly() }"
+            (click)="commit()">Commit</button>
+        <button class="btn btn-primary" (click)="createNewMap()">
+            <span class="fa fa-plus"></span> Create new</button>
+    </div>
+
+    </template>
+
+    <template [ngSwitchCase]="'palette'">
+
+    <h4 class="lead text-center">Palette</h4>
+
+    </template>
+
+</nav>
+
+<alert-box></alert-box>
+
+<div [ngSwitch]="state.stateStr()">
+    <template [ngSwitchCase]="'editor'">
+
+        <layer-panel [currentMap]="map_manager.currentMap()"
+                     (selectLayer)="onSelectLayer($event)"></layer-panel>
+
+    </template>
+</div>

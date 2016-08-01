@@ -1,0 +1,18 @@
+@import "theme/constants";
+
+.map-layers-panel {
+    position: relative;
+    display: block;
+    float: left;
+    width: 260px;
+    margin: 20px;
+    // TODO: remove that dark magic
+    top: -29px;
+    left: -54px;
+    z-index: 100;
+    transition: 0.5s opacity;
+}
+
+.map-layers-panel--close {
+    margin: 8px;
+}

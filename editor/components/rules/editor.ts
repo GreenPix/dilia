@@ -1,8 +1,7 @@
 import {Subscription} from 'rxjs';
-import {Component, View, AfterViewInit} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
-import {ViewChild} from 'angular2/core';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {Component, AfterViewInit} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
+import {ViewChild} from '@angular/core';
 import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
@@ -16,15 +15,13 @@ import {AlertBox} from '../alert/box';
 import {AutocompleteFiles} from '../autocomplete/autocomplete';
 
 let ruleEditorTemplate = require<string>('./editor.html');
-let ruleEditorCss = require<string>('./editor.css');
+let ruleEditorCss = require<Webpack.Scss>('./editor.scss');
 
 @Component({
-    selector: 'rule-editor'
-})
-@View({
-    styles: [ruleEditorCss],
+    selector: 'rule-editor',
+    styles: [ruleEditorCss.toString()],
     directives: [
-        CORE_DIRECTIVES, ROUTER_DIRECTIVES, AutocompleteFiles,
+        CORE_DIRECTIVES, AutocompleteFiles,
         CommitModal, AlertBox, RuleEditorExec, RuleEditorGlobals],
     templateUrl: ruleEditorTemplate
 })
@@ -35,7 +32,7 @@ export class RuleEditor implements AfterViewInit {
     text_area_height: number;
     editor: AceAjax.Editor;
     interpreter: AaribaInterpreter;
-    content_observable: Subscription<string> = null;
+    content_observable: Subscription = null;
 
     @ViewChild(CommitModal)
     commit_modal: CommitModal;

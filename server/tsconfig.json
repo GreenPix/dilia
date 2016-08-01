@@ -1,5 +1,5 @@
 {
-    "version": "1.6.0-beta",
+    "version": "1.7.5",
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
@@ -17,45 +17,12 @@
         "moduleResolution": "node"
     },
     "compileOnSave": false,
-    "filesGlob": [
-        "./**/*.ts",
-        "./typings/main.d.ts",
-        "!./typings/browser.d.ts",
-        "!./typings/browser/**/*",
-        "!./typings/main/**/*",
-        "!./node_modules/**/*"
+    "buildOnSave": false,
+    "exclude": [
+        "build",
+        "../node_modules"
     ],
-    "files": [
-        "./apis/aariba.ts",
-        "./apis/auth.ts",
-        "./apis/index.ts",
-        "./apis/lycan.ts",
-        "./apis/middlewares.ts",
-        "./apis/post_response_fmt.ts",
-        "./apis/user.ts",
-        "./apis/users.ts",
-        "./check.ts",
-        "./config/express.ts",
-        "./config/index.ts",
-        "./config/passport.ts",
-        "./config/router/index.ts",
-        "./config/socket.io.ts",
-        "./custom_typings/crypto.d.ts",
-        "./custom_typings/passport.socketio.d.ts",
-        "./db/error_helpers.ts",
-        "./db/index.ts",
-        "./db/schemas/aariba.ts",
-        "./db/schemas/users.ts",
-        "./errors/index.ts",
-        "./logger/helpers.ts",
-        "./resources.ts",
-        "./server.ts",
-        "./shared.ts",
-        "./typings/main.d.ts",
-        "./util/print.ts"
-    ],
-    "exclude": [],
     "atom": {
-        "rewriteTsconfig": true
+        "rewriteTsconfig": false
     }
 }

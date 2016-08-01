@@ -5,7 +5,9 @@ var gulp = require('gulp');
 var mode = process.env.NODE_ENV;
 
 if (mode !== 'development' && mode !== 'production') {
-  throw new Error("NODE_ENV needs to be set to either 'development' or 'production'.");
+  console.log("NODE_ENV needs to be set to either 'development' or 'production'.");
+  console.log("Falling back to 'development'");
+  mode = 'development';
 }
 
 var ace = {

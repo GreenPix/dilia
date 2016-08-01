@@ -16,10 +16,16 @@ export function notFound(res: Response, user?: UserDocument, msg?: string): Resp
     });
 }
 
-export function unauthorized(res: Response, user: UserDocument): Response {
-    warn(`Unauthorized access by ${user.username}`);
+export function unauthorized(res: Response, msg: string | UserDocument, user?: UserDocument): Response {
+    if (!(typeof msg === 'string')) {
+        user = msg as UserDocument;
+        msg = `Unauthorized access`;
+    }
+    if (user) {
+        warn(`Unauthorized access by ${user.username}`);
+    }
     return res.status(401).json({
-        message: `Unauthorized access`,
+        message: msg,
     });
 }
 
@@ -27,7 +33,7 @@ export function badReq(res: Response, msg?: string, errors?: any): Response {
     warn(msg || 'Bad request');
     return res.status(400).json({
         message: msg || 'Bad request',
-        errors: errors
+        errors: errors || {}
     });
 }
 

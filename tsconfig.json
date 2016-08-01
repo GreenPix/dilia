@@ -1,5 +1,5 @@
 {
-    "version": "1.6.0-beta",
+    "version": "1.8.10",
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
@@ -7,6 +7,7 @@
         "jsx": "react",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
+        "noEmitHelpers": true,
         "declaration": false,
         "noImplicitAny": false,
         "removeComments": true,
@@ -17,49 +18,17 @@
         "suppressImplicitAnyIndexErrors": true,
         "moduleResolution": "node"
     },
+    "awesomeTypescriptLoaderOptions": {
+        "resolveGlobs": true,
+        "forkChecker": true
+    },
+    "exclude": [
+        "node_modules",
+        "server"
+    ],
+    "buildOnSave": false,
     "compileOnSave": false,
-    "filesGlob": [
-        "./editor/**/*.ts",
-        "./shared/**/*.ts",
-        "./typings/browser.d.ts",
-        "./custom_typings/**/*.ts",
-        "./editor/**/*.tsx",
-        "!./node_modules/**/*"
-    ],
-    "files": [
-        "./editor/app.ts",
-        "./editor/components/alert/box.ts",
-        "./editor/components/autocomplete/autocomplete.ts",
-        "./editor/components/login/form.ts",
-        "./editor/components/map/editor.ts",
-        "./editor/components/modal/dialog.ts",
-        "./editor/components/profile/profile.ts",
-        "./editor/components/rules/ace.ts",
-        "./editor/components/rules/autocompleter.ts",
-        "./editor/components/rules/behaviour.ts",
-        "./editor/components/rules/commit.ts",
-        "./editor/components/rules/editor.ts",
-        "./editor/components/rules/exec.ts",
-        "./editor/components/rules/globals.ts",
-        "./editor/components/rules/interfaces.ts",
-        "./editor/components/toolbar/toolbar.ts",
-        "./editor/index.ts",
-        "./editor/libs-free.ts",
-        "./editor/models/scripting.ts",
-        "./editor/models/user.ts",
-        "./editor/rules/parser.ts",
-        "./editor/services/directives.ts",
-        "./editor/services/index.ts",
-        "./editor/shared.ts",
-        "./editor/util/injector.ts",
-        "./shared/aariba.ts",
-        "./shared/socket.ts",
-        "./typings/browser.d.ts",
-        "./custom_typings/ace-custom.d.ts",
-        "./custom_typings/webpack.d.ts"
-    ],
-    "exclude": [],
     "atom": {
-        "rewriteTsconfig": true
+        "rewriteTsconfig": false
     }
 }

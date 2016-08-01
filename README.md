@@ -13,6 +13,7 @@ In order to work properly, the server has a few requirements:
 
 * Some packages:
   * **[required]** `mongodb`
+  * **[required]** `libkrb5-dev`
 * Some environment variables:
   * **[required]** `NODE_ENV` set to `production`.
   * **[optional]** `GOOGLE_SECRET` and `GOOGLE_CLIENTID` API token in order to allow google oauth
@@ -41,6 +42,20 @@ To start the client:
 npm start
 ```
 
+Note that, as for now, the project does not contain any fixture and if you do
+not use any external authentication provider (Google or Github), you cannot use
+the Dilia UI to create an account to connect with. Therefore, you have to create
+an user by sending a POST request directly to the Dilia server.
+
+```bash
+curl -H "Content-Type: application/json"      \
+     -X POST                                  \
+     -d '{"username": "test","password": "test", "email": "test@gg.com"}' \
+     http://localhost:8000/api/users
+```
+
+The server response —in case of success— is `OK`.
+
 ### Vagrant
 
 This repository also includes a **Vagrantfile** for easy set up and quick development.
@@ -59,4 +74,22 @@ cd /vagrant
 export NODE_ENV='development' && npm run server
 ```
 
-And navigate to http://localhost:3000/.
+And navigate to http://localhost:8000/.
+
+### Text editor setup
+
+#### Atom
+
+If you use [atom](http://atom.io/), you might consider installing those
+packages:
+  - `atom-typescript`
+  - `linter-tslint`
+  - `language-pegjs`
+  - `language-glsl`
+  - `autocomplete-paths`
+  - `autocomplete-glsl`
+  - `docblockr`
+  - `color-picker`
+
+For fun :)
+  - `file-icons`

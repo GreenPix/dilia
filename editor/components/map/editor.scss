@@ -1,0 +1,13 @@
+@import "theme/constants";
+
+.map-editor--canvas {
+    width: 100vw;
+    position: absolute;
+    left: 0;
+    top: $navbar-height;
+    height: calc(100vh - #{$navbar-height});
+}
+
+.map-editor--nav {
+    margin-top: $margin-for-editors-navbar;
+}

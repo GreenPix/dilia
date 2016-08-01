@@ -43,11 +43,11 @@ app.get('/api/aariba/:name', reqAuth, (req, res) => {
             werror(err);
             notFound(res, req.user);
         } else {
-            let script_reduced = script.toJsonResponse();
+            let script_reduced = script.toJsmap();
 
             User.findAll(script_reduced.revisions.map(r => r.author), (err, authors) => {
                 if (err) return res.status(500).json(errorToJson(err));
-                script_reduced.revisions = script_reduced.revisions.map(r => {
+                (script_reduced as any).revisions = script_reduced.revisions.map(r => {
                     return {
                         author: authors.get(r.author),
                         date: r.date,

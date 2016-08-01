@@ -1,6 +1,6 @@
-import {Directive, ElementRef} from 'angular2/core';
-import {Component, View} from 'angular2/core';
-import {NgStyle} from 'angular2/common';
+import {Directive, ElementRef} from '@angular/core';
+import {Component} from '@angular/core';
+import {NgStyle} from '@angular/common';
 import {Observable} from 'rxjs';
 
 
@@ -23,9 +23,7 @@ export class AnimFadeIn {
     ],
     host: {
       '(mouseover)': 'show()'
-    }
-})
-@View({
+    },
     directives: [NgStyle],
     template: `<span class="tooltip bottom"
         [ngStyle]="{'opacity': opacity}">{{text}}</span>`
@@ -53,7 +51,7 @@ export class SelectEl {
     }
 
     event<T>(fromEvent: string): Observable<T> {
-        return Observable.fromEvent(this.element.nativeElement, fromEvent);
+        return Observable.fromEvent<T>(this.element.nativeElement, fromEvent);
     }
 
     getInputElement(): HTMLInputElement {

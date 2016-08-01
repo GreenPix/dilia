@@ -1,10 +1,16 @@
 
 // Auth
-require('./auth');
+import './auth';
 
 // User
-require('./users');
-require('./user');
+import './users';
+import './user';
 
 // Aariba
-require('./aariba');
+import './aariba';
+
+// Maps
+import './map';
+
+// Assets
+import './chipsets';

@@ -16,7 +16,7 @@
     <div class="autocomplete-container list-group">
         <!-- <div class="autocomplete-suggestions list-group"> -->
             <button type="button" class="list-group-item"
-                *ngFor="#file of file_filtered"
+                *ngFor="let file of file_filtered"
                 (click)="selectFile(file)"
                 [ngClass]="{ 'active': file === selected, 'file-readonly': file.locked }">
                 {{file.name}}

@@ -1,6 +1,7 @@
-import {Component, View} from 'angular2/core';
-import {CORE_DIRECTIVES} from 'angular2/common';
-import {Location, Router, RouterLink} from 'angular2/router';
+import {Component} from '@angular/core';
+import {CORE_DIRECTIVES} from '@angular/common';
+import {ROUTER_DIRECTIVES, Router} from '@angular/router';
+import {Location} from '@angular/common';
 import {HttpService} from '../../services/index';
 import {SERVICE_DIRECTIVES} from '../../services/directives';
 
@@ -9,19 +10,18 @@ let toolbarTemplate = require<string>('./toolbar.html');
 let toolbarCss = require<Webpack.Scss>('./toolbar.scss');
 
 @Component({
-    selector: 'rule-editor-toolbar'
-})
-@View({
+    selector: 'rule-editor-toolbar',
     templateUrl: toolbarTemplate,
     styles: [toolbarCss.toString()],
-    directives: [CORE_DIRECTIVES, SERVICE_DIRECTIVES, RouterLink]
+    directives: [CORE_DIRECTIVES, SERVICE_DIRECTIVES, ROUTER_DIRECTIVES]
 })
 export class RuleEditorToolbar {
 
     constructor(
         private router: Router,
         private location: Location,
-        private http: HttpService) {}
+        private http: HttpService
+    ) {}
 
     isLoginPage(): boolean {
         return this.location.path() === '/login';
@@ -30,7 +30,7 @@ export class RuleEditorToolbar {
     logout(): void {
         this.http.post('/api/logout')
             .subscribe(res => {
-                this.router.navigate(['/Login']);
+                this.router.navigate(['/login']);
             });
     }
 }
