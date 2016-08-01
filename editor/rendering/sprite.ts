@@ -14,7 +14,12 @@ export interface SpriteBuilder {
     overlayFlag(overlay: boolean): this;
     updateTexture(pixels: Pixels): this;
     buildWithEntireTexture(): SpriteHandle;
-    buildWithSize(width: number, height: number, tex_repeat?: boolean): SpriteHandle;
+    buildWithSize(
+        width: number,
+        height: number,
+        tex_repeat?: boolean,
+        scale_coord?: number
+    ): SpriteHandle;
     buildFromTileId(tile_size: number, id: number): SpriteHandle;
 }
 
