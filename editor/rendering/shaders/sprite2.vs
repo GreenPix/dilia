@@ -8,6 +8,6 @@ uniform vec2 viewport_size;
 varying vec2 f_tex;
 
 void main(void) {
-   gl_Position = vec4((pos + obj_pos - view_pos) / viewport_size, 0.0, 1.0);
-   f_tex = tex;
+    gl_Position = vec4(2.0 * (pos + obj_pos - view_pos) / viewport_size - 1.0, 0.0, 1.0);
+    f_tex = tex;
 }

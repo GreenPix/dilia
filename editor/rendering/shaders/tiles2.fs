@@ -18,6 +18,11 @@ void main(void) {
         discard;
     }
     vec4 tile = texture2D(tiles_index, tex_coord);
+
+    if (abs(tex_coord.x - 0.0) < 0.01 && abs(tex_coord.y - 0.0) < 0.01) {
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    } else {
+
     // Blank tiles are represented by the maximum value
     if (tile.x == 1.0 && tile.y == 1.0) {
         discard;
@@ -26,4 +31,6 @@ void main(void) {
     vec2 offset_in_tile = tile_size - mod(pixel_coord, tile_size);
     vec2 final_tex_coord = (tile_coord + offset_in_tile) * inverse_tiles_tex_size;
     gl_FragColor = texture2D(tiles_tex, final_tex_coord);
+
+    }
 }

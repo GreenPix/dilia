@@ -64,8 +64,8 @@ class GridHandle {
             genPixelsForTextureWithBorder(this.map.tile_size * new_zoom_level)
         )
         .buildWithSize(
-            this.map.widthInPx() * new_zoom_level,
-            this.map.heightInPx() * new_zoom_level,
+            this.map.widthInPx(),// * new_zoom_level,
+            this.map.heightInPx(),// * new_zoom_level,
             true
         );
     }
@@ -193,7 +193,7 @@ export class EditorState implements MouseHandler, KeyHandler {
             DefaultFBO,
             ClearAll,
             Sprite2Program,
-            this.camera_editor.as_camera_with_scale_ignored(),
+            this.camera_editor,//.as_camera_with_scale_ignored(),
             grid,
             Tile2Program,
             this.camera_editor,

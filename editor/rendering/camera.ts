@@ -88,8 +88,8 @@ export class Camera implements Command, ViewportListener {
     }
 
     fromWindowCoordToObjectSpace(mx: number, my: number): [number, number] {
-        let a = 1 / this.values[0];
-        let b = 1 / this.values[4];
+        let a = this.viewport_width / (2 * this.zoom_factor);
+        let b = this.viewport_height / (2 * this.zoom_factor);
         let c = this.values[6];
         let d = this.values[7];
         return [
