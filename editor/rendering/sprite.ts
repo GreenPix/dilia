@@ -80,15 +80,16 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         updateTextureFromPixels(this.gl, this.tex, pixels);
         return this;
     }
-    buildWithSize(width: number, height: number, tex_repeat?: boolean): this {
+    buildWithSize(width: number, height: number, tex_repeat?: boolean, scale_coord?: number): this {
         let tex_coord_w, tex_coord_h;
+        scale_coord = scale_coord || 1;
         if (tex_repeat) {
             texRepeat(this.gl, this.tex.tex_id);
-            tex_coord_w = width / this.tex.width;
-            tex_coord_h = height / this.tex.height;
+            tex_coord_w = width / this.tex.width * scale_coord;
+            tex_coord_h = height / this.tex.height * scale_coord;
         } else {
-            tex_coord_w = 1;
-            tex_coord_h = 1;
+            tex_coord_w = 1 * scale_coord;
+            tex_coord_h = 1 * scale_coord;
         }
         return this.buildFrom(
             genQuadData(0, 0, width, height),

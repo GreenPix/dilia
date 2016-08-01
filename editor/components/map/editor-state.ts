@@ -64,9 +64,10 @@ class GridHandle {
             genPixelsForTextureWithBorder(this.map.tile_size * new_zoom_level)
         )
         .buildWithSize(
-            this.map.widthInPx(),// * new_zoom_level,
-            this.map.heightInPx(),// * new_zoom_level,
-            true
+            this.map.widthInPx(),
+            this.map.heightInPx(),
+            true,
+            new_zoom_level
         );
     }
 }
