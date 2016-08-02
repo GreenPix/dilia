@@ -69,6 +69,7 @@
     "core-js": "2.4.1",
     "crypto": "0.0.3",
     "csurf": "1.9.0",
+    "dragula": "3.7.1",
     "express": "4.13.4",
     "express-session": "1.13.0",
     "font-awesome": "4.5.0",
