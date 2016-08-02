@@ -1,13 +1,13 @@
 attribute vec2 pos;
-attribute vec2 texCoord;
+attribute vec2 tex;
 
-uniform mat3 proj;
 uniform vec2 obj_pos;
+uniform vec2 view_pos;
+uniform vec2 viewport_size;
 
-varying vec2 ftexCoord;
+varying vec2 f_tex;
 
-void main()
-{
-    gl_Position = vec4(proj * vec3(pos + obj_pos, 1.0), 1.0);
-    ftexCoord = texCoord;
+void main(void) {
+    gl_Position = vec4(2.0 * (pos + obj_pos - view_pos) / viewport_size - 1.0, 0.0, 1.0);
+    f_tex = tex;
 }

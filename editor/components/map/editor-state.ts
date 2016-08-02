@@ -8,7 +8,7 @@ import {CommandBuffer, ClearAll, FlipY} from '../../rendering/pipeline';
 import {TilesHandle, SelectedPartialLayer} from '../../rendering/tiles';
 import {SpriteHandle, SpriteBuilder} from '../../rendering/sprite';
 import {genPixelsForTextureWithBorder} from '../../rendering/util';
-import {TileProgram, Sprite2Program, Tile2Program} from '../../rendering/shaders';
+import {SpriteProgram, TileProgram} from '../../rendering/shaders';
 
 let vertex_shader_overlay_src = require<string>('./shaders/dark_overlay.vs');
 let fragment_shader_overlay_src = require<string>('./shaders/dark_overlay.fs');
@@ -192,34 +192,17 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.scene_editor = new CommandBuffer([
             DefaultFBO,
             ClearAll,
-            Sprite2Program,
+            SpriteProgram,
             this.camera_editor,//.as_camera_with_scale_ignored(),
             grid,
-            Tile2Program,
+            TileProgram,
             this.camera_editor,
             map_tiled,
             FlipY,
-            Sprite2Program,
+            SpriteProgram,
             this.camera_editor,
             brush
         ]);
-        // new CommandBuffer([
-        //     full_map_fbo,
-        //     ClearAll,
-        //     FixedCamera(map.widthInPx(), map.heightInPx()),
-        //     TileProgram,
-        //     new TmpLinearFiltering(map_tiled),
-        //     DefaultFBO,
-        //     ClearAll,
-        //     this.camera_editor.as_camera_with_scale_ignored(),
-        //     SpriteProgram,
-        //     grid,
-        //     this.camera_editor,
-        //     SpriteProgram,
-        //     map_quad,
-        //     FlipY,
-        //     brush
-        // ]);
 
         this.scene_palette = new CommandBuffer([
             DefaultFBO,
@@ -229,7 +212,7 @@ export class EditorState implements MouseHandler, KeyHandler {
             this.camera_editor,
             map_tiled,
             overlay,
-            Sprite2Program,
+            SpriteProgram,
             this.camera_palette,
             palette,
             surface.createSpriteRenderEl().loadSpriteObject(

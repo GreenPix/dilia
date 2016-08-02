@@ -3,7 +3,7 @@ import {Program, VertexBuffer} from '../gl/gl';
 import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
 import {Command, TextureGetter} from './interfaces';
 import {Context} from './context';
-import {TilesLayer2, TilesLayerBuilder} from './tiles';
+import {TilesLayer, TilesLayerBuilder} from './tiles';
 import {SpriteObject, SpriteBuilder} from './sprite';
 import {Texture, Pixels} from '../gl/tex';
 import {values} from 'lodash';
@@ -102,9 +102,6 @@ export class GenericRenderEl extends BaseRenderEl {
             // make sure the program is active
             this.program.use();
             this.program.setUniforms(this.uniforms_values);
-            this.program.setUniforms({
-                proj: ctx.active_camera
-            });
 
             if (this.indices) {
                 glDrawElements(
@@ -163,7 +160,7 @@ export class SpriteRenderEl extends BaseRenderEl {
 
 export class TilesRenderEl extends BaseRenderEl {
 
-    private tile_el: TilesLayer2;
+    private tile_el: TilesLayer;
 
     constructor(
         gl: WebGLRenderingContext,
@@ -176,7 +173,7 @@ export class TilesRenderEl extends BaseRenderEl {
         chipset_paths: string[],
         cb: (chipset_datas: Texture[], object: TilesLayerBuilder) => void
     ): this {
-        this.tile_el = new TilesLayer2(this.gl);
+        this.tile_el = new TilesLayer(this.gl);
         let nb_chipset = chipset_paths.length;
         let chipset_datas = new Array(nb_chipset);
         for (let i = 0; i < nb_chipset; ++i) {

@@ -1,16 +1,18 @@
-uniform mat3 proj;
+attribute vec2 quad_pos;
+attribute vec2 quad_tex;
 
-attribute vec2 tile_pos;
-attribute vec2 tile_tex_coord;
+varying vec2 pixel_coord;
+varying vec2 tex_coord;
 
-varying vec2 v_tex_coords;
+uniform vec2 view_pos;
+uniform vec2 viewport_size;
+uniform vec2 inverse_map_size;
+uniform float tile_size;
 
-void main() {
-    if (tile_tex_coord.x == 0.0 && tile_tex_coord.y == 0.0) {
-        gl_Position = vec4(0.0);
-        v_tex_coords = vec2(0.0);
-    } else {
-        gl_Position = vec4(proj * vec3(tile_pos, 1.0), 1.0);
-        v_tex_coords = vec2(tile_tex_coord.x - 1.0, tile_tex_coord.y - 1.0);
-    }
+void main(void) {
+    pixel_coord = (quad_tex * viewport_size) + view_pos;
+    // TODO: is it more numerically stable to pass a uniform which is the
+    // inverse of tile_size?
+    tex_coord = pixel_coord * inverse_map_size / tile_size;
+    gl_Position = vec4(quad_pos, 0.0, 1.0);
 }
