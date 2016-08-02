@@ -1,3 +1,4 @@
+/* tslint:disable */
 import {Schema, model, Document, Types} from 'mongoose';
 
 // This is the store for chipsets.

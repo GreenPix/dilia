@@ -33,7 +33,8 @@ export class AuthService {
         return this.redirect_url ? this.redirect_url: 'map-editor';
     }
 
-    logout() {
+    logout(): Observable<Response> {
         this.is_logged_in = false;
+        return this.http.post('/api/logout');
     }
 }

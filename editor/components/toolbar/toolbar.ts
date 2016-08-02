@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {CORE_DIRECTIVES} from '@angular/common';
 import {ROUTER_DIRECTIVES, Router} from '@angular/router';
 import {Location} from '@angular/common';
-import {HttpService} from '../../services/index';
+import {AuthService} from '../../services/auth';
 import {SERVICE_DIRECTIVES} from '../../services/directives';
 
 
@@ -20,7 +20,7 @@ export class RuleEditorToolbar {
     constructor(
         private router: Router,
         private location: Location,
-        private http: HttpService
+        private auth: AuthService
     ) {}
 
     isLoginPage(): boolean {
@@ -28,9 +28,8 @@ export class RuleEditorToolbar {
     }
 
     logout(): void {
-        this.http.post('/api/logout')
-            .subscribe(res => {
-                this.router.navigate(['/login']);
-            });
+        this.auth.logout().subscribe(res => {
+            this.router.navigate(['/login']);
+        });
     }
 }

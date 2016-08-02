@@ -24,10 +24,11 @@ Thus the environment will be:
 The following options allows you to override this behavior.
 
 ${colors.bold.green('Usage:')}
-  webpack [--prod | --dev]
+  webpack [--prod | --dev] [--bail]
   webpack --opt-help | --version
 
 ${colors.bold.green('Arguments:')}
+  --bail                Fail the build if there's any compile error.
   --opt-help            Show this message.
   --version             Show the version of dilia.
   --prod                Start a production build.

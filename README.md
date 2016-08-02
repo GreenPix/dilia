@@ -1,4 +1,4 @@
-# Dilia - Game Editor for Renaissance
+# Dilia - Game Editor for Renaissance [![Build Status](https://travis-ci.org/GreenPix/dilia.svg?branch=travis)](https://travis-ci.org/GreenPix/dilia)
 
 Dilia is a dedicated game editor for the Renaissance project. The editor can
 be used for your own project, you'll probably want to fork it to adapt it to your needs.
