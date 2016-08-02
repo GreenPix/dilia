@@ -21,7 +21,6 @@ export class AaribaInterpreter {
     }
 
     execute(content: string) {
-        //let globalsInit = clone(this.globals);
         pegParser.parse(content, this.globals);
     }
 
