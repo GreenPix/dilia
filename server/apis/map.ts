@@ -1,11 +1,11 @@
 import {app} from '../config/express';
 import {reqAuth} from './middlewares';
-import {MapData, LayerData, ChipsetData} from '../shared';
-import {MapSchema, MapProperties} from '../db/schemas/map';
-import {UserDocument} from '../db/schemas/users';
+//import {MapData, LayerData, ChipsetData} from '../shared';
+//import {MapSchema, MapProperties} from '../db/schemas/map';
+//import {UserDocument} from '../db/schemas/users';
 
 app.post('/api/maps/new', reqAuth, (req, res) => {
-  let user: UserDocument = req.user;
+  //let user: UserDocument = req.user;
 });
 
 app.get('/api/maps/:id', reqAuth, (req, res) => {
@@ -28,6 +28,5 @@ app.get('/api/maps/:id', reqAuth, (req, res) => {
 });
 
 app.post('/api/maps/:id/commit', reqAuth, (req, res) => {
-    let user: UserDocument = req.user;
-
+    //let user: UserDocument = req.user;
 });

@@ -4,7 +4,7 @@ const webpackMerge = require('webpack-merge');
 const commonConfig = require('./common');
 const DefinePlugin = require('webpack').DefinePlugin;
 
-const outputDir = path.join(__dirname, '/public/');
+const outputDir = path.join(path.dirname(__dirname), '/public/');
 
 module.exports = webpackMerge(commonConfig, {
     debug: true,

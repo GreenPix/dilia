@@ -1,4 +1,4 @@
-declare module "passport.socketio" {
+declare module 'passport.socketio' {
 
     interface AuthorizeSuccess {
         (data: any, accept: () => void): void;

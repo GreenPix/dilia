@@ -1,10 +1,9 @@
 import {WebGLSurface} from '../webgl/surface';
 import {MouseHandler, KeyHandler} from '../webgl/surface';
-import {Camera, FixedCamera} from '../../rendering/camera';
+import {Camera} from '../../rendering/camera';
 import {Map} from '../../models/map';
-import {DefaultFBO, FBO} from '../../rendering/fbo';
+import {DefaultFBO} from '../../rendering/fbo';
 import {ZoomBehavior} from '../webgl/zoom';
-import {TmpLinearFiltering} from '../../rendering/pipeline';
 import {CommandBuffer, ClearAll, FlipY} from '../../rendering/pipeline';
 import {TilesHandle, SelectedPartialLayer} from '../../rendering/tiles';
 import {SpriteHandle, SpriteBuilder} from '../../rendering/sprite';

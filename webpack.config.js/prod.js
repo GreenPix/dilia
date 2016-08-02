@@ -7,7 +7,7 @@ const DefinePlugin = require('webpack/lib/DefinePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const DedupePlugin = require('webpack/lib/optimize/DedupePlugin');
 
-const outputDir = path.join(__dirname, '/dist/public/');
+const outputDir = path.join(path.dirname(__dirname), '/build/public/');
 
 module.exports = webpackMerge(commonConfig, {
     debug: false,
