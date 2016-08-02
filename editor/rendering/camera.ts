@@ -27,7 +27,7 @@ export class Camera implements Command, ViewportListener {
     translate(x: number, y: number) {
         this.pos[0] -= x;
         this.pos[1] -= y;
-        this.updateSaledPos();
+        this.updateScaledPos();
     }
 
     as_camera_with_scale_ignored(): (ctx: Context) => void {
@@ -57,11 +57,10 @@ export class Camera implements Command, ViewportListener {
     }
 
     fromWindowCoordToObjectSpace(mx: number, my: number): [number, number] {
-        let a = this.viewport_width / (2 * this.zoom_factor);
-        let b = this.viewport_height / (2 * this.zoom_factor);
+        let z = this.zoom_factor;
         return [
-            a * (2 * mx / this.viewport_width - 1) + this.scaled_pos[0],
-            b * (1 - 2 * my / this.viewport_height) + this.scaled_pos[1]
+            mx / z + this.scaled_pos[0],
+            (this.viewport_height - my) / z + this.scaled_pos[1],
         ];
     }
 
@@ -73,7 +72,7 @@ export class Camera implements Command, ViewportListener {
             w / 2 - this.viewport_width  / (2 * z),
             h / 2 - this.viewport_height / (2 * z)
         ];
-        this.updateSaledPos();
+        this.updateScaledPos();
     }
 
     // TODO: Write a test for this function.
@@ -97,7 +96,7 @@ export class Camera implements Command, ViewportListener {
         this.pos[0] += v[0] / old_z - v[0] / new_z;
         this.pos[1] += v[1] / old_z - v[1] / new_z;
         this.zoom_factor = new_z;
-        this.updateSaledPos();
+        this.updateScaledPos();
     }
 
     viewport(width: number, height: number) {
@@ -105,7 +104,7 @@ export class Camera implements Command, ViewportListener {
         this.viewport_height = height;
     }
 
-    private updateSaledPos() {
+    private updateScaledPos() {
         this.scaled_pos[0] = Math.floor(this.pos[0]);
         this.scaled_pos[1] = Math.floor(this.pos[1]);
     }
