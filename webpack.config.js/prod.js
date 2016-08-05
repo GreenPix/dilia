@@ -3,6 +3,7 @@ const path = require('path');
 const webpackMerge = require('webpack-merge');
 const commonConfig = require('./common');
 
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
 const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
 const DedupePlugin = require('webpack/lib/optimize/DedupePlugin');
@@ -19,6 +20,13 @@ module.exports = webpackMerge(commonConfig, {
         chunkFilename: 'js/[id].[chunkhash].chunk.js'
     },
     plugins: [
+        new CopyWebpackPlugin([{
+            from: './node_modules/ace-builds/src-min/ace.js',
+            to: 'js/ace-min.js'
+        }, {
+            from: './node_modules/ace-builds/src-min/ext-language_tools.js',
+            to: 'js/'
+        }]),
         new DedupePlugin(),
         new DefinePlugin({
             VERSION: "1.0",
