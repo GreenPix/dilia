@@ -2,9 +2,7 @@ import {warn} from 'winston';
 
 export function check() {
     if (['development', 'production', 'test'].indexOf(process.env.NODE_ENV) == -1) {
-        /* tslint:disable:quotemark */
-        throw new Error("NODE_ENV wasn't set ! Should be either 'development' | 'production' | 'test'");
-        /* tslint:enable:quotemark */
+        process.env.NODE_ENV = 'production';
     }
     checkToken('GOOGLE_CLIENTID');
     checkToken('GOOGLE_SECRET');
