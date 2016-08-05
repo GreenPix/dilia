@@ -13,7 +13,7 @@
     "build-client": "webpack --prod --bail",
     "server": "node ./server/build/server/server.js",
     "debug-server": "node --debug-brk ./server/build/server/server.js",
-    "build-server": "cd server/ && tsc && cd .."
+    "build-server": "cd server/ && $(npm bin)/tsc && cd .."
   },
   "repository": {
     "type": "git",
