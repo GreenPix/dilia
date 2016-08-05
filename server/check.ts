@@ -16,10 +16,12 @@ function checkToken(token) {
     let msg = `${token} was not defined:` +
     `\tAuthentication using this provider are going to fails...`;
 
-    if (!process.env[token] && process.env.NODE_ENV !== 'production') {
-        warn(msg);
-        process.env[token] = `FAKE_${token}`;
-    } else {
-        throw new Error(msg);
+    if (!process.env[token]) {
+        if (process.env.NODE_ENV !== 'production') {
+            warn(msg);
+            process.env[token] = `FAKE_${token}`;
+        } else {
+            throw new Error(msg);
+        }
     }
 }
