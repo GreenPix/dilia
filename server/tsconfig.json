@@ -5,7 +5,7 @@
         "module": "commonjs",
         "isolatedModules": false,
         "jsx": "react",
-        "outDir": "build/",
+        "outDir": "../build/",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": false,
@@ -19,7 +19,6 @@
     "compileOnSave": false,
     "buildOnSave": false,
     "exclude": [
-        "build",
         "../node_modules"
     ],
     "atom": {
