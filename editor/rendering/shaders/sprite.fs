@@ -4,15 +4,15 @@ uniform sampler2D texture;
 uniform bool is_overlay;
 uniform bool flip_y;
 
-varying vec2 ftexCoord;
+varying vec2 f_tex;
 
 void main()
 {
     vec4 tc;
     if (flip_y) {
-        tc = texture2D( texture, vec2(ftexCoord.x, 1.0 -ftexCoord.y));
+        tc = texture2D( texture, vec2(f_tex.x, 1.0 -f_tex.y));
     } else {
-        tc = texture2D( texture, ftexCoord );
+        tc = texture2D( texture, f_tex );
     }
     if (is_overlay) {
         vec4 bo = vec4(51.0 / 255.0, 122.0 / 255.0, 183.0 / 255.0, 0.70);

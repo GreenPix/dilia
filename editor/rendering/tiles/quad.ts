@@ -8,7 +8,7 @@ import {SelectedPartialLayer} from './common';
 import {SelectedPartialLayerImpl} from './layer';
 
 
-export class TilesLayer2 implements TilesLayerBuilder, TilesHandle {
+export class TilesLayer implements TilesLayerBuilder, TilesHandle {
 
     // In tile space the size of those layers
     private width: number = 0;

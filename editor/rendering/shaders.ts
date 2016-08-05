@@ -2,17 +2,11 @@ import {Command} from './interfaces';
 import {Context} from './context';
 import {Program} from '../gl/program';
 
-let sprite_vertex_shader = require<string>('./shaders/sprite.vs');
-let sprite_fragment_shader = require<string>('./shaders/sprite.fs');
+const sprite_vertex_shader = require<string>('./shaders/sprite.vs');
+const sprite_fragment_shader = require<string>('./shaders/sprite.fs');
 
-let sprite2_vertex_shader = require<string>('./shaders/sprite2.vs');
-let sprite2_fragment_shader = require<string>('./shaders/sprite2.fs');
-
-let tiles_vertex_shader = require<string>('./shaders/tiles.vs');
-let tiles_fragment_shader = require<string>('./shaders/tiles.fs');
-
-let tiles2_vertex_shader = require<string>('./shaders/tiles2.vs');
-let tiles2_fragment_shader = require<string>('./shaders/tiles2.fs');
+const tiles_vertex_shader = require<string>('./shaders/tiles.vs');
+const tiles_fragment_shader = require<string>('./shaders/tiles.fs');
 
 
 export class ProgramEl implements Command {
@@ -39,17 +33,7 @@ export const TileProgram = new ProgramEl(
     tiles_fragment_shader
 );
 
-export const Tile2Program = new ProgramEl(
-    tiles2_vertex_shader,
-    tiles2_fragment_shader
-);
-
 export const SpriteProgram = new ProgramEl(
     sprite_vertex_shader,
     sprite_fragment_shader
-);
-
-export const Sprite2Program = new ProgramEl(
-    sprite2_vertex_shader,
-    sprite2_fragment_shader
 );
