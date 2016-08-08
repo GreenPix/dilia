@@ -2,19 +2,18 @@ import {Injectable} from '@angular/core';
 import {Response} from '@angular/http';
 import {AaribaFile} from '../shared';
 import {HttpService, Observable, SocketIOService} from '../services';
+import {CommitObject, Committer} from './commitable';
 import {some, filter} from 'lodash';
 
-export interface FileTab {
+export interface FileTab extends CommitObject {
     index: number;
     content: string;
-    name: string;
     active: boolean;
     readonly: boolean;
-    isNew: boolean;
 }
 
 @Injectable()
-export class FileManager {
+export class FileManager implements Committer {
 
     private file_list: Array<FileTab> = [];
     private current_file: number = -1;
@@ -34,7 +33,7 @@ export class FileManager {
             name: '',
             active: false,
             readonly: false,
-            isNew: true,
+            is_new: true,
         };
         this.file_list.push(new_file);
         this.edit(new_file, previous_content);
@@ -48,7 +47,7 @@ export class FileManager {
             content: content,
             active: false,
             readonly: file.locked,
-            isNew: false,
+            is_new: false,
         };
         this.file_list.push(new_file);
         this.edit(new_file, previous_content);
@@ -81,7 +80,7 @@ export class FileManager {
     }
 
     commit(file: FileTab, comment: string): Observable<Response> {
-        if (file.isNew) {
+        if (file.is_new) {
             let observable = this.http.post(`/api/aariba/new`, {
                 content: file.content,
                 comment: comment,
@@ -89,7 +88,7 @@ export class FileManager {
             });
             observable.subscribe(res => {
                 if (res.status === 200) {
-                    file.isNew = false;
+                    file.is_new = false;
                 }
             });
             return observable;

@@ -10,7 +10,7 @@ import {FileManager, FileTab} from '../../models/scripting';
 import {AaribaFile} from '../../shared';
 import {RuleEditorGlobals} from './globals';
 import {RuleEditorExec} from './exec';
-import {CommitModal} from './commit';
+import {CommitModal} from '../commit';
 import {AlertBox} from '../alert/box';
 import {AutocompleteFiles} from '../autocomplete/autocomplete';
 
@@ -20,10 +20,11 @@ let ruleEditorCss = require<Webpack.Scss>('./editor.scss');
 @Component({
     selector: 'rule-editor',
     styles: [ruleEditorCss.toString()],
+    templateUrl: ruleEditorTemplate,
     directives: [
         CORE_DIRECTIVES, AutocompleteFiles,
-        CommitModal, AlertBox, RuleEditorExec, RuleEditorGlobals],
-    templateUrl: ruleEditorTemplate
+        CommitModal, AlertBox, RuleEditorExec, RuleEditorGlobals
+    ],
 })
 export class RuleEditor implements AfterViewInit {
 

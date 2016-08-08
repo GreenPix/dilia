@@ -2,6 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {AfterViewInit, OnDestroy} from '@angular/core';
 import {WebGLSurface} from '../webgl/surface';
 import {ChipsetModal} from './chipset';
+import {CommitModal} from '../commit';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {MapManager} from '../../models/map';
 import {EditorState} from './editor-state';
@@ -18,7 +19,8 @@ let mapEditorScss = require<Webpack.Scss>('./editor.scss');
     styles: [mapEditorScss.toString()],
     templateUrl: mapEditorTemplate,
     directives: [
-        WebGLSurface, ChipsetModal, MapSettings, LayersPanel, CreateNewMapModal
+        WebGLSurface, ChipsetModal, MapSettings,
+        LayersPanel, CreateNewMapModal, CommitModal,
     ],
 })
 export class MapEditor implements AfterViewInit, OnDestroy {
@@ -29,6 +31,9 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     private chipset_modal: ChipsetModal;
     @ViewChild(CreateNewMapModal)
     private create_map_modal: CreateNewMapModal;
+    @ViewChild(CommitModal)
+    private commit_modal: CommitModal;
+
 
     private state: EditorState = new EditorState();
 
@@ -37,7 +42,7 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     ) {}
 
     currentMapIsReadOnly() {
-        return false;
+        return this.map_manager.currentMap() === undefined;
     }
 
     uploadChipset() {
@@ -53,7 +58,14 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     }
 
     createNewMap(): void {
+        this.create_map_modal.clear();
         this.create_map_modal.show();
+    }
+
+    commit(): void {
+        if (this.map_manager.currentMap()) {
+            this.commit_modal.show(this.map_manager.currentMap());
+        }
     }
 
     /// This is a hook to be used only by

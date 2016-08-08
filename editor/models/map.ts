@@ -1,4 +1,6 @@
+import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
+import {CommitObject, Committer} from './commitable';
 
 /// This ChipsetLayer is the high level view
 /// of the ChipsetLayer present in the `tile.ts` file.
@@ -23,12 +25,15 @@ export class Layer {
     }
 }
 
-export class Map {
+export class Map implements CommitObject {
 
-    public layers: Layer[] = [];
     private current_layer: number  = 0;
 
+    public layers: Layer[] = [];
+    public is_new: boolean = true;
+
     constructor(
+        public name: string,
         public width: number,
         public height: number,
         public tile_size: number = 16
@@ -68,13 +73,13 @@ export class Map {
 }
 
 @Injectable()
-export class MapManager {
+export class MapManager implements Committer {
 
     private current_map: number = -1;
     private map_list: Array<Map> = [];
 
     createMap(name: string, width: number, height: number): void {
-        let map = new Map(width, height);
+        let map = new Map(name, width, height);
         map.addLayer([{
             tiles_id: new Uint16Array(width * height),
             chipset: '/api/chipset/0'
@@ -87,8 +92,8 @@ export class MapManager {
         // TODO
     }
 
-    commit() {
-        // TODO
+    commit(map: Map, message: string): Observable<any> {
+        throw 'unimplemented';
     }
 
     currentMap(): Map {
