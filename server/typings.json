@@ -7,6 +7,7 @@
     "csurf": "github:DefinitelyTyped/DefinitelyTyped/csurf/csurf.d.ts#3fc1377ce29dd9670975cb68615edf1b819fc4a5",
     "express": "github:DefinitelyTyped/DefinitelyTyped/express/express.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
     "express-session": "github:DefinitelyTyped/DefinitelyTyped/express-session/express-session.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
+    "is-my-json-valid": "registry:dt/is-my-json-valid#0.0.0+20160316135805",
     "lodash": "github:DefinitelyTyped/DefinitelyTyped/lodash/lodash.d.ts#4356af494c045299110677b21e62000957e7a72e",
     "mime": "github:DefinitelyTyped/DefinitelyTyped/mime/mime.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
     "mongodb": "github:DefinitelyTyped/DefinitelyTyped/mongodb/mongodb.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
@@ -18,6 +19,8 @@
     "passport-local": "github:DefinitelyTyped/DefinitelyTyped/passport-local/passport-local.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
     "serve-static": "github:DefinitelyTyped/DefinitelyTyped/serve-static/serve-static.d.ts#571bf28dd6c3266e131e412c894378b8c4af5064",
     "socket.io": "github:DefinitelyTyped/DefinitelyTyped/socket.io/socket.io.d.ts#af5b8275d1f2b92738b93fddabc461fc20c553a1",
+    "validator": "registry:dt/validator#4.5.1+20160316155526",
     "winston": "github:DefinitelyTyped/DefinitelyTyped/winston/winston.d.ts#66f88ec51858bb21bc375fa91a963c04bc09401e"
-  }
+  },
+  "dependencies": {}
 }

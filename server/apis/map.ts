@@ -1,13 +1,22 @@
-// TODO: remove me
-/* tslint:disable */
 import {app} from '../config/express';
 import {reqAuth} from './middlewares';
-import {MapData, LayerData, ChipsetData} from '../shared';
+import {success, badReq} from './post_response_fmt';
+import {MapData} from '../shared';
+import {validateMapNew, validateMapCommit} from '../validators/api_map';
 import {MapSchema, MapProperties} from '../db/schemas/map';
 import {UserDocument} from '../db/schemas/users';
 
 app.post('/api/maps/new', reqAuth, (req, res) => {
+    // Validation
+    if (!validateMapNew(req.body)) {
+        return badReq(res, 'Invalid body', validateMapNew.errors);
+    }
+    // Processing
     let user: UserDocument = req.user;
+    let map_data: MapData = req.body;
+    // TODO
+
+    return success(res);
 });
 
 app.get('/api/maps/:id', reqAuth, (req, res) => {
@@ -30,5 +39,12 @@ app.get('/api/maps/:id', reqAuth, (req, res) => {
 });
 
 app.post('/api/maps/:id/commit', reqAuth, (req, res) => {
+    // Validation
+    if (!validateMapCommit(req.body)) {
+        return badReq(res, 'Invalid body', validateMapCommit.errors);
+    }
+    // Processing
     let user: UserDocument = req.user;
+    // TODO
+    return success(res);
 });
