@@ -1,6 +1,7 @@
-import {Observable} from 'rxjs';
+import {HttpService, Observable} from '../services';
 import {Injectable} from '@angular/core';
 import {CommitObject, Committer} from './commitable';
+import {intoBase64} from '../util/base64';
 
 /// This ChipsetLayer is the high level view
 /// of the ChipsetLayer present in the `tile.ts` file.
@@ -78,6 +79,10 @@ export class MapManager implements Committer {
     private current_map: number = -1;
     private map_list: Array<Map> = [];
 
+    constructor(
+        private http: HttpService
+    ) {}
+
     createMap(name: string, width: number, height: number): void {
         let map = new Map(name, width, height);
         map.addLayer([{
@@ -92,8 +97,32 @@ export class MapManager implements Committer {
         // TODO
     }
 
-    commit(map: Map, message: string): Observable<any> {
-        throw 'unimplemented';
+    commit(map: Map, comment: string): Observable<any> {
+        if (map.is_new) {
+            let observable = this.http.post(`/api/map/new`, {
+                name: map.name,
+                layers: map.layers.map(l =>
+                    l.raw.map(c => ({
+                        tiles_id_base64: intoBase64(c.tiles_id),
+                        chipset_id: c.chipset
+                    }))
+                ),
+                width: map.width,
+                height: map.height,
+                tile_size: map.tile_size,
+                comment,
+            });
+            observable.subscribe(res => {
+                if (res.status === 200) {
+                    map.is_new = false;
+                }
+            });
+            return observable;
+        }
+        return this.http.post(`/api/map/${map.name}/commit`, {
+            layers: map.layers.map(layer => ``),
+            comment,
+        });
     }
 
     currentMap(): Map {
