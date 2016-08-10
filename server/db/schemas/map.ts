@@ -1,20 +1,24 @@
 import {Schema, model, Document, Types} from 'mongoose';
-
+import {pick, find} from 'lodash';
 
 // A layer where all tiles ids share the same
 // chipset.
-let mongooseLayerSchema = new Schema({
+const mongooseLayerSchema = new Schema({
     tile_ids: Buffer,
     chipset: Schema.Types.ObjectId,
     depth: Number,
 });
 
-let mongooseMapSchema = new Schema({
+const mongooseMapSchema = new Schema({
     name: { type: String, maxlength: [
         30,
         'Name (`{VALUE}`) exceeds the ' +
         'maximum allowed length ({MAXLENGTH}).'
     ]},
+    width: { type: Number },
+    height: { type: Number },
+    tile_size: { type: Number },
+    created_on: { type: Date, default: Date.now },
     revisions: [{
         author: Schema.Types.ObjectId,
         comment: { type: String, maxlength: [
@@ -24,7 +28,8 @@ let mongooseMapSchema = new Schema({
         ] },
         layers: [mongooseLayerSchema],
         date: { type: Date, default: Date.now },
-    }]
+    }],
+    contributors: [Schema.Types.ObjectId],
 });
 
 export interface Layer {
@@ -44,12 +49,17 @@ export interface Revision {
 
 export interface MapProperties {
     name: string;
+    width: number;
+    height: number;
+    tile_size: number;
+    created_on?: Date;
     revisions: Array<Revision>;
+    contributors: Types.ObjectId[];
 }
 
 export interface MapJsmap {
     name: string;
-    date: Date;
+    created_on: Date;
     layers: Array<Array<{
         tiles_ids: string;
         chipset: Types.ObjectId;
@@ -107,7 +117,7 @@ mongooseMapSchema.method({
     toJsmap: function (): MapJsmap {
 
         let self: MapSchema = this;
-        let res: MapJsmap =  _.pick<any, MapSchema>(self,
+        let res: MapJsmap =  pick<any, MapSchema>(self,
             ['name', 'created_on']
         );
 
@@ -143,12 +153,12 @@ mongooseMapSchema.method({
     getLatest: function (): any {
         let self: MapSchema = this;
         let id = self.revisions.length - 1;
-        return _.pick(self.revisions[id], ['author', 'content', 'comment', 'date']);
+        return pick(self.revisions[id], ['author', 'layers', 'comment', 'date']);
     },
 
     getRevision: function (id: number): any {
         let self: MapSchema = this;
-        return _.pick(self.revisions[id], ['author', 'content', 'comment', 'date']);
+        return pick(self.revisions[id], ['author', 'layers', 'comment', 'date']);
     },
 
     commitRevision: function (rev: Revision, cb: (err: any) => void): void {
@@ -157,6 +167,9 @@ mongooseMapSchema.method({
         rev.layers.sort((a, b) => a.depth - b.depth);
         // Push the new revision.
         self.revisions.push(rev);
+        if (!find(self.contributors, contrib => contrib.equals(rev.author))) {
+            self.contributors.push(rev.author);
+        }
         self.save(cb);
     }
 });
@@ -191,8 +204,20 @@ mongooseMapSchema.path('name').validate(function (name, cb) {
     }
 }, 'Name already exists');
 
+mongooseMapSchema.path('width').validate(function (width) {
+    return width > 0;
+}, 'Width must be strictly positive');
+
+mongooseMapSchema.path('height').validate(function (height) {
+    return height > 0;
+}, 'Width must be strictly positive');
+
+mongooseMapSchema.path('tile_size').validate(function (tile_size) {
+    return tile_size > 0;
+}, 'Tile size must be strictly positive');
+
 /// Document interface for more type-checking
 export interface MapDocument extends Document, MapSchema {}
 
 /// Model<T> exported for convenience.
-export var MapModel = model<MapDocument>('MapModel', mongooseMapSchema);
+export const MapModel = model<MapDocument>('MapModel', mongooseMapSchema);
