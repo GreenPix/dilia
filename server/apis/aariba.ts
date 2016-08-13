@@ -8,6 +8,7 @@ import {warn as wwarn} from 'winston';
 import {AaribaFileList, AaribaFile} from '../shared';
 import {accessControlManager, ResourceKind as RK} from '../resources';
 import {success, badReq, unauthorized, notFound} from './post_response_fmt';
+import {serverError} from './post_response_fmt';
 import _ = require('lodash');
 
 
@@ -18,6 +19,11 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
     AaribaScript.find({})
     .select('name')
     .exec((err, scripts) => {
+        if (err) {
+            werror(err);
+            serverError(res, `Couldn't get the list of scripts.`);
+            return;
+        }
         let user: UserDocument = req.user;
         res.status(200);
         accessControlManager.updateLockOnResources();
@@ -32,7 +38,7 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
                 name: val.name,
             });
             return res;
-        }, <AaribaFileList>[]));
+        }, [] as AaribaFileList));
     });
 });
 
@@ -40,7 +46,7 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
 app.get('/api/aariba/:name', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
-            werror(err);
+            if (err) werror(err);
             notFound(res, req.user);
         } else {
             let script_reduced = script.toJsmap();
