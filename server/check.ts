@@ -8,6 +8,10 @@ export function check() {
     checkToken('GOOGLE_SECRET');
     checkToken('GITHUB_CLIENTID');
     checkToken('GITHUB_SECRET');
+
+    if (!process.env.DILIA_WEBSITE) {
+        throw new Error('DILIA_WEBSITE is not defined (http(s?)://<hostname>)');
+    }
 }
 
 function checkToken(token) {

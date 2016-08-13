@@ -18,17 +18,27 @@ export interface ChipsetProperties {
     raw_content: Buffer;
 }
 
+export interface ChipsetJsmap {
+    name: string;
+    author: string;
+    created_on: Date;
+    raw_content: string;
+}
+
 export interface ChipsetSchema extends ChipsetProperties {
 
-    toJsmap(): ChipsetProperties;
+    toJsmap(): ChipsetJsmap;
 }
 
 mongooseChipsetSchema.method({
-    toJsmap: function (): ChipsetProperties {
+    toJsmap: function (): ChipsetJsmap {
         let self: ChipsetSchema = this;
-        return pick<any, ChipsetProperties>(
-            self, ['name', 'created_on', 'author', 'raw_content']
-        );
+        let into: ChipsetJsmap = {} as any;
+        into.name = self.name;
+        into.created_on = self.created_on;
+        into.author = self.author.toHexString();
+        into.raw_content = self.raw_content.toString('base64');
+        return into;
     }
 });
 
