@@ -1,5 +1,5 @@
 import {Schema, model, Document, Types} from 'mongoose';
-import {pick} from 'lodash';
+
 
 // This is the store for chipsets.
 // The API should be immutable as chipsets
