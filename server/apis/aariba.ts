@@ -4,7 +4,7 @@ import {app} from '../config/express';
 import {reqAuth} from './middlewares';
 import {errorToJson} from '../db/error_helpers';
 import {error as werror} from 'winston';
-import {warn as wwarn} from 'winston';
+import {warn} from 'winston';
 import {AaribaFileList, AaribaFile} from '../shared';
 import {accessControlManager, ResourceKind as RK} from '../resources';
 import {success, badReq, unauthorized, notFound} from './post_response_fmt';
@@ -67,13 +67,13 @@ app.get('/api/aariba/:name', reqAuth, (req, res) => {
 });
 
 // Obtain the content of a script at a particular revision
-app.get('/api/aariba/:name/revision/:id', reqAuth, (req, res) => {
+app.get('/api/aariba/:name/revision/:rev', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
             werror(err);
             notFound(res, req.user);
         } else {
-            let rev = script.getRevision(req.params.id);
+            let rev = script.getRevision(req.params.rev);
             User.findById(rev.author.toHexString(), (err, user) => {
                 res.status(200);
                 rev.author = user.username as any;
@@ -83,7 +83,7 @@ app.get('/api/aariba/:name/revision/:id', reqAuth, (req, res) => {
     });
 });
 
-// Try to lock a resource.
+// Try to lock a script.
 app.post('/api/aariba/:name/lock', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
@@ -108,6 +108,7 @@ app.post('/api/aariba/:name/lock', reqAuth, (req, res) => {
 // Stream of the modified content of a script
 app.io().stream('/api/aariba/:name/liveupdate', (req, res) => {
 
+    // TODO: validate the req.body object
     // Send back the content to everyone
     res.json(req.body);
 
@@ -145,7 +146,7 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
                 kind: RK.AaribaScript,
                 resource: script.name
             })) {
-                wwarn(`User ${user.username} failed to commit on: \n` +
+                warn(`User ${user.username} failed to commit on: \n` +
                       `==> '${script.name}' (unauthorized)`
                 );
                 unauthorized(res, user);
