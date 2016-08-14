@@ -8,6 +8,11 @@ export interface MapData {
     comment: string;
 }
 
+export interface MapStatus {
+    name: string;
+    locked: boolean;
+}
+
 export interface LayerData {
     tiles_id_base64: string;
     chipset_id: string;
@@ -19,5 +24,8 @@ export interface MapCommitData {
 }
 
 export interface ChipsetData {
-
+    name: string;
+    author: string;
+    created_on: string;
+    raw_content: string;
 }

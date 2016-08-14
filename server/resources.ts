@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 export enum ResourceKind {
     AaribaScript,
+    Map,
 }
 
 export interface Resource {

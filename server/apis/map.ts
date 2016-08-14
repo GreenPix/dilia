@@ -2,10 +2,13 @@ import {Types} from 'mongoose';
 import {uniq, without} from 'lodash';
 import {app} from '../config/express';
 import {reqAuth} from './middlewares';
-import {success, badReq} from './post_response_fmt';
-import {MapData} from '../shared';
+import {success, badReq, notFound, serverError} from './post_response_fmt';
+import {unauthorized} from './post_response_fmt';
+import {MapData, MapStatus, MapCommitData, LayerData} from '../shared';
+import {error as werror, warn} from 'winston';
+import {accessControlManager, ResourceKind as RK} from '../resources';
 import {validateMapNew, validateMapCommit} from '../validators/api_map';
-import {MapModel, MapProperties} from '../db/schemas/map';
+import {MapModel, MapProperties, Layer} from '../db/schemas/map';
 import {ChipsetModel} from '../db/schemas/chipset';
 import {errorToJson} from '../db/error_helpers';
 import {UserDocument} from '../db/schemas/users';
@@ -29,7 +32,7 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
     }).select('name').exec().then(cs => {
         if (without(cs_ids, ...cs.map(c => c.id)).length > 0) {
             badReq(res, `Couldn't save map '${map_data.name}'`,
-                'Not all chipset ids given exists within the database');
+                'Not all chipset ids provided exists within the database');
             return;
         }
         let properties: MapProperties = {
@@ -41,13 +44,7 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
             revisions: [{
                 author: user._id,
                 comment: map_data.comment,
-                layers: map_data.layers.map((l, i) => {
-                    return l.map(d => ({
-                        tile_ids: new Buffer(d.tiles_id_base64, 'base64'),
-                        chipset: d.chipset_id as any,
-                        depth: i
-                    }));
-                }).reduce((p, c) => p.concat(c), [])
+                layers: intoInternalFmt(map_data.layers),
             }]
         };
         let map = new MapModel(properties);
@@ -56,7 +53,13 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
                 badReq(res, `Couldn't save map '${properties.name}'`,
                     errorToJson(err));
             } else {
-                // TODO: emit on /api/map/new
+                app.emitOn('/api/aariba/new', (client) => {
+                  let value: MapStatus = {
+                    name: properties.name,
+                    locked: !user._id.equals(client._id),
+                  };
+                  return value;
+                });
                 success(res, `Saved new map '${properties.name}'`);
             }
         });
@@ -68,32 +71,139 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
 
 app.io().room('/api/maps/new');
 
-app.get('/api/maps/:id', reqAuth, (req, res) => {
-    res.json({
-        name: 'test',
-        layers: [
-            {
-                chipsets_ids: [0],
-                tile_size: 16,
-                tiles_ids: [
-                    8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                    8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-                    8, 8, 8, 8, 8, 8, 8, 8, 8, 8
-                ],
-                width: 10,
-                height: 3,
+app.get('/api/maps/', reqAuth, (req, res) => {
+    MapModel.find({})
+        .select('name')
+        .exec((err, maps) => {
+            if (err) {
+                werror(err);
+                serverError(res, `Couldn't get the list of maps.`);
+                return;
             }
-        ]
+            let user: UserDocument = req.user;
+            accessControlManager.updateLockOnResources();
+            res.json(maps.map(val => {
+                let is_locked = accessControlManager.isUsedBySomeoneOtherThanMe({
+                    kind: RK.Map,
+                    me: user._id,
+                    resource: val.name
+                });
+                return {
+                    locked: is_locked,
+                    name: val.name,
+                };
+            }, [] as MapStatus[]));
+        });
+});
+
+app.get('/api/maps/:name', reqAuth, (req, res) => {
+    MapModel.findOne({ name: req.params.name }, (err, map) => {
+        if (err || !map) {
+            if (err) werror(err);
+            notFound(res, req.user);
+        } else {
+            res.send(200).json(map.toJsmap());
+        }
     });
 });
 
-app.post('/api/maps/:id/commit', reqAuth, (req, res) => {
+app.post('/api/maps/:name/lock', reqAuth, (req, res) => {
+    MapModel.findOne({ name: req.params.name }, (err, map) => {
+        if (err || !map) {
+            werror(err || 'Map not found');
+            notFound(res, req.user);
+        } else {
+            accessControlManager.updateLockOnResources();
+            let succeed = accessControlManager.lockThisResource({
+                owner: req.user._id,
+                kind: RK.Map,
+                resource: map.name
+            });
+            if (succeed) {
+                success(res, `Succesfully locked '${map.name}'`);
+            } else {
+                badReq(res, `Couldn't locked '${map.name}'`);
+            }
+        }
+    });
+});
+
+// Stream of the modified content of a script
+app.io().stream('/api/maps/:name/liveupdate', (req, res) => {
+
+    // TODO: validate the req.body object
+    // Send back the content to everyone
+    res.json(req.body);
+
+    let name = req.params['name'];
+
+    // Obtain a lock on the resource
+    accessControlManager.maintainLockOnResource({
+        owner: req.user._id,
+        kind: RK.Map,
+        resource: name,
+    });
+
+    app.emitOn(`/api/maps/lock_status`, (client) => {
+      let value: MapStatus = {
+        name: name,
+        locked: !req.user._id.equals(client._id),
+      };
+      return value;
+    });
+
+});
+
+app.post('/api/maps/:name/commit', reqAuth, (req, res) => {
     // Validation
     if (!validateMapCommit(req.body)) {
         return badReq(res, 'Invalid body', validateMapCommit.errors);
     }
-    // Processing
-    let user: UserDocument = req.user;
-    // TODO
-    return success(res);
+
+    MapModel.findOne({ name: req.params.name }, (err, map) => {
+        if (err || !map) {
+            werror(err);
+            badReq(res, `Couldn't find map: ${req.params.name}`);
+        } else {
+            // Processing
+            let user: UserDocument = req.user;
+            let commit: MapCommitData = req.body;
+
+            if (!accessControlManager.isUsedByMe({
+                owner: user._id,
+                kind: RK.Map,
+                resource: map.name
+            })) {
+                warn(`User ${user.username} failed to commit on: \n` +
+                     `==> '${map.name}' (locked)`);
+                unauthorized(res, user);
+                return;
+            }
+
+            map.commitRevision({
+                author: user._id,
+                comment: commit.comment,
+                layers: intoInternalFmt(commit.layers),
+            }, err => {
+                if (err) {
+                    serverError(res, `Couldn't save map '${map.name}'`);
+                } else {
+                    success(res, `Committed new version for '${map.name}'`);
+                }
+            });
+        }
+    });
 });
+
+
+/// Convenience function to convert the layer into
+/// the mongodb schema
+function intoInternalFmt(layers: LayerData[][]): Layer[] {
+    return layers.map((l, i) => {
+        return l.map(d => ({
+            tile_ids: new Buffer(d.tiles_id_base64, 'base64'),
+            chipset: d.chipset_id as any,
+            depth: i
+        }));
+    }).reduce((p, c) => p.concat(c), []);
+}
