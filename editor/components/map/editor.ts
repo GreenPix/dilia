@@ -1,7 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {AfterViewInit, OnDestroy} from '@angular/core';
 import {WebGLSurface} from '../webgl/surface';
-import {ChipsetModal} from './chipset';
+import {ChipsetModal} from './chipset-upload';
 import {CommitModal} from '../commit';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {MapManager} from '../../models/map';

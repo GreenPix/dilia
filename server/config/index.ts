@@ -1,7 +1,7 @@
+import {ChipsetMaxFileSize} from '../../shared/map';
 
 export const port = 8000;
-// Limit set to 20mb
-export const max_file_size = 20 * 1024 * 1024; // in bytes
+export const max_file_size = ChipsetMaxFileSize;
 
 const configDev: Config = {
     mongodb: 'mongodb://localhost/diliaDev',

@@ -13,20 +13,21 @@ app.post('/api/chipset/upload/', reqAuth, upload.single('chipset'),
         if (req.file.size > max_file_size) {
             badReq(res, 'File size is too big.');
         } else {
+            let name: string = req.body.chipset_name || req.file.filename;
             let user: UserDocument = req.user;
             let properties: ChipsetProperties = {
-                name: req.file.fieldname,
+                name,
                 author: user._id,
                 raw_content: req.file.buffer
             };
             let chipset = new ChipsetModel(properties);
             chipset.save(err => {
                 if (err) {
-                    badReq(res, `Couldn't save chipset ${properties.name}`,
+                    badReq(res, `Couldn't save chipset '${properties.name}'`,
                         errorToJson(err));
                 } else {
                     // TODO: emit on /api/chipset/new
-                    success(res, `Saved new chipset ${properties.name}`);
+                    success(res, `Saved new chipset '${properties.name}'`);
                 }
             });
         }

@@ -1,0 +1,48 @@
+.hidden {
+    opacity: 0;
+}
+
+.img-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    position: relative;
+
+    & > img {
+        max-height: 300px;
+        max-width: 100%;
+    }
+
+    &.uploading > img {
+        opacity: 0.5;
+    }
+}
+
+.upload-bar {
+    opacity: 0;
+    position: absolute;
+    margin: auto;
+    font-size: 45px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .uploading & {
+        opacity: 1;
+    }
+
+    .subbar {
+        background-color: rgba(255, 255, 255, 0.8);
+        color: #656565;
+        border-radius: 75px;
+        width: 150px;
+        height: 150px;
+        line-height: 150px;
+        text-align: center;
+    }
+}

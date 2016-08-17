@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
-let uploadCss = require<Webpack.Scss>('./upload.scss');
+const uploadCss = require<Webpack.Scss>('./upload.scss');
 
 @Component({
     selector: 'upload',
@@ -13,13 +13,13 @@ let uploadCss = require<Webpack.Scss>('./upload.scss');
 })
 export class Upload {
 
+    @Input() fileChange: (file: File) => void;
+
     handleFileChange(event: Event) {
-        console.log('FILE CHANGE EVENT!!');
-        // let file: File = (event.target as HTMLInputElement).files[0];
-        // let fd = new FormData();
-        // let xhr = new XMLHttpRequest();
-        // fd.append('file_content', file);
-        // xhr.open('POST', '/api/upload/chipset');
-        // xhr.send(fd);
+        let files = (event.target as HTMLInputElement).files;
+        let file: File = files && files[0];
+        if (file) {
+            this.fileChange(file);
+        }
     }
 }

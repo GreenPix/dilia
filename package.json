@@ -11,8 +11,8 @@
     "lint": "tslint --project tsconfig.json && tslint --project server/tsconfig.json",
     "build": "npm run build-client && npm run build-server",
     "build-client": "webpack --prod --bail",
-    "server": "node ./server/build/server/server.js",
-    "debug-server": "node --debug-brk ./server/build/server/server.js",
+    "server": "cd build && node ./server/server.js",
+    "debug-server": "node --debug-brk ./build/server/server.js",
     "build-server": "cd server/ && tsc && cd .."
   },
   "repository": {
