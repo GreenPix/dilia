@@ -43,7 +43,7 @@ enum ImgState {
             </dialog-body>
             <dialog-footer>
                 <button type="button" class="btn btn-default" [disabled]="uploading"
-                    (click)="hide($event)">Cancel</button>
+                    (click)="hide()">Cancel</button>
                 <button type="button" class="btn btn-primary" [disabled]="uploading"
                     (click)="submit()">Upload</button>
             </dialog-footer>
@@ -83,8 +83,8 @@ export class ChipsetModal {
         this.dialog.show();
     }
 
-    hide(event?: Event) {
-        this.dialog.hide(event);
+    hide() {
+        this.dialog.hide();
     }
 
     resetData() {
@@ -115,7 +115,7 @@ export class ChipsetModal {
     }
 
     submit() {
-        this.uploading = true;
+        this.lock();
         (new Observable<number>((subscriber: Subscriber<number>) => {
             const form = new FormData();
             const xhr = new XMLHttpRequest();
@@ -164,9 +164,19 @@ export class ChipsetModal {
             val => this.percentage_upload = val,
             err => {
                 this.error_message = err;
-                this.uploading = false;
+                this.unlock();
             },
             () => setTimeout(() => this.hide(), 500)
         );
+    }
+
+    private lock() {
+        this.uploading = true;
+        this.dialog.lock();
+    }
+
+    private unlock() {
+        this.uploading = false;
+        this.dialog.unlock();
     }
 }
