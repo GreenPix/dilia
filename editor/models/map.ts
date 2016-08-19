@@ -86,10 +86,9 @@ export class MapManager implements Committer {
 
     createMap(name: string, width: number, height: number): void {
         let map = new Map(name, width, height);
-        map.addLayer([{
-            tiles_id: new Uint16Array(width * height),
-            chipset: '/api/chipset/0'
-        }]);
+        // By default we have two layers
+        map.addLayer([]);
+        map.addLayer([]);
         this.map_list.push(map);
         this.current_map = 0;
     }

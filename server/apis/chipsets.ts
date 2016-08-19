@@ -18,7 +18,8 @@ app.post('/api/chipset/upload/', reqAuth, upload.single('chipset'),
             let properties: ChipsetProperties = {
                 name,
                 author: user._id,
-                raw_content: req.file.buffer
+                raw_content: req.file.buffer,
+                mime_type: req.file.mimetype,
             };
             let chipset = new ChipsetModel(properties);
             chipset.save(err => {
@@ -46,13 +47,32 @@ app.get('/api/chipset/', reqAuth, (req, res) => {
         });
 });
 
-app.get('/api/chipset/:name', reqAuth, (req, res) => {
+app.get('/api/chipset/:name/metadata', reqAuth, (req, res) => {
     ChipsetModel.findOne({ name: req.params.name }, (err, chipset) => {
         if (err || !chipset) {
             if (err) werr(err);
             notFound(res, req.user);
         } else {
             res.status(200).json(chipset.toJsmap());
+        }
+    });
+});
+
+app.get('/api/chipset/:name', reqAuth, (req, res) => {
+    ChipsetModel.findOne({ name: req.params.name }, (err, chipset) => {
+        if (err || !chipset) {
+            if (err) werr(err);
+            notFound(res, req.user);
+        } else {
+            res.writeHead(200, {
+                'Content-Type': chipset.mime_type,
+                'Content-Length': chipset.raw_content.length,
+                'Accept-Ranges': 'bytes',
+                // Chipset are supposed to be immutable, so
+                // a chipset id can be used as ETag.
+                'ETag': chipset.id,
+            });
+            res.end(chipset.raw_content);
         }
     });
 });

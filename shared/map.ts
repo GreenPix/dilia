@@ -27,7 +27,6 @@ export interface ChipsetData {
     name: string;
     author: string;
     created_on: string;
-    raw_content: string;
 }
 
 export const ChipsetMaxFileSize = 20 * 1024 * 1024;

@@ -1,5 +1,6 @@
 import {SelectedPartialLayer} from '../../../rendering/tiles';
 import {SpriteHandle} from '../../../rendering/sprite';
+import {Texture} from '../../../gl/gl';
 
 
 export class Brush {
@@ -7,6 +8,11 @@ export class Brush {
     width: number = 1;
     tiles_ids: Uint16Array = new Uint16Array([93]);
     sprite: SpriteHandle;
+
+    // This will be set once the within the palette area
+    // an element has been chosen.
+    private chipset_name: string;
+    private chipset_tex: Texture;
 
     position(x: number, y: number): void {
         if (this.sprite) {

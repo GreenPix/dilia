@@ -2,10 +2,14 @@ import {Component, ViewChild} from '@angular/core';
 import {AfterViewInit, OnDestroy} from '@angular/core';
 import {WebGLSurface} from '../webgl/surface';
 import {ChipsetModal} from './chipset-upload';
+import {ChipsetService} from './chipset.service';
 import {CommitModal} from '../commit';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {MapManager} from '../../models/map';
 import {EditorState} from './editor-state';
+import {Brush} from './editor-state/brush';
+import {PaletteArea} from './editor-state/palette-area';
+import {EditorArea} from './editor-state/editor-area';
 import {MapSettings} from './map-settings';
 import {LayersPanel} from './layers-panel';
 import {PanelState} from './panel-state';
@@ -22,6 +26,10 @@ let mapEditorScss = require<Webpack.Scss>('./editor.scss');
         WebGLSurface, ChipsetModal, MapSettings,
         LayersPanel, CreateNewMapModal, CommitModal,
     ],
+    providers: [
+        ChipsetService, EditorState, Brush,
+        EditorArea, PaletteArea
+    ]
 })
 export class MapEditor implements AfterViewInit, OnDestroy {
 
@@ -34,11 +42,10 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     @ViewChild(CommitModal)
     private commit_modal: CommitModal;
 
-
-    private state: EditorState = new EditorState();
-
     constructor(
-        private map_manager: MapManager
+        private state: EditorState,
+        private map_manager: MapManager,
+        private chipset_service: ChipsetService
     ) {}
 
     currentMapIsReadOnly() {

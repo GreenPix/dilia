@@ -1,200 +1,55 @@
+import {Injectable} from '@angular/core';
 import {WebGLSurface} from '../../webgl/surface';
 import {MouseHandler, KeyHandler} from '../../webgl/surface';
-import {Camera} from '../../../rendering/camera';
 import {Map} from '../../../models/map';
-import {DefaultFBO} from '../../../rendering/fbo';
-import {ZoomBehavior} from '../../webgl/zoom';
-import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/pipeline';
-import {TilesHandle} from '../../../rendering/tiles';
-import {SpriteHandle, SpriteBuilder} from '../../../rendering/sprite';
-import {genPixelsForTextureWithBorder} from '../../../rendering/util';
-import {SpriteProgram, TileProgram} from '../../../rendering/shaders';
+import {EditorArea} from './editor-area';
+import {PaletteArea} from './palette-area';
 import {Brush} from './brush';
 
-let vertex_shader_overlay_src = require<string>('./shaders/dark_overlay.vs');
-let fragment_shader_overlay_src = require<string>('./shaders/dark_overlay.fs');
-
-class GridHandle {
-    constructor(
-        private grid: SpriteBuilder,
-        private map: Map
-    ) {}
-
-    updateGrid(new_zoom_level: number) {
-        this.grid.updateTexture(
-            genPixelsForTextureWithBorder(this.map.tile_size * new_zoom_level)
-        )
-        .buildWithSize(
-            this.map.widthInPx(),
-            this.map.heightInPx(),
-            true,
-            new_zoom_level
-        );
-    }
-}
-
-class DynamicMap {
-    handles: TilesHandle[] = [];
-}
-
-enum State {
+export enum State {
     Palette,
     Editor
 }
 
+@Injectable()
 export class EditorState implements MouseHandler, KeyHandler {
 
-    private camera_editor: Camera = new Camera();
-    private camera_palette: Camera = new Camera();
-
-    private zbehavior_editor: ZoomBehavior;
-    private zbehavior_palette: ZoomBehavior;
-
-    private map_handle: TilesHandle;
+    // TODO: this value should be in a model
+    //       and be managed by the LayersPanel component.
     private active_layer: number = 0;
-    private brush: Brush = new Brush();
-    private brush_area: SpriteHandle;
-    private chipset_palette: SpriteHandle;
-    private grid: GridHandle;
-
-    private scene_editor: CommandBuffer;
-    private scene_palette: CommandBuffer;
     private state: State = State.Editor;
-    private is_mouse_pressed: boolean = false;
-
     private surface: WebGLSurface;
 
-    constructor() {
-        this.zbehavior_editor = new ZoomBehavior(this.camera_editor);
-        this.zbehavior_palette = new ZoomBehavior(this.camera_palette);
-    }
+    constructor(
+        private brush: Brush,
+        private editor_area: EditorArea,
+        private palette_area: PaletteArea
+    ) {}
 
     init(surface: WebGLSurface) {
         this.surface = surface;
         this.surface.setKeyHandler(this);
-        this.surface.addViewportListener(this.camera_editor);
-        this.surface.addViewportListener(this.camera_palette);
+        this.surface.setMouseHandler(this);
+        this.palette_area.setSurface(this.surface);
+        this.editor_area.setSurface(this.surface);
     }
 
     edit(map: Map) {
         let surface = this.surface;
-        let overlay = surface.createGenericRenderingContext()
-            .setShader(vertex_shader_overlay_src, fragment_shader_overlay_src)
-            .addVertexBuffer('position', [-1, -1, -1, 1, 1, 1, -1, -1, 1, 1, 1, -1], 2);
 
-        let palette = surface.createSpriteRenderEl();
-        palette.loadSpriteObject(map.layers[0].raw[0].chipset, builder => {
-            this.chipset_palette = builder.buildWithEntireTexture();
-            this.camera_palette.centerOn(this.chipset_palette);
-        });
+        this.editor_area.load(map);
 
-        // Load the map. We compute first the position of the chipset that
-        // are going to be loaded from the server.
-        let chipsets_pos: {[path: string]: number} = {};
-        let chipsets_path: string[] = [];
-        for (let l of map.layers) {
-            for (let pl of l.raw) {
-                if (!(pl.chipset in chipsets_pos)) {
-                    chipsets_pos[pl.chipset] = chipsets_path.length;
-                    chipsets_path.push(pl.chipset);
-                }
-            }
-        }
-
-        let map_tiled = surface.createTilesRenderEl();
-        map_tiled.loadTileLayerObject(chipsets_path, (chipsets, builder) => {
-            let handle = builder.setWidth(map.width)
-                .setHeight(map.height)
-                .tileSize(map.tile_size);
-            for (let i = 0; i < map.layers.length; ++i) {
-                let layer = map.layers[i].raw.map(pl => {
-                    return {
-                        tiles_id: pl.tiles_id,
-                        chipset: chipsets[chipsets_pos[pl.chipset]]
-                    };
-                });
-                handle.addLayer(layer);
-            }
-            this.map_handle = handle.build();
-            this.camera_editor.centerOn(this.map_handle);
-        });
-
-        let brush = surface.createSpriteRenderEl();
-        brush.loadSpriteObject(map.layers[0].raw[0].chipset, builder => {
-            this.brush.sprite = builder
-                .overlayFlag(true)
-                .buildFromTileId(16, this.brush.tiles_ids[0]);
-
-            surface.setMouseHandler(this);
-        });
-
-        // let full_map_fbo = new FBO(this.surface.getGLContext());
-        // full_map_fbo.setSize(map.widthInPx(), map.heightInPx());
-
-        // let map_quad = surface.createSpriteRenderEl();
-        // map_quad.loadSpriteObject(full_map_fbo.getTexture(),
-        //     builder => builder.buildWithEntireTexture()
-        // );
-
-        let zoom = this.camera_editor.zoom_lvl;
-        let grid = surface.createSpriteRenderEl();
-        grid.loadSpriteObject(
-            genPixelsForTextureWithBorder(map.tile_size * zoom),
-            builder => {
-                this.grid = new GridHandle(
-                    builder,
-                    map
-                );
-                this.grid.updateGrid(zoom);
-        });
-
-        // TODO: Have a version "untouched" where
-        //       we don't perform the rendering
-        //       against the FBO (not needed when the map hasn't changed)
-        this.scene_editor = new CommandBuffer([
-            DefaultFBO,
-            ClearAll,
-            SpriteProgram,
-            this.camera_editor,//.as_camera_with_scale_ignored(),
-            grid,
-            TileProgram,
-            this.camera_editor,
-            map_tiled,
-            FlipY,
-            SpriteProgram,
-            this.camera_editor,
-            brush
-        ]);
-
-        this.scene_palette = new CommandBuffer([
-            DefaultFBO,
-            ClearAll,
-            FlipY,
-            TileProgram,
-            this.camera_editor,
-            map_tiled,
-            overlay,
-            SpriteProgram,
-            this.camera_palette,
-            palette,
-            surface.createSpriteRenderEl().loadSpriteObject(
-                [51, 122, 183, 178],
-                builder => this.brush_area = builder.buildWithSize(16, 16)
-            )
-        ]);
-
-        surface.setCommandBuffer(this.scene_editor);
+        surface.setCommandBuffer(this.editor_area.getScene());
     }
 
     cleanUp() {
         if (this.surface) {
-            this.surface.removeViewportListener(this.camera_editor);
-            this.surface.removeViewportListener(this.camera_palette);
+            this.editor_area.cleanUp();
+            this.palette_area.cleanUp();
             this.surface.setCommandBuffer(undefined);
             this.surface.setMouseHandler(undefined);
             this.surface.setKeyHandler(undefined);
         }
-        this.map_handle = undefined;
         this.brush.sprite = undefined;
         this.surface = undefined;
     }
@@ -205,16 +60,17 @@ export class EditorState implements MouseHandler, KeyHandler {
 
     private switchToState(state: State) {
         this.state = state;
-        if (this.surface && this.scene_editor && this.scene_palette) {
+        if (this.surface && this.editor_area.isReady() && this.palette_area.isReady()) {
             if (this.state == State.Palette) {
-                this.zbehavior_editor.desactivate();
-                this.surface.setCommandBuffer(this.scene_palette);
+                this.editor_area.deactivate();
+                this.palette_area.activate();
+                this.surface.setCommandBuffer(this.palette_area.getScene());
             } else {
-                this.zbehavior_palette.desactivate();
-                this.surface.setCommandBuffer(this.scene_editor);
+                this.palette_area.deactivate();
+                this.editor_area.activate();
+                this.surface.setCommandBuffer(this.editor_area.getScene());
             }
         }
-        this.is_mouse_pressed = false;
     }
 
     /// Wiring: should be called only by the MapEditor
@@ -248,121 +104,46 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     mouseUp(event: MouseEvent): void {
+        let next_state: State;
         switch (this.state) {
-            case State.Palette: return this.mouseUpPalette(event);
-            case State.Editor: return this.mouseUpEditor(event);
+            case State.Palette: next_state = this.palette_area.mouseUpPalette(event); break;
+            case State.Editor: next_state = this.editor_area.mouseUpEditor(event); break;
+        }
+        if (this.state !== next_state) {
+            this.switchToState(next_state);
         }
     }
 
     mouseDown(event: MouseEvent): void {
+        let next_state: State;
         switch (this.state) {
-            case State.Palette: return this.mouseDownPalette(event);
-            case State.Editor: return this.mouseDownEditor(event);
+            case State.Palette: next_state = this.palette_area.mouseDownPalette(event); break;
+            case State.Editor: next_state = this.editor_area.mouseDownEditor(event); break;
+        }
+        if (this.state !== next_state) {
+            this.switchToState(next_state);
         }
     }
 
     mouseMove(event: MouseEvent): void {
+        let next_state: State;
         switch (this.state) {
-            case State.Palette: return this.mouseMovePalette(event);
-            case State.Editor: return this.mouseMoveEditor(event);
+            case State.Palette: next_state = this.palette_area.mouseMovePalette(event); break;
+            case State.Editor: next_state = this.editor_area.mouseMoveEditor(event); break;
+        }
+        if (this.state !== next_state) {
+            this.switchToState(next_state);
         }
     }
 
     mouseWheel(event: WheelEvent): void {
+        let next_state: State;
         switch (this.state) {
-            case State.Palette: return this.mouseWheelPalette(event);
-            case State.Editor: return this.mouseWheelEditor(event);
+            case State.Palette: next_state = this.palette_area.mouseWheelPalette(event); break;
+            case State.Editor: next_state = this.editor_area.mouseWheelEditor(event); break;
         }
-    }
-
-
-    //////////////////////////////////////////////
-    ///             Editor State               ///
-    //////////////////////////////////////////////
-
-    private mouseUpEditor(event: MouseEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.zbehavior_editor.mouseUp(event.button, x, y);
-        this.is_mouse_pressed = false;
-    }
-
-    private mouseDownEditor(event: MouseEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.zbehavior_editor.mouseDown(event.button, x, y);
-        if (event.button === 0) {
-            // TODO: Instead of always picking the same
-            // layer, we should select the appropriate one
-            let selected_layer = this.map_handle.select(this.active_layer, 0);
-            this.brush.paint(selected_layer, x, y);
-            this.is_mouse_pressed = true;
-        }
-    }
-
-    private mouseMoveEditor(event: MouseEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.zbehavior_editor.mouseMove(event, x, y);
-
-        if (this.is_mouse_pressed && this.map_handle) {
-            // TODO: Should only be applied every
-            // x that are distant from at least width
-            // (same for y) to avoid erasing the
-            // previous brush
-            let selected_layer = this.map_handle.select(this.active_layer, 0);
-            this.brush.paint(selected_layer, x, y);
-        }
-
-        this.brush.position(x, y);
-    }
-
-    private mouseWheelEditor(event: WheelEvent): void {
-        this.zbehavior_editor.mouseWheel(event);
-        this.grid.updateGrid(this.camera_editor.zoom_lvl);
-    }
-
-    //////////////////////////////////////////////
-    ///            Palette State               ///
-    //////////////////////////////////////////////
-
-    private mouseUpPalette(event: MouseEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.zbehavior_palette.mouseUp(event.button, x, y);
-    }
-
-    private mouseDownPalette(event: MouseEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.zbehavior_palette.mouseDown(event.button, x, y);
-        // Prevent selection if button is not left mouse button.
-        if (event.button === 0) {
-            let new_id = this.chipset_palette.getTileIdFor(x, y, 16);
-            if (new_id != 0) {
-                this.brush.replaceWith(1, new_id);
-                this.switchToState(State.Editor);
-            }
-        }
-    }
-
-    private mouseMovePalette(event: MouseEvent): void {
-        let [x, y] = this.objectSpace(event);
-        this.zbehavior_palette.mouseMove(event, x, y);
-        // TODO: Refactor this part
-        x = Math.floor(x / 16) * 16;
-        y = Math.floor(y / 16) * 16;
-        this.brush_area.position([x, y]);
-    }
-
-    private mouseWheelPalette(event: WheelEvent): void {
-        this.zbehavior_palette.mouseWheel(event);
-    }
-
-    private objectSpace(event: MouseEvent): [number, number] {
-        if (this.state == State.Editor) {
-            return this.camera_editor.fromWindowCoordToObjectSpace(
-                event.clientX, event.clientY - 63
-            );
-        } else {
-            return this.camera_palette.fromWindowCoordToObjectSpace(
-                event.clientX, event.clientY - 63
-            );
+        if (this.state !== next_state) {
+            this.switchToState(next_state);
         }
     }
 }

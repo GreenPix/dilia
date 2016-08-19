@@ -5,10 +5,11 @@ import {Schema, model, Document, Types} from 'mongoose';
 // The API should be immutable as chipsets
 // are referenced by maps and objects.
 const mongooseChipsetSchema = new Schema({
-  name: { type: String },
-  created_on: { type: Date, default: Date.now },
-  raw_content: Buffer,
-  author: Schema.Types.ObjectId,
+    name: { type: String },
+    created_on: { type: Date, default: Date.now },
+    raw_content: Buffer,
+    author: Schema.Types.ObjectId,
+    mime_type: String,
 });
 
 export interface ChipsetProperties {
@@ -16,13 +17,13 @@ export interface ChipsetProperties {
     created_on?: Date;
     author: Types.ObjectId;
     raw_content: Buffer;
+    mime_type: string;
 }
 
 export interface ChipsetJsmap {
     name: string;
     author: string;
     created_on: Date;
-    raw_content: string;
 }
 
 export interface ChipsetSchema extends ChipsetProperties {
@@ -37,7 +38,6 @@ mongooseChipsetSchema.method({
         into.name = self.name;
         into.created_on = self.created_on;
         into.author = self.author.toHexString();
-        into.raw_content = self.raw_content.toString('base64');
         return into;
     }
 });
