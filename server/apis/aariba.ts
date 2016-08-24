@@ -147,7 +147,7 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
                 resource: script.name
             })) {
                 warn(`User ${user.username} failed to commit on: \n` +
-                      `==> '${script.name}' (unauthorized)`
+                      `==> '${script.name}' (locked)`
                 );
                 unauthorized(res, user);
                 return;
