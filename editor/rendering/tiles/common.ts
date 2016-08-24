@@ -43,7 +43,7 @@ export interface TilesHandle extends Obj2D {
     // The layer inserted has the new position given here.
     insertEmptyLayer(layer_index: number): void;
     // TODO:
-    // extendTo(x: number, y: number): void;
+    insertChipset(layer_index: number, chipset_tex: Texture): void;
 }
 
 /// This interface allows to modify the id of

@@ -1,9 +1,12 @@
+import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {Subscriber} from 'rxjs/Subscriber';
+import {WebGLSurface} from '../../webgl/surface';
 import {DefaultFBO} from '../../../rendering/fbo';
 import {SpriteHandle} from '../../../rendering/sprite';
 import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/pipeline';
 import {SpriteProgram} from '../../../rendering/shaders';
 import {ChipsetService} from '../chipset.service';
-import {fromBase64} from '../../../util/base64';
 import {Brush} from './brush';
 import {State} from './index';
 import {Area} from './area';
@@ -11,22 +14,28 @@ import {Area} from './area';
 let vertex_shader_overlay_src = require<string>('./shaders/dark_overlay.vs');
 let fragment_shader_overlay_src = require<string>('./shaders/dark_overlay.fs');
 
+@Injectable()
 export class PaletteArea extends Area {
 
     private brush_area: SpriteHandle;
     private chipset: SpriteHandle;
+    private chipset_name: string;
 
     constructor(
         private brush: Brush,
         private chipset_service: ChipsetService
     ) {
         super();
-        this.load()
     }
 
     activate() {}
     deactivate() {
         this.zbehavior.desactivate();
+    }
+
+    setSurface(surface: WebGLSurface) {
+        super.setSurface(surface);
+        this.load();
     }
 
     private load() {
@@ -35,25 +44,29 @@ export class PaletteArea extends Area {
 
         // Create a palette for future use.
         let palette = this.surface.createSpriteRenderEl();
+        let brush = this.surface.createSpriteRenderEl().loadSpriteObject(
+            [51, 122, 183, 178],
+            builder => this.brush_area = builder.buildWithSize(16, 16)
+        );
 
         this.chipset_service.getChipsetList()
             .flatMap(chip_list => chip_list)
             .map(chip => this.chipset_service.getChipsetPath(chip))
-            .forEach(chip_path => {
-                if (!this.chipset) {
+            .switchMap(chip_path => {
+                if (this.chipset) {
                     console.log(`Handle more than one chipset`);
                     return;
                 }
-                palette.loadSpriteObject(chip_path, builder => {
-                    // if (!this.chipset) {
+                this.chipset_name = chip_path;
+                let observable = new Observable<void>((subscriber: Subscriber<void>) => {
+                    palette.loadSpriteObject(chip_path, builder => {
                         this.chipset = builder.buildWithEntireTexture();
                         this.camera.centerOn(this.chipset);
-                    // } else {
-                        // let chipset = builder.buildWithEntireTexture();
-                        // chipset.position();
-                    // }
+                        subscriber.next();
+                    });
                 });
-            }).then(() => {
+                return observable;
+            }).subscribe(() => {
                 if (!this.chipset) {
                     console.log(`No chipset found!`);
                     return;
@@ -70,12 +83,9 @@ export class PaletteArea extends Area {
                     SpriteProgram,
                     this.camera,
                     palette,
-                    this.surface.createSpriteRenderEl().loadSpriteObject(
-                        [51, 122, 183, 178],
-                        builder => this.brush_area = builder.buildWithSize(16, 16)
-                    )
+                    brush
                 ]);
-            }).catch(err => console.log(`Error while loading chipsets: ${err}`));
+            }, err => console.log(`Error while loading chipsets: ${err}`));
     }
 
     //////////////////////////////////////////////
@@ -92,10 +102,10 @@ export class PaletteArea extends Area {
         let [x, y] = this.objectSpace(event);
         this.zbehavior.mouseDown(event.button, x, y);
         // Prevent selection if button is not left mouse button.
-        if (event.button === 0) {
+        if (event.button === 0 && this.chipset) {
             let new_id = this.chipset.getTileIdFor(x, y, 16);
             if (new_id != 0) {
-                this.brush.replaceWith(1, new_id);
+                this.brush.replaceWith(1, new_id, this.chipset.tex, this.chipset_name);
                 return State.Editor;
             }
         }

@@ -32,12 +32,14 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.surface.setMouseHandler(this);
         this.palette_area.setSurface(this.surface);
         this.editor_area.setSurface(this.surface);
+        this.brush.setSurface(this.surface);
     }
 
     edit(map: Map) {
         let surface = this.surface;
 
         this.editor_area.load(map);
+        this.brush.setMap(map);
 
         surface.setCommandBuffer(this.editor_area.getScene());
     }
@@ -60,7 +62,7 @@ export class EditorState implements MouseHandler, KeyHandler {
 
     private switchToState(state: State) {
         this.state = state;
-        if (this.surface && this.editor_area.isReady() && this.palette_area.isReady()) {
+        if (this.isReady()) {
             if (this.state == State.Palette) {
                 this.editor_area.deactivate();
                 this.palette_area.activate();
@@ -71,6 +73,11 @@ export class EditorState implements MouseHandler, KeyHandler {
                 this.surface.setCommandBuffer(this.editor_area.getScene());
             }
         }
+    }
+
+    private isReady(): boolean {
+        return this.surface && this.editor_area.isReady()
+            && this.palette_area.isReady();
     }
 
     /// Wiring: should be called only by the MapEditor
@@ -104,6 +111,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     mouseUp(event: MouseEvent): void {
+        if (!this.isReady()) return;
         let next_state: State;
         switch (this.state) {
             case State.Palette: next_state = this.palette_area.mouseUpPalette(event); break;
@@ -115,6 +123,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     mouseDown(event: MouseEvent): void {
+        if (!this.isReady()) return;
         let next_state: State;
         switch (this.state) {
             case State.Palette: next_state = this.palette_area.mouseDownPalette(event); break;
@@ -126,6 +135,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     mouseMove(event: MouseEvent): void {
+        if (!this.isReady()) return;
         let next_state: State;
         switch (this.state) {
             case State.Palette: next_state = this.palette_area.mouseMovePalette(event); break;
@@ -137,6 +147,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     mouseWheel(event: WheelEvent): void {
+        if (!this.isReady()) return;
         let next_state: State;
         switch (this.state) {
             case State.Palette: next_state = this.palette_area.mouseWheelPalette(event); break;

@@ -110,6 +110,14 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
             new Layer(this.gl, this.width, this.tile_size, [])
         );
     }
+    insertChipset(layer_index: number, chipset: Texture): void {
+        let layer = this.layers[layer_index];
+        let chipset_layer: ChipsetLayer = {
+            tiles_id: new Uint16Array(this.width * this.height),
+            chipset
+        };
+        layer.insertChipset(this.gl, this.width, this.tile_size, chipset_layer);
+    }
     getPosition(): [number, number] {
         return this.pos;
     }
@@ -136,6 +144,17 @@ class Layer {
                 new PartialLayer(gl, width_map, tile_size, cl)
             );
         }
+    }
+
+    insertChipset(
+        gl: WebGLRenderingContext,
+        width_map: number,
+        tile_size: number,
+        chip_layer: ChipsetLayer
+    ) {
+        this.partial_layers.push(
+            new PartialLayer(gl, width_map, tile_size, chip_layer)
+        );
     }
 }
 

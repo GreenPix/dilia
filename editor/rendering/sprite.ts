@@ -24,6 +24,7 @@ export interface SpriteBuilder {
 }
 
 export interface SpriteHandle extends Obj2D {
+    tex: Texture;
     hide(): void;
     show(): void;
     getTileIdFor(x: number, y: number, tile_size: number): number;

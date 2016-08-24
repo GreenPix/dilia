@@ -27,6 +27,29 @@ export class Layer {
     }
 }
 
+export class SelectedChipsetLayer {
+
+    constructor(
+        private width: number,
+        private height: number,
+        private chipset_layer: ChipsetLayer,
+        private tile_size: number
+    ) {}
+
+    // TODO: There's duplication with SelectedPartialLayerImpl
+    // TODO: also, the SelectedPartialLayer interface does not
+    // TODO: seems very useful in the end. It adds unneeded
+    // TODO: complexity and just look Java-ish.
+    setTileId(x: number, y: number, tile_id: number) {
+        let i, j;
+        i = Math.floor(y / this.tile_size);
+        j = Math.floor(x / this.tile_size);
+        if (i >= 0 && i < this.height && j >= 0 && j < this.width) {
+            this.chipset_layer.tiles_id[i * this.width + j] = tile_id;
+        }
+    }
+}
+
 export class Map implements CommitObject {
 
     private current_layer: number  = 0;
@@ -71,6 +94,14 @@ export class Map implements CommitObject {
             this.current_layer = index;
         }
         return index;
+    }
+
+    select(layer_index: number, chipset_layer: number): SelectedChipsetLayer {
+        return new SelectedChipsetLayer(
+            this.width, this.height,
+            this.layers[layer_index].raw[chipset_layer],
+            this.tile_size
+        );
     }
 }
 

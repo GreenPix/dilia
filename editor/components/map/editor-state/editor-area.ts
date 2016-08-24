@@ -1,3 +1,4 @@
+import {Injectable} from '@angular/core';
 import {DefaultFBO} from '../../../rendering/fbo';
 import {genPixelsForTextureWithBorder} from '../../../rendering/util';
 import {SpriteBuilder} from '../../../rendering/sprite';
@@ -28,6 +29,7 @@ class GridHandle {
     }
 }
 
+@Injectable()
 export class EditorArea extends Area {
 
     private map_handle: TilesHandle;
@@ -78,23 +80,9 @@ export class EditorArea extends Area {
                 handle.addLayer(layer);
             }
             this.map_handle = handle.build();
+            this.brush.setMapHandle(this.map_handle);
             this.camera.centerOn(this.map_handle);
         });
-
-        let brush = this.surface.createSpriteRenderEl();
-        brush.loadSpriteObject(map.layers[0].raw[0].chipset, builder => {
-            this.brush.sprite = builder
-                .overlayFlag(true)
-                .buildFromTileId(16, this.brush.tiles_ids[0]);
-        });
-
-        // let full_map_fbo = new FBO(this.surface.getGLContext());
-        // full_map_fbo.setSize(map.widthInPx(), map.heightInPx());
-
-        // let map_quad = surface.createSpriteRenderEl();
-        // map_quad.loadSpriteObject(full_map_fbo.getTexture(),
-        //     builder => builder.buildWithEntireTexture()
-        // );
 
         let zoom = this.camera.zoom_lvl;
         let grid = this.surface.createSpriteRenderEl();
@@ -115,10 +103,11 @@ export class EditorArea extends Area {
             this.camera,
             grid,
             TileProgram,
+            this.camera,
             map_tiled,
             FlipY,
             SpriteProgram,
-            brush
+            this.brush
         ]);
 
     }
@@ -138,10 +127,7 @@ export class EditorArea extends Area {
         let [x, y] = this.objectSpace(event);
         this.zbehavior.mouseDown(event.button, x, y);
         if (event.button === 0) {
-            // TODO: Instead of always picking the same
-            // layer, we should select the appropriate one
-            let selected_layer = this.map_handle.select(this.active_layer, 0);
-            this.brush.paint(selected_layer, x, y);
+            this.brush.paint(x, y);
             this.is_mouse_pressed = true;
         }
         return State.Editor;
@@ -156,8 +142,7 @@ export class EditorArea extends Area {
             // x that are distant from at least width
             // (same for y) to avoid erasing the
             // previous brush
-            let selected_layer = this.map_handle.select(this.active_layer, 0);
-            this.brush.paint(selected_layer, x, y);
+            this.brush.paint(x, y);
         }
 
         this.brush.position(x, y);
