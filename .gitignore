@@ -1,4 +1,5 @@
 .vagrant
+coverage/
 node_modules/
 typings/
 build/

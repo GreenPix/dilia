@@ -1,20 +1,33 @@
 "use strict"
 
 Error.stackTraceLimit = Infinity;
-require('phantomjs-polyfill');
-require('es6-promise');
-require('es6-shim');
-require('es7-reflect-metadata/dist/browser');
+require('core-js/es6');
+require('core-js/es7/reflect');
 
-require('zone.js/lib/browser/zone-microtask.js');
-require('zone.js/lib/browser/long-stack-trace-zone.js');
-require('zone.js/dist/jasmine-patch.js');
+require('ts-helpers');
+
+require('zone.js/dist/zone');
+require('zone.js/dist/long-stack-trace-zone');
+require('zone.js/dist/jasmine-patch');
+require('zone.js/dist/async-test');
+require('zone.js/dist/fake-async-test');
+require('zone.js/dist/sync-test');
+
+require('rxjs/Rx');
 
 var testContext = require.context('./tests', true, /\.spec\.ts/);
-var appContext = require.context('./editor', true, /\.spec\.ts/);
+// var appContext = require.context('./editor', true, /\.spec\.ts/);
 
-appContext.keys().forEach(appContext);
 testContext.keys().forEach(testContext);
+// appContext.keys().forEach(appContext);
 
-var domAdapter = require('angular2/src/platform/browser/browser_adapter');
-domAdapter.BrowserDomAdapter.makeCurrent();
+var testing = require('@angular/core/testing');
+var browser = require('@angular/platform-browser-dynamic/testing');
+
+testing.setBaseTestProviders(
+    browser.TEST_BROWSER_DYNAMIC_PLATFORM_PROVIDERS,
+    browser.TEST_BROWSER_DYNAMIC_APPLICATION_PROVIDERS
+);
+// testing.TestBed.initTestEnvironment(
+//     browser.BrowserDynamicTestingModule, browser.platformBrowserDynamicTesting()
+// );

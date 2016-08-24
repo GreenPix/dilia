@@ -49,68 +49,6 @@ export class HttpService {
         return this.observable;
     }
 
-    // postFile(path: string, data: FormData | Blob): RxObservable<Response> {
-    //
-    //     return new Observable<Response>((subscriber: Subscriber<Response>) => {
-    //         let xhr = new XMLHttpRequest();
-    //         xhr.withCredentials = true;
-    //
-    //         // TODO: CHECK THIS
-    //         let onLoad = () => {
-    //             // responseText is the old-school way of retrieving response (supported by IE8 & 9)
-    //             // response/responseType properties were introduced in XHR Level2 spec (supported by
-    //             // IE10)
-    //             let body = isPresent(xhr.response) ? xhr.response : xhr.responseText;
-    //
-    //             let headers = Headers.fromResponseHeaderString(xhr.getAllResponseHeaders());
-    //
-    //             let url = getResponseURL(xhr);
-    //
-    //             // normalize IE9 bug (http://bugs.jquery.com/ticket/1450)
-    //             let status: number = xhr.status === 1223 ? 204 : xhr.status;
-    //
-    //             // fix status code when it is 0 (0 status is undocumented).
-    //             // Occurs when accessing file resources or on Android 4.1 stock browser
-    //             // while retrieving files from application cache.
-    //             if (status === 0) {
-    //                 status = body ? 200 : 0;
-    //             }
-    //             let responseOptions = new ResponseOptions({body, status, headers, url});
-    //             let response = new Response(responseOptions);
-    //             if (isSuccess(status)) {
-    //                 subscriber.next(response);
-    //                 subscriber.complete();
-    //                 return;
-    //             }
-    //             subscriber.error(response);
-    //         };
-    //
-    //         // TODO: CHECK THIS
-    //         let onError = (err) => {
-    //             let responseOptions = new ResponseOptions({body: err, type: ResponseType.Error});
-    //             subscriber.error(new Response(responseOptions));
-    //         };
-    //
-    //         // TODO: CHECK THIS
-    //         xhr.onreadystatechange = function () {
-    //             if (this.readyState === 4) {
-    //                 console.log(this.responseText);
-    //             }
-    //         };
-    //
-    //         xhr.open('POST', path);
-    //         xhr.addEventListener('load', onLoad);
-    //         xhr.addEventListener('error', onError);
-    //         xhr.send(data);
-    //
-    //         return () => {
-    //             xhr.removeEventListener('load', onLoad);
-    //             xhr.removeEventListener('error', onError);
-    //             xhr.abort();
-    //         };
-    //     });
-    // }
-
     post(path: string, json?: any): Observable<Response> {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');

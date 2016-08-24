@@ -13,10 +13,20 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [ { pattern: 'spec-bundle.js', watched: false } ],
 
-    webpack: require('./webpack.config.js'),
+    webpack: require('./webpack.config.js/test.js'),
 
     webpackServer: {
-      noInfo: true
+        noInfo: true,
+        stats: 'errors-only'
+    },
+
+    coverageReporter: {
+        dir: 'coverage/',
+        reporters: [
+            { type: 'text-summary' },
+            { type: 'json' },
+            { type: 'html' }
+        ]
     },
 
     // list of files to exclude
@@ -25,12 +35,12 @@ module.exports = function(config) {
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: { 'spec-bundle.js': ['webpack', 'sourcemap'] },
+    preprocessors: { 'spec-bundle.js': ['coverage', 'webpack', 'sourcemap'] },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['mocha', 'coverage'],
 
 
     // web server port

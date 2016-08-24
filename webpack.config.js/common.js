@@ -1,4 +1,5 @@
 
+const path = require('path');
 const webpack = require('webpack');
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 
@@ -13,7 +14,7 @@ module.exports = {
 
     resolve: {
         extensions: ['', '.ts', '.js'],
-        root: __dirname,
+        root: path.join(path.dirname(__dirname), 'editor/'),
         modulesDirectories: ['node_modules']
     },
 
@@ -37,7 +38,7 @@ module.exports = {
             { test: /\.pegjs$/, loader: 'pegjs' },
             { test: /\.fs$/,    loader: 'raw'   },
             { test: /\.vs$/,    loader: 'raw'   },
-            { test: /\.ts$/,    loader: 'awesome-typescript', exclude: [/\.spec.ts$/] }
+            { test: /\.ts$/,    loader: 'awesome-typescript' }
         ]
     },
 
