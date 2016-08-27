@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {WebGLSurface} from '../../webgl/surface';
-import {MouseHandler, KeyHandler} from '../../webgl/surface';
+import {WebGLSurface} from '../../../components';
+import {MouseHandler, KeyHandler} from '../../../components';
 import {Map} from '../../../models/map';
 import {EditorArea} from './editor-area';
 import {PaletteArea} from './palette-area';

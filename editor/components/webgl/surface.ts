@@ -1,5 +1,4 @@
 import {Component, AfterViewInit, OnDestroy} from '@angular/core';
-import {CORE_DIRECTIVES} from '@angular/common';
 import {TextureLoader} from '../../gl/gl';
 import {UniqueId} from '../../services/index';
 import {CommandBuffer} from '../../rendering/pipeline';
@@ -36,7 +35,6 @@ export interface KeyHandler {
             'display-none': gl_not_supported
         }"></canvas>
         <h3 *ngIf="gl_not_supported">WebGL isn't supported by your browser. :(</h3>`,
-    directives: [CORE_DIRECTIVES]
 })
 export class WebGLSurface implements AfterViewInit, OnDestroy {
 

@@ -1,6 +1,5 @@
 import {Output, EventEmitter} from '@angular/core';
 import {Component, Input} from '@angular/core';
-import {CORE_DIRECTIVES} from '@angular/common';
 import {PanelState, Panel} from './panel-state';
 import {Map, Layer} from '../../models/map';
 
@@ -12,7 +11,6 @@ let layerPanelTemplate = require<string>('./layers-panel.html');
     selector: 'layer-panel',
     styles: [layerPanelCss.toString()],
     templateUrl: layerPanelTemplate,
-    directives: [CORE_DIRECTIVES]
 })
 export class LayersPanel {
 

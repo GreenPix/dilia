@@ -1,9 +1,7 @@
 import {Component} from '@angular/core';
 import {Output, EventEmitter} from '@angular/core';
-import {CORE_DIRECTIVES} from '@angular/common';
-import {NgModel} from '@angular/common';
 import {ViewChild} from '@angular/core';
-import {Dialog} from '../modal/dialog';
+import {Dialog} from '../../components';
 import {MapManager} from '../../models/map';
 
 let templateUrl = require<string>('./createnewmap.html');
@@ -17,11 +15,10 @@ export interface NewMap {
 @Component({
     selector: 'create-map-modal',
     templateUrl: templateUrl,
-    directives: [Dialog, CORE_DIRECTIVES, NgModel]
 })
 export class CreateNewMapModal {
 
-    @ViewChild(Dialog)
+    @ViewChild('newmapdialog')
     private dialog: Dialog;
 
     @Output('newMap')

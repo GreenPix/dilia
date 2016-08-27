@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Subscriber} from 'rxjs/Subscriber';
-import {WebGLSurface} from '../../webgl/surface';
+import {WebGLSurface} from '../../../components';
 import {DefaultFBO} from '../../../rendering/fbo';
 import {SpriteHandle} from '../../../rendering/sprite';
 import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/pipeline';

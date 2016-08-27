@@ -1,5 +1,4 @@
 import {Component, Input} from '@angular/core';
-import {CORE_DIRECTIVES} from '@angular/common';
 
 let dialogTemplate = require<string>('./dialog.html');
 let dialogCss = require<Webpack.Scss>('./dialog.scss');
@@ -8,7 +7,6 @@ let dialogCss = require<Webpack.Scss>('./dialog.scss');
     selector: 'dialog-modal',
     templateUrl: dialogTemplate,
     styles: [dialogCss.toString()],
-    directives: [CORE_DIRECTIVES]
 })
 export class Dialog {
     private is_shown: boolean;

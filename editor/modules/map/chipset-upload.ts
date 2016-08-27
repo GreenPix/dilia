@@ -1,9 +1,7 @@
 import {Component} from '@angular/core';
-import {CORE_DIRECTIVES} from '@angular/common';
 import {ViewChild} from '@angular/core';
 import {uniqueId} from 'lodash';
-import {Dialog} from '../modal/dialog';
-import {Upload} from '../upload/upload';
+import {Dialog} from '../../components';
 import {ChipsetMaxFileSize} from '../../../shared/map';
 import {Observable, Subscriber} from 'rxjs';
 import {isString, values} from 'lodash';
@@ -21,7 +19,7 @@ enum ImgState {
     selector: 'chipset-modal',
     styles: [chipsetUploadCss.toString()],
     template: `
-        <dialog-modal [onHide]="_rd">
+        <dialog-modal [onHide]="_rd" #upload>
             <dialog-header>Edit a chipset</dialog-header>
             <dialog-body>
                 <div class="alert alert-danger" *ngIf="error_message !== ''">
@@ -49,7 +47,6 @@ enum ImgState {
             </dialog-footer>
         </dialog-modal>
     `,
-    directives: [Dialog, CORE_DIRECTIVES, Upload]
 })
 export class ChipsetModal {
 
@@ -68,7 +65,7 @@ export class ChipsetModal {
     private img_obj: HTMLImageElement;
     private file: File;
 
-    @ViewChild(Dialog)
+    @ViewChild('upload')
     private dialog: Dialog;
 
     constructor() {

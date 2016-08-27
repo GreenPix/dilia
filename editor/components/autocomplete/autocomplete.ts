@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {CORE_DIRECTIVES, FORM_DIRECTIVES, NgForm} from '@angular/common';
+import {NgForm} from '@angular/common';
 import {Output, EventEmitter} from '@angular/core';
 import {SocketIOService, HttpService} from '../../services/index';
 import {AaribaFileList, AaribaFile} from '../../shared';
@@ -14,7 +14,6 @@ let autocompleteScss = require<Webpack.Scss>('./autocomplete.scss');
     selector: 'autocomplete-files',
     templateUrl: autocompleteTemplate,
     styles: [autocompleteScss.toString()],
-    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, SelectEl]
 })
 export class AutocompleteFiles {
 
