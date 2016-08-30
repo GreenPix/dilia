@@ -24,7 +24,7 @@ Thus the environment will be:
 The following options allows you to override this behavior.
 
 ${colors.bold.green('Usage:')}
-  webpack [--prod | --dev] [--bail]
+  webpack [--prod | --dev | --uglify] [--bail] [--json]
   webpack --opt-help | --version
 
 ${colors.bold.green('Arguments:')}
@@ -32,6 +32,7 @@ ${colors.bold.green('Arguments:')}
   --opt-help            Show this message.
   --version             Show the version of dilia.
   --prod                Start a production build.
+  --uglify              Start a production build using uglify.
   --dev                 Start a dev environment.
   --test                Start a test environment.
 `;
