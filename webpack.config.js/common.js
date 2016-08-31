@@ -53,6 +53,7 @@ module.exports = {
 
     node: {
         global: 'window',
+        process: false,
         crypto: 'empty',
         module: false,
         clearImmediate: false,

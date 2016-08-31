@@ -1,7 +1,7 @@
 // Karma configuration
 
 module.exports = function(config) {
-  config.set({
+  let configuration = {
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -62,8 +62,25 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    browsers: [/*'PhantomJS'*/, 'Chromium'],
 
+    customLaunchers: {
+        PhantomJSDebug: {
+            base: 'PhantomJS',
+            options: {
+                windowName: 'my-window',
+                settings: {
+                    webSecurityEnabled: false
+                },
+            },
+            flags: ['--load-images=true'],
+            debug: true
+        },
+        ChromiumTravisCI: {
+            base: 'Chromium',
+            flags: ['--no-sandbox']
+        }
+    },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
@@ -72,5 +89,11 @@ module.exports = function(config) {
     // Concurrency level
     // how many browser should be started simultanous
     concurrency: Infinity,
-  });
+  };
+
+  if (process.env.TRAVIS) {
+      configuration.browsers = ['ChromiumTravisCI']
+  }
+
+  config.set(configuration);
 }

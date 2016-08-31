@@ -1,5 +1,7 @@
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {Injectable, provide} from '@angular/core';
+import {XHRBackend} from '@angular/http';
+import {MockBackend} from '@angular/http/testing';
 import {AuthGuard} from '../editor/permissions/auth';
 import {AuthService} from '../editor/services/auth';
 import {User} from '../editor/models/user';
@@ -20,6 +22,7 @@ export class MockUser {}
 
 export const PROVIDERS = [
     AuthService,
+    provide(XHRBackend, { useClass: MockBackend}),
     provide(AuthGuard, { useClass: MockAuthGuard }),
     provide(User, { useClass: MockUser }),
     provide(LocationStrategy, { useClass: HashLocationStrategy }),
