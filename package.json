@@ -30,7 +30,6 @@
     "docopt": "0.6.2",
     "es6-promise": "3.2.1",
     "es6-shim": "0.35.1",
-    "es7-reflect-metadata": "1.6.0",
     "file-loader": "0.8.5",
     "istanbul-instrumenter-loader": "0.2.0",
     "jasmine-core": "2.5.0",
@@ -65,14 +64,14 @@
     "webpack-merge": "0.13.0"
   },
   "dependencies": {
-    "@angular/common": "2.0.0-rc.5",
-    "@angular/compiler": "2.0.0-rc.5",
-    "@angular/core": "2.0.0-rc.5",
-    "@angular/forms": "0.3.0",
-    "@angular/http": "2.0.0-rc.5",
-    "@angular/platform-browser": "2.0.0-rc.5",
-    "@angular/platform-browser-dynamic": "2.0.0-rc.5",
-    "@angular/router": "3.0.0-rc.1",
+    "@angular/common": "2.0.0-rc.6",
+    "@angular/compiler": "2.0.0-rc.6",
+    "@angular/core": "2.0.0-rc.6",
+    "@angular/forms": "2.0.0-rc.6",
+    "@angular/http": "2.0.0-rc.6",
+    "@angular/platform-browser": "2.0.0-rc.6",
+    "@angular/platform-browser-dynamic": "2.0.0-rc.6",
+    "@angular/router": "3.0.0-rc.2",
     "ace-builds": "ajaxorg/ace-builds#0982db4",
     "body-parser": "1.15.1",
     "bootstrap-sass": "3.3.6",
@@ -98,12 +97,13 @@
     "passport-local": "1.0.0",
     "passport-local-mongoose": "4.0.0",
     "passport.socketio": "3.6.1",
-    "rxjs": "5.0.0-beta.6",
+    "reflect-metadata": "0.1.8",
+    "rxjs": "5.0.0-beta.11",
     "serve-static": "1.10.2",
     "socket.io": "1.4.6",
     "socket.io-client": "1.4.6",
     "validator": "5.5.0",
     "winston": "2.2.0",
-    "zone.js": "0.6.12"
+    "zone.js": "0.6.17"
   }
 }

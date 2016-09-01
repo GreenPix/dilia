@@ -39,6 +39,11 @@ module.exports = webpackMerge(commonConfig, {
         new DefinePlugin({
             VERSION: "1.0",
             IS_PRODUCTION: false,
+            process: {
+                env: {
+                    NODE_ENV: '"test"',
+                },
+            },
         }),
     ],
 });

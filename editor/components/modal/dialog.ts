@@ -54,3 +54,21 @@ export class Dialog {
         clearTimeout(this.timeid_visible);
     }
 }
+
+@Component({
+    selector: 'dialog-header',
+    template: '<ng-content></ng-content>'
+})
+export class DialogHeader {}
+
+@Component({
+    selector: 'dialog-footer',
+    template: '<ng-content></ng-content>'
+})
+export class DialogFooter {}
+
+@Component({
+    selector: 'dialog-body',
+    template: '<ng-content></ng-content>'
+})
+export class DialogBody {}

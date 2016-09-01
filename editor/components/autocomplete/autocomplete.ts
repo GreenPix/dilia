@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {NgForm} from '@angular/common';
+import {NgForm} from '@angular/forms';
 import {Output, EventEmitter} from '@angular/core';
 import {SocketIOService, HttpService} from '../../services/index';
 import {AaribaFileList, AaribaFile} from '../../shared';

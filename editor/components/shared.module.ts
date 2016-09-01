@@ -6,7 +6,7 @@ import {HttpModule} from '@angular/http';
 import {AlertBox} from './alert/box';
 import {AutocompleteFiles} from './autocomplete/autocomplete';
 import {LoginForm} from './login/form';
-import {Dialog} from './modal/dialog';
+import {Dialog, DialogHeader, DialogFooter, DialogBody} from './modal/dialog';
 import {Toolbar} from './toolbar/toolbar';
 import {CommitModal} from './commit';
 import {WebGLSurface} from './webgl/surface';
@@ -21,6 +21,9 @@ import {HttpService} from '../services';
         AutocompleteFiles,
         LoginForm,
         Dialog,
+        DialogHeader,
+        DialogFooter,
+        DialogBody,
         Toolbar,
         CommitModal,
         WebGLSurface,
@@ -37,12 +40,15 @@ import {HttpService} from '../services';
         AutocompleteFiles,
         LoginForm,
         Dialog,
+        DialogHeader,
+        DialogFooter,
+        DialogBody,
         Toolbar,
         CommitModal,
         WebGLSurface,
         Upload,
         SelectEl,
         AnimFadeIn,
-    ]
+    ],
 })
 export class SharedModule {}

@@ -1,6 +1,6 @@
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule, provide} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {SharedModule} from './components/shared.module';
 import {MapModule} from './modules/map.module';
@@ -32,10 +32,10 @@ import {App} from './app';
         AuthService,
         AuthGuard,
         SocketIOService,
-        provide(User, { useValue: User.default() }),
-        provide(AaribaScriptSettings, { useFactory: user => user.aaribaScriptSettings, deps: [User] }),
-        provide(UniqueId, { useFactory: () => new UniqueId() }),
-        provide(LocationStrategy, { useClass: HashLocationStrategy })
+        { provide: User, useValue: User.default() },
+        { provide: AaribaScriptSettings, useFactory: user => user.aaribaScriptSettings, deps: [User] },
+        { provide: UniqueId, useFactory: () => new UniqueId() },
+        { provide: LocationStrategy, useClass: HashLocationStrategy },
     ],
     bootstrap: [App]
 })

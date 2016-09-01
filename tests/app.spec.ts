@@ -35,7 +35,6 @@ describe('App', () => {
     });
 
     it('should have a router', (done) => {
-        debugger;
         TestBed.compileComponents().then(() => {
             let app = TestBed.createComponent(App);
             app.detectChanges();

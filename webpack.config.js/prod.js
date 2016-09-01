@@ -35,7 +35,12 @@ const config = webpackMerge(commonConfig, {
         }]),
         new DefinePlugin({
             VERSION: "1.0",
-            IS_PRODUCTION: true
+            IS_PRODUCTION: true,
+            process: {
+                env: {
+                    NODE_ENV: '"production"',
+                },
+            },
         }),
     ]
 });
