@@ -35,6 +35,14 @@ const config = webpackMerge(commonConfig, {
     bail: true,
 });
 
+config.module.loaders = config.module.loaders.filter(function (loader) {
+    return loader.test.source !== '\\.html$';
+});
+
+config.module.loaders.push({
+    test: /\.html$/,  loader: 'raw'
+});
+
 config.plugins = [
     new DefinePlugin({
         VERSION: "1.0",
