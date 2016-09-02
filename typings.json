@@ -1,11 +1,9 @@
 {
   "globalDependencies": {
     "ace": "github:DefinitelyTyped/DefinitelyTyped/ace/ace.d.ts#52b0ea5c9719831eecf6ba7436660e30061a4b3c",
-    "es6-shim": "registry:dt/es6-shim#0.31.2+20160317120654",
+    "es6-shim": "registry:dt/es6-shim#0.31.2+20160602141504",
     "jasmine": "registry:dt/jasmine#2.2.0+20160621224255",
+    "lodash": "registry:dt/lodash#4.14.0+20160830145422",
     "socket.io-client": "registry:dt/socket.io-client#1.4.4+20160317120654"
-  },
-  "dependencies": {
-    "lodash": "registry:npm/lodash#4.0.0+20160416211519"
   }
 }

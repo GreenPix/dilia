@@ -6,7 +6,7 @@ import {Context} from './context';
 import {TilesLayer, TilesLayerBuilder} from './tiles';
 import {SpriteObject, SpriteBuilder} from './sprite';
 import {Texture, Pixels} from '../gl/tex';
-import {values} from 'lodash';
+import * as values from 'lodash/values';
 
 
 

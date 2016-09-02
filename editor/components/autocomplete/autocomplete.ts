@@ -4,7 +4,10 @@ import {Output, EventEmitter} from '@angular/core';
 import {SocketIOService, HttpService} from '../../services/index';
 import {AaribaFileList, AaribaFile} from '../../shared';
 import {SelectEl} from '../../services/directives';
-import {filter, sortBy, throttle} from 'lodash';
+
+import * as filter from 'lodash/filter';
+import * as sortBy from 'lodash/sortBy';
+import * as throttle from 'lodash/throttle';
 
 let autocompleteTemplate = require<string>('./autocomplete.html');
 let autocompleteScss = require<Webpack.Scss>('./autocomplete.scss');

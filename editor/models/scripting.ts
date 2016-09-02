@@ -3,7 +3,8 @@ import {Response} from '@angular/http';
 import {AaribaFile} from '../shared';
 import {HttpService, Observable, SocketIOService} from '../services';
 import {CommitObject, Committer} from './commitable';
-import {some, filter} from 'lodash';
+import * as some from 'lodash/some';
+import * as filter from 'lodash/filter';
 
 export interface FileTab extends CommitObject {
     index: number;

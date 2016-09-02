@@ -1,4 +1,4 @@
-import {map} from 'lodash';
+import * as map from 'lodash/map';
 
 // TODO: This should be gathered from the server.
 let globals = {

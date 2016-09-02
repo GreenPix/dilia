@@ -1,11 +1,12 @@
 import {Component} from '@angular/core';
 import {ViewChild} from '@angular/core';
-import {uniqueId} from 'lodash';
-import {Dialog} from '../../components';
-import {ChipsetMaxFileSize} from '../../../shared/map';
+import * as uniqueId from 'lodash/uniqueId';
+import * as isString from 'lodash/isString';
+import * as values from 'lodash/values';
 import {Observable} from 'rxjs/Observable';
 import {Subscriber} from 'rxjs/Subscriber';
-import {isString, values} from 'lodash';
+import {Dialog} from '../../components';
+import {ChipsetMaxFileSize} from '../../../shared/map';
 
 const chipsetUploadCss = require<Webpack.Scss>('./chipset-upload.scss');
 const XSSI_PREFIX = /^\)\]\}',?\n/;
