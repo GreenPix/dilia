@@ -1,4 +1,4 @@
-import {Subscription} from 'rxjs';
+import {Subscription} from 'rxjs/Subscription';
 import {Component, AfterViewInit} from '@angular/core';
 import {ViewChild} from '@angular/core';
 import {UniqueId, HttpService, SocketIOService} from '../../services/index';

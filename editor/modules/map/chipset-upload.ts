@@ -3,7 +3,8 @@ import {ViewChild} from '@angular/core';
 import {uniqueId} from 'lodash';
 import {Dialog} from '../../components';
 import {ChipsetMaxFileSize} from '../../../shared/map';
-import {Observable, Subscriber} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
+import {Subscriber} from 'rxjs/Subscriber';
 import {isString, values} from 'lodash';
 
 const chipsetUploadCss = require<Webpack.Scss>('./chipset-upload.scss');

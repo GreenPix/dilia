@@ -1,4 +1,4 @@
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 
 /// This interface must be satisfied for
 /// all objects that can be commited through
