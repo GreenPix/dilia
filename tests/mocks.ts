@@ -5,6 +5,7 @@ import {MockBackend} from '@angular/http/testing';
 import {AuthGuard} from '../editor/permissions/auth';
 import {AuthService} from '../editor/services/auth';
 import {User} from '../editor/models/user';
+import '../editor/rxjs-add';
 
 
 @Injectable()

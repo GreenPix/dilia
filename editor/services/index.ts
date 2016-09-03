@@ -1,8 +1,9 @@
-import {uniqueId} from 'lodash';
+import * as uniqueId from 'lodash/uniqueId';
 import * as io from 'socket.io-client';
 import {SocketPacket, SocketMethod} from '../shared';
 import {Injectable} from '@angular/core';
-import {Observable, Subscriber} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
+import {Subscriber} from 'rxjs/Subscriber';
 import {Http, Response, Headers} from '@angular/http';
 // Temporary
 // import {getResponseURL, isSuccess} from '@angular/http';
