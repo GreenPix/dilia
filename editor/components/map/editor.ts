@@ -1,10 +1,15 @@
 import {Component, ViewChild} from '@angular/core';
 import {AfterViewInit, OnDestroy} from '@angular/core';
 import {WebGLSurface} from '../webgl/surface';
-import {ChipsetModal} from './chipset';
+import {ChipsetModal} from './chipset-upload';
+import {ChipsetService} from './chipset.service';
+import {CommitModal} from '../commit';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {MapManager} from '../../models/map';
 import {EditorState} from './editor-state';
+import {Brush} from './editor-state/brush';
+import {PaletteArea} from './editor-state/palette-area';
+import {EditorArea} from './editor-state/editor-area';
 import {MapSettings} from './map-settings';
 import {LayersPanel} from './layers-panel';
 import {PanelState} from './panel-state';
@@ -18,8 +23,13 @@ let mapEditorScss = require<Webpack.Scss>('./editor.scss');
     styles: [mapEditorScss.toString()],
     templateUrl: mapEditorTemplate,
     directives: [
-        WebGLSurface, ChipsetModal, MapSettings, LayersPanel, CreateNewMapModal
+        WebGLSurface, ChipsetModal, MapSettings,
+        LayersPanel, CreateNewMapModal, CommitModal,
     ],
+    providers: [
+        ChipsetService, EditorState, Brush,
+        EditorArea, PaletteArea
+    ]
 })
 export class MapEditor implements AfterViewInit, OnDestroy {
 
@@ -29,15 +39,17 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     private chipset_modal: ChipsetModal;
     @ViewChild(CreateNewMapModal)
     private create_map_modal: CreateNewMapModal;
-
-    private state: EditorState = new EditorState();
+    @ViewChild(CommitModal)
+    private commit_modal: CommitModal;
 
     constructor(
-        private map_manager: MapManager
+        private state: EditorState,
+        private map_manager: MapManager,
+        private chipset_service: ChipsetService
     ) {}
 
     currentMapIsReadOnly() {
-        return false;
+        return this.map_manager.currentMap() === undefined;
     }
 
     uploadChipset() {
@@ -53,7 +65,14 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     }
 
     createNewMap(): void {
+        this.create_map_modal.clear();
         this.create_map_modal.show();
+    }
+
+    commit(): void {
+        if (this.map_manager.currentMap()) {
+            this.commit_modal.show(this.map_manager.currentMap());
+        }
     }
 
     /// This is a hook to be used only by

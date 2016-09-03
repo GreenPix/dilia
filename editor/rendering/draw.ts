@@ -184,6 +184,10 @@ export class TilesRenderEl extends BaseRenderEl {
                 }
             });
         }
+
+        if (nb_chipset == 0) {
+            cb(chipset_datas, this.tile_el);
+        }
         return this;
     }
 

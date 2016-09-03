@@ -1,8 +1,9 @@
+import {ChipsetMaxFileSize} from '../../shared/map';
 
-export var port = 8000;
-export var max_file_size = 5 * 1024 * 1024; // in bytes
+export const port = 8000;
+export const max_file_size = ChipsetMaxFileSize;
 
-let configDev: Config = {
+const configDev: Config = {
     mongodb: 'mongodb://localhost/diliaDev',
     github: {
       clientID: process.env.GITHUB_CLIENTID,
@@ -16,22 +17,22 @@ let configDev: Config = {
     },
 };
 
-let configProd: Config = {
+const configProd: Config = {
     mongodb: 'mongodb://localhost/dilia',
     github: {
       clientID: process.env.GITHUB_CLIENTID,
       clientSecret: process.env.GITHUB_SECRET,
-      callbackURL: 'http://dilia.herokuapp.com/api/login/github/callback'
+      callbackURL: `${process.env.DILIA_WEBSITE}/api/login/github/callback`
     },
     google: {
       clientID: process.env.GOOGLE_CLIENTID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: 'http://dilia.herokuapp.com/api/login/google/callback'
+      callbackURL: `${process.env.DILIA_WEBSITE}/api/login/google/callback`
     },
 };
 
-export var development = configDev;
-export var production = configProd;
+export const development = configDev;
+export const production = configProd;
 
 export function config(): Config {
     if (process.env.NODE_ENV === 'production') {

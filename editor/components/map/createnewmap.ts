@@ -33,6 +33,10 @@ export class CreateNewMapModal {
         private map_manager: MapManager
     ) {}
 
+    clear() {
+        this.new_map = { name: '' } as any;
+    }
+
     show() {
         this.dialog.show();
     }

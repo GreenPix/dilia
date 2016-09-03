@@ -1,5 +1,5 @@
 import {Request, Response} from 'express';
-import {config} from './index';
+import {config, max_file_size} from './index';
 import {wrap} from './socket.io';
 import {authorize as passSocketIOAuth} from 'passport.socketio';
 import {createServer} from 'http';
@@ -22,7 +22,13 @@ let expressApp = express();
 export var server = createServer(expressApp);
 export var io = socket_io(server);
 export var app = wrap(expressApp, io);
-export var upload = multer();
+export var upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: max_file_size,
+        files: 1,
+    },
+});
 
 let MongoStore = connectMongo(session);
 let cookieParserM = cookieParser();

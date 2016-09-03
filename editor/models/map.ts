@@ -1,4 +1,8 @@
+import {HttpService, Observable} from '../services';
 import {Injectable} from '@angular/core';
+import {CommitObject, Committer} from './commitable';
+import {MapData, MapCommitData} from '../../shared/map';
+import {intoBase64} from '../util/base64';
 
 /// This ChipsetLayer is the high level view
 /// of the ChipsetLayer present in the `tile.ts` file.
@@ -23,12 +27,38 @@ export class Layer {
     }
 }
 
-export class Map {
-
-    public layers: Layer[] = [];
-    private current_layer: number  = 0;
+export class SelectedChipsetLayer {
 
     constructor(
+        private width: number,
+        private height: number,
+        private chipset_layer: ChipsetLayer,
+        private tile_size: number
+    ) {}
+
+    // TODO: There's duplication with SelectedPartialLayerImpl
+    // TODO: also, the SelectedPartialLayer interface does not
+    // TODO: seems very useful in the end. It adds unneeded
+    // TODO: complexity and just look Java-ish.
+    setTileId(x: number, y: number, tile_id: number) {
+        let i, j;
+        i = Math.floor(y / this.tile_size);
+        j = Math.floor(x / this.tile_size);
+        if (i >= 0 && i < this.height && j >= 0 && j < this.width) {
+            this.chipset_layer.tiles_id[i * this.width + j] = tile_id;
+        }
+    }
+}
+
+export class Map implements CommitObject {
+
+    private current_layer: number  = 0;
+
+    public layers: Layer[] = [];
+    public is_new: boolean = true;
+
+    constructor(
+        public name: string,
         public width: number,
         public height: number,
         public tile_size: number = 16
@@ -65,20 +95,31 @@ export class Map {
         }
         return index;
     }
+
+    select(layer_index: number, chipset_layer: number): SelectedChipsetLayer {
+        return new SelectedChipsetLayer(
+            this.width, this.height,
+            this.layers[layer_index].raw[chipset_layer],
+            this.tile_size
+        );
+    }
 }
 
 @Injectable()
-export class MapManager {
+export class MapManager implements Committer {
 
     private current_map: number = -1;
     private map_list: Array<Map> = [];
 
+    constructor(
+        private http: HttpService
+    ) {}
+
     createMap(name: string, width: number, height: number): void {
-        let map = new Map(width, height);
-        map.addLayer([{
-            tiles_id: new Uint16Array(width * height),
-            chipset: '/api/chipset/0'
-        }]);
+        let map = new Map(name, width, height);
+        // By default we have two layers
+        map.addLayer([]);
+        map.addLayer([]);
         this.map_list.push(map);
         this.current_map = 0;
     }
@@ -87,8 +128,35 @@ export class MapManager {
         // TODO
     }
 
-    commit() {
-        // TODO
+    commit(map: Map, comment: string): Observable<any> {
+        if (map.is_new) {
+            let observable = this.http.post(`/api/map/new`, {
+                name: map.name,
+                layers: map.layers.map(l =>
+                    l.raw.map(c => ({
+                        tiles_id_base64: intoBase64(c.tiles_id),
+                        chipset_id: c.chipset
+                    }))
+                ),
+                width: map.width,
+                height: map.height,
+                tile_size: map.tile_size,
+                comment,
+            } as MapData);
+            observable.subscribe(res => {
+                if (res.status === 200) {
+                    map.is_new = false;
+                }
+            });
+            return observable;
+        }
+        return this.http.post(`/api/map/${map.name}/commit`, {
+            layers: map.layers.map(l => l.raw.map(c => ({
+                tiles_id_base64: intoBase64(c.tiles_id),
+                chipset_id: c.chipset
+            }))),
+            comment,
+        } as MapCommitData);
     }
 
     currentMap(): Map {

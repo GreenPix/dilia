@@ -4,10 +4,11 @@ import {app} from '../config/express';
 import {reqAuth} from './middlewares';
 import {errorToJson} from '../db/error_helpers';
 import {error as werror} from 'winston';
-import {warn as wwarn} from 'winston';
+import {warn} from 'winston';
 import {AaribaFileList, AaribaFile} from '../shared';
 import {accessControlManager, ResourceKind as RK} from '../resources';
 import {success, badReq, unauthorized, notFound} from './post_response_fmt';
+import {serverError} from './post_response_fmt';
 import _ = require('lodash');
 
 
@@ -18,6 +19,11 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
     AaribaScript.find({})
     .select('name')
     .exec((err, scripts) => {
+        if (err) {
+            werror(err);
+            serverError(res, `Couldn't get the list of scripts.`);
+            return;
+        }
         let user: UserDocument = req.user;
         res.status(200);
         accessControlManager.updateLockOnResources();
@@ -32,7 +38,7 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
                 name: val.name,
             });
             return res;
-        }, <AaribaFileList>[]));
+        }, [] as AaribaFileList));
     });
 });
 
@@ -40,7 +46,7 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
 app.get('/api/aariba/:name', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
-            werror(err);
+            if (err) werror(err);
             notFound(res, req.user);
         } else {
             let script_reduced = script.toJsmap();
@@ -61,13 +67,13 @@ app.get('/api/aariba/:name', reqAuth, (req, res) => {
 });
 
 // Obtain the content of a script at a particular revision
-app.get('/api/aariba/:name/revision/:id', reqAuth, (req, res) => {
+app.get('/api/aariba/:name/revision/:rev', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
             werror(err);
             notFound(res, req.user);
         } else {
-            let rev = script.getRevision(req.params.id);
+            let rev = script.getRevision(req.params.rev);
             User.findById(rev.author.toHexString(), (err, user) => {
                 res.status(200);
                 rev.author = user.username as any;
@@ -77,7 +83,7 @@ app.get('/api/aariba/:name/revision/:id', reqAuth, (req, res) => {
     });
 });
 
-// Try to lock a resource.
+// Try to lock a script.
 app.post('/api/aariba/:name/lock', reqAuth, (req, res) => {
     AaribaScript.findOne({ name: req.params.name }, (err, script) => {
         if (err || !script) {
@@ -102,6 +108,7 @@ app.post('/api/aariba/:name/lock', reqAuth, (req, res) => {
 // Stream of the modified content of a script
 app.io().stream('/api/aariba/:name/liveupdate', (req, res) => {
 
+    // TODO: validate the req.body object
     // Send back the content to everyone
     res.json(req.body);
 
@@ -139,8 +146,8 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
                 kind: RK.AaribaScript,
                 resource: script.name
             })) {
-                wwarn(`User ${user.username} failed to commit on: \n` +
-                      `==> '${script.name}' (unauthorized)`
+                warn(`User ${user.username} failed to commit on: \n` +
+                      `==> '${script.name}' (locked)`
                 );
                 unauthorized(res, user);
                 return;

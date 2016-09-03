@@ -2,7 +2,7 @@ import {Schema, model, Document, Types} from 'mongoose';
 import _ = require('lodash');
 
 /// Schema:
-let mongooseAaribaScriptSchema = new Schema({
+const mongooseAaribaScriptSchema = new Schema({
     name: { type : String, maxlength: [
         30,
         'Name (`{VALUE}`) exceeds the ' +
@@ -136,5 +136,5 @@ mongooseAaribaScriptSchema.method({
 export interface AaribaScriptDocument extends Document, AaribaScriptSchema {}
 
 /// Model<T> exported for convenience.
-export var AaribaScript =
+export const AaribaScript =
     model<AaribaScriptDocument>('AaribaScript', mongooseAaribaScriptSchema);
