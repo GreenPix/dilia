@@ -53,6 +53,10 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         this.id = id.get();
     }
 
+    focus() {
+        this.canvas.focus();
+    }
+
     setMouseHandler(mouse_handler: MouseHandler) {
         this.mouse_handler = mouse_handler;
     }
