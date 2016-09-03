@@ -1,8 +1,8 @@
-<commit-modal [title]="'Map name'" [service]="map_manager"></commit-modal>
-<chipset-modal></chipset-modal>
-<create-map-modal (newMap)="onNewMap($event)"></create-map-modal>
+<commit-modal #commitmap [title]="'Map name'" [service]="map_manager"></commit-modal>
+<chipset-modal #chipsetupload></chipset-modal>
+<create-map-modal #newmapmodal (newMap)="onNewMap($event)"></create-map-modal>
 
-<webgl-surface class="map-editor--canvas"></webgl-surface>
+<webgl-surface class="map-editor--canvas" #surface></webgl-surface>
 
 <div class="all-editor--nav-background"></div>
 

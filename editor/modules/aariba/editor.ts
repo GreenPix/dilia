@@ -1,6 +1,5 @@
 import {Subscription} from 'rxjs';
 import {Component, AfterViewInit} from '@angular/core';
-import {CORE_DIRECTIVES} from '@angular/common';
 import {ViewChild} from '@angular/core';
 import {UniqueId, HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
@@ -8,11 +7,7 @@ import {AaribaScriptTextMode} from './ace';
 import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';
 import {FileManager, FileTab} from '../../models/scripting';
 import {AaribaFile} from '../../shared';
-import {RuleEditorGlobals} from './globals';
-import {RuleEditorExec} from './exec';
-import {CommitModal} from '../commit';
-import {AlertBox} from '../alert/box';
-import {AutocompleteFiles} from '../autocomplete/autocomplete';
+import {CommitModal} from '../../components';
 
 let ruleEditorTemplate = require<string>('./editor.html');
 let ruleEditorCss = require<Webpack.Scss>('./editor.scss');
@@ -21,10 +16,6 @@ let ruleEditorCss = require<Webpack.Scss>('./editor.scss');
     selector: 'rule-editor',
     styles: [ruleEditorCss.toString()],
     templateUrl: ruleEditorTemplate,
-    directives: [
-        CORE_DIRECTIVES, AutocompleteFiles,
-        CommitModal, AlertBox, RuleEditorExec, RuleEditorGlobals
-    ],
 })
 export class RuleEditor implements AfterViewInit {
 
@@ -35,7 +26,7 @@ export class RuleEditor implements AfterViewInit {
     interpreter: AaribaInterpreter;
     content_observable: Subscription = null;
 
-    @ViewChild(CommitModal)
+    @ViewChild('commitscript')
     commit_modal: CommitModal;
 
     constructor(

@@ -12,6 +12,8 @@ app.post('/api/chipset/upload/', reqAuth, upload.single('chipset'),
     (req, res) => {
         if (req.file.size > max_file_size) {
             badReq(res, 'File size is too big.');
+        } else if (req.file.mimetype.indexOf('image') === -1) {
+            badReq(res, 'Only images are accepted.');
         } else {
             let name: string = req.body.chipset_name || req.file.filename;
             let user: UserDocument = req.user;

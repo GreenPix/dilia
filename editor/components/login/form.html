@@ -4,56 +4,49 @@
     <div class="login-heading">
       <h3>Sign in</h3>
     </div>
-    <form (submit)="doLogin($event)" [ngFormModel]="loginForm" novalidate>
+    <form (submit)="doLogin($event)" #loginForm="ngForm" novalidate>
+
       <div class="form-group has-feedback" [ngClass]="{
-        'has-error': isLoginInvalid() &&
-                     loginForm.dirty &&
-                     loginForm.controls?.login?.touched ||
+        'has-error': (login.invalid && login.touched) ||
                      loginAttemptFailed,
-        'has-success': isLoginValid() && loginForm.dirty && !loginAttemptFailed }" >
-        <input class="form-control" ngControl="login" placeholder="Username">
-        <span class="control-label" *ngIf="isLoginValid() && loginForm.dirty && !loginAttemptFailed">
+        'has-success': login.valid && login.touched && !loginAttemptFailed }" >
+
+        <input class="form-control" type="text" placeholder="Username"
+               [(ngModel)]="username" minlength="1" required
+               name="username"
+               #login="ngModel">
+        <span class="control-label" [hidden]="login.invalid || login.untouched">
           <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
         </span>
-        <span class="control-label" *ngIf="
-          isLoginInvalid() &&
-          loginForm.dirty &&
-          loginForm.controls?.login?.touched ||
-          loginAttemptFailed
-        ">
+        <span class="control-label" [hidden]="login.valid || login.pristine">
             <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
         </span>
-        <span class="control-label" *ngIf="
-          isLoginInvalid() &&
-          loginForm.dirty &&
-          loginForm.controls?.login?.touched
-        ">
+        <span class="control-label" [hidden]="login.valid || login.pristine">
           Login is required
         </span>
       </div>
       <div class="form-group has-feedback" [ngClass]="{
-        'has-error':  isPasswordInvalid() &&
-                      loginForm.dirty &&
-                      loginForm.controls?.password?.touched ||
+        'has-error':  (pwd.invalid && pwd.touched) ||
                       loginAttemptFailed,
-        'has-success': isPasswordValid() &&
-                       loginForm.dirty }">
-        <input class="form-control" ngControl="password" type="password" placeholder="Password">
-        <span class="control-label" *ngIf="isPasswordValid() && loginForm.dirty">
+        'has-success': pwd.valid && pwd.touched && !loginAttemptFailed }">
+
+        <input class="form-control" type="password" placeholder="Password"
+               [(ngModel)]="password" minlength="1" required
+               name="password"
+               #pwd="ngModel">
+        <span class="control-label" [hidden]="pwd.invalid || pwd.untouched">
           <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
         </span>
-        <span class="control-label" *ngIf="
-          isPasswordInvalid() &&
-          loginForm.dirty &&
-          loginForm.controls?.password?.touched
-        ">
+        <span class="control-label" [hidden]="pwd.valid || pwd.pristine">
           <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
-          Password is required
+        </span>
+        <span class="control-label" [hidden]="pwd.valid || pwd.pristine">
+            Password is required
         </span>
       </div>
-      <button class="btn btn-primary" type="submit">
-        Log in
-        <span class="fa fa-sign-in"></span>
+      <button class="btn btn-primary" type="submit" [disabled]="!loginForm.form.valid">
+          Log in
+          <span class="fa fa-sign-in"></span>
       </button>
     </form>
   </div>

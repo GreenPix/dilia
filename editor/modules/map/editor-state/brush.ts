@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {WebGLSurface} from '../../webgl/surface';
+import {WebGLSurface} from '../../../components';
 import {SpriteHandle} from '../../../rendering/sprite';
 import {Map, ChipsetLayer} from '../../../models/map';
 import {TilesHandle} from '../../../rendering/tiles';

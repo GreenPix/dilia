@@ -1,31 +1,24 @@
 import {Component, ViewChild} from '@angular/core';
 import {AfterViewInit, OnDestroy} from '@angular/core';
-import {WebGLSurface} from '../webgl/surface';
+import {WebGLSurface, CommitModal} from '../../components';
 import {ChipsetModal} from './chipset-upload';
 import {ChipsetService} from './chipset.service';
-import {CommitModal} from '../commit';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {MapManager} from '../../models/map';
 import {EditorState} from './editor-state';
+
 import {Brush} from './editor-state/brush';
 import {PaletteArea} from './editor-state/palette-area';
 import {EditorArea} from './editor-state/editor-area';
-import {MapSettings} from './map-settings';
-import {LayersPanel} from './layers-panel';
-import {PanelState} from './panel-state';
+
 
 let mapEditorTemplate = require<string>('./editor.html');
 let mapEditorScss = require<Webpack.Scss>('./editor.scss');
 
 @Component({
     selector: 'map-editor',
-    viewProviders: [PanelState],
     styles: [mapEditorScss.toString()],
     templateUrl: mapEditorTemplate,
-    directives: [
-        WebGLSurface, ChipsetModal, MapSettings,
-        LayersPanel, CreateNewMapModal, CommitModal,
-    ],
     providers: [
         ChipsetService, EditorState, Brush,
         EditorArea, PaletteArea
@@ -33,13 +26,13 @@ let mapEditorScss = require<Webpack.Scss>('./editor.scss');
 })
 export class MapEditor implements AfterViewInit, OnDestroy {
 
-    @ViewChild(WebGLSurface)
+    @ViewChild('surface')
     private surface: WebGLSurface;
-    @ViewChild(ChipsetModal)
+    @ViewChild('chipsetupload')
     private chipset_modal: ChipsetModal;
-    @ViewChild(CreateNewMapModal)
+    @ViewChild('newmapmodal')
     private create_map_modal: CreateNewMapModal;
-    @ViewChild(CommitModal)
+    @ViewChild('commitmap')
     private commit_modal: CommitModal;
 
     constructor(

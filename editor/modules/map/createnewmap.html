@@ -1,4 +1,4 @@
-<dialog-modal>
+<dialog-modal #newmapdialog>
     <dialog-header>
         <span *ngIf="new_map.name.length == 0">Create a new map</span>
         <span *ngIf="new_map.name.length > 0">Create <code>{{new_map.name}}</code></span>
@@ -15,8 +15,8 @@
             <label for="mapName">Map name</label>
             <input class="form-control" required
                 [(ngModel)]="new_map.name"
-                #mapName="ngForm"
-                ngControl="mapName"
+                #mapName="ngModel"
+                name="map_name"
                 placeholder="Name">
         </div>
         <div class="form-group has-feedback"
@@ -28,8 +28,8 @@
             <label for="mapWidth">Width</label>
             <input type="number" class="form-control" required
                 [(ngModel)]="new_map.width"
-                #mapWidth="ngForm"
-                ngControl="mapWidth"
+                #mapWidth="ngModel"
+                name="map_width"
                 placeholder="Width in tiles">
         </div>
         <div class="form-group has-feedback"
@@ -41,8 +41,8 @@
             <label for="mapHeight">Height</label>
             <input type="number" class="form-control" required
                 [(ngModel)]="new_map.height"
-                #mapHeight="ngForm"
-                ngControl="mapHeight"
+                #mapHeight="ngModel"
+                name="map_height"
                 placeholder="Height in tiles">
         </div>
     </form>

@@ -1,7 +1,7 @@
-import {WebGLSurface} from '../../webgl/surface';
+import {WebGLSurface} from '../../../components';
 import {Camera} from '../../../rendering/camera';
 import {CommandBuffer} from '../../../rendering/pipeline';
-import {ZoomBehavior} from '../../webgl/zoom';
+import {ZoomBehavior} from '../../../components';
 
 
 export abstract class Area {

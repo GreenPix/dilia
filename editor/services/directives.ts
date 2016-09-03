@@ -1,6 +1,5 @@
 import {Directive, ElementRef} from '@angular/core';
 import {Component} from '@angular/core';
-import {NgStyle} from '@angular/common';
 import {Observable} from 'rxjs';
 
 
@@ -24,7 +23,6 @@ export class AnimFadeIn {
     host: {
       '(mouseover)': 'show()'
     },
-    directives: [NgStyle],
     template: `<span class="tooltip bottom"
         [ngStyle]="{'opacity': opacity}">{{text}}</span>`
 })

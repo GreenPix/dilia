@@ -1,5 +1,4 @@
 import {Component, ViewChild, Input} from '@angular/core';
-import {FORM_DIRECTIVES, CORE_DIRECTIVES} from '@angular/common';
 import {Dialog} from './modal/dialog';
 import {CommitObject, Committer} from '../models/commitable';
 
@@ -32,7 +31,6 @@ import {CommitObject, Committer} from '../models/commitable';
             </dialog-footer>
         </dialog-modal>
     `,
-    directives: [Dialog, FORM_DIRECTIVES, CORE_DIRECTIVES]
 })
 export class CommitModal {
 
