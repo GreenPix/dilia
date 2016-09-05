@@ -4,10 +4,17 @@ interface VariableStore {
     [name: string]: number;
 }
 
-export interface AaribaScriptError {
+export interface AaribaLocation {
     column: number;
     line: number;
     offset: number;
+}
+
+export interface AaribaScriptError {
+    location: {
+        start: AaribaLocation,
+        end: AaribaLocation,
+    };
     message: string;
     name: string;
 }

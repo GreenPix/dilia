@@ -98,24 +98,18 @@
   /// Error handling
   ///
   function gen_error(ident) {
-    var pos = peg$reportedPos;
-    var posDetails = peg$computePosDetails(pos);
+    var pos = location();
     errors.push(new IllFormedError(
       "`" + ident + "` doesn't exists.",
       "",
       "",
-      pos,
-      posDetails.line,
-      posDetails.column
+      pos
     ));
   }
-  function IllFormedError(message, expected, found, offset, line, column) {
+  function IllFormedError(message, expected, found, location) {
     this.message  = message;
     this.expected = expected;
-    this.found    = found;
-    this.offset   = offset;
-    this.line     = line;
-    this.column   = column;
+    this.location = location;
     this.name     = "IllFormedError";
   }
   function subclass(child, parent) {
