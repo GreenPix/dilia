@@ -80,7 +80,7 @@ export class PaletteArea extends Area {
                     ClearAll,
                     FlipY,
                     overlay,
-                    SpriteProgram,
+                    new SpriteProgram(),
                     this.camera,
                     palette,
                     brush

@@ -6,8 +6,6 @@ import {ChipsetService} from './chipset.service';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {MapManager} from '../../models/map';
 
-import {LayersPanelSettings} from './layers-panel.store';
-
 import {EditorState} from './editor-state';
 import {Brush} from './editor-state/brush';
 import {PaletteArea} from './editor-state/palette-area';
@@ -23,7 +21,7 @@ let mapEditorScss = require<Webpack.Scss>('./editor.scss');
     templateUrl: mapEditorTemplate,
     providers: [
         ChipsetService, EditorState, Brush,
-        EditorArea, PaletteArea, LayersPanelSettings
+        EditorArea, PaletteArea
     ]
 })
 export class MapEditor implements AfterViewInit, OnDestroy {

@@ -109,3 +109,19 @@ export class Camera implements Command, ViewportListener {
         this.scaled_pos[1] = Math.floor(this.pos[1]);
     }
 }
+
+export class SimpleCamera implements Command {
+
+    constructor(
+        private viewport_width,
+        private viewport_height
+    ) {}
+
+    execute(ctx: Context) {
+        ctx.active_program.setUniforms({
+            viewport_size: [this.viewport_width, this.viewport_height],
+            view_pos: [0, 0],
+            flip_y: ctx.flip_y
+        });
+    }
+}

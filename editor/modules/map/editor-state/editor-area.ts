@@ -1,7 +1,12 @@
 import {Injectable} from '@angular/core';
-import {DefaultFBO} from '../../../rendering/fbo';
+import {Subscription} from 'rxjs/Subscription';
+import {Subject} from 'rxjs/Subject';
+import {DefaultFBO, FBO} from '../../../rendering/fbo';
 import {genPixelsForTextureWithBorder} from '../../../rendering/util';
 import {SpriteBuilder} from '../../../rendering/sprite';
+import {ReadPixel} from '../../../rendering/readpixel';
+import {Pixels} from '../../../gl/gl';
+import {SimpleCamera} from '../../../rendering/camera';
 import {TilesHandle} from '../../../rendering/tiles';
 import {SpriteProgram, TileProgram} from '../../../rendering/shaders';
 import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/pipeline';
@@ -35,6 +40,14 @@ export class EditorArea extends Area {
     private map_handle: TilesHandle;
     private grid: GridHandle;
     private is_mouse_pressed: boolean = false;
+    private scene_with_fbo: CommandBuffer;
+
+    pixels_stream = new Subject<[Pixels, number]>();
+    layer_index_stream = new Subject<number>();
+
+    private buffer: number[] = [];
+    private readpixel_sub: Subscription;
+    private layerindex_sub: Subscription;
 
     constructor(private brush: Brush) {
         super();
@@ -43,6 +56,7 @@ export class EditorArea extends Area {
     cleanUp() {
         super.cleanUp();
         this.map_handle = undefined;
+        this.unsubscribe();
     }
 
     activate() {}
@@ -99,17 +113,91 @@ export class EditorArea extends Area {
         this.scene = new CommandBuffer([
             DefaultFBO,
             ClearAll,
-            SpriteProgram,
+            new SpriteProgram(),
             this.camera,
             grid,
-            TileProgram,
+            new TileProgram(),
             this.camera,
             map_tiled,
             FlipY,
-            SpriteProgram,
+            new SpriteProgram(),
             this.brush
         ]);
 
+        // The pipeline that does the rendering of a layer:
+        let fbo = new FBO(this.surface.getGLContext());
+        let ratio = map.width / map.height;
+        let width, height;
+        if (ratio >= 1) {
+            width = 256;
+            height = Math.floor(256 / ratio);
+        } else {
+            width = Math.floor(256 * ratio);
+            height = 256;
+        }
+        fbo.setSize(width, height);
+
+        this.unsubscribe();
+
+        this.layer_index_stream.subscribe(index => {
+            this.buffer.push(index);
+            this.surface.setCommandBuffer(this.scene_with_fbo);
+        });
+
+        let readpixel = new ReadPixel(width, height);
+        this.readpixel_sub = readpixel.stream.subscribe(pixels => {
+            let pix = new Pixels();
+            pix.raw = new Uint32Array(pixels.buffer);
+            pix.width = width;
+            this.pixels_stream.next([pix, this.buffer.shift()]);
+        });
+        // We want part of this things
+        // to be controlled by an observable that
+        // is watching for changes in active layer
+        // as well as direct request (the first time)
+        // for both layer.
+        // It basically listen to a stream of layer index
+        // and listen for them processing them using
+        // switch with this command buffer.
+        this.scene_with_fbo = new CommandBuffer([
+            fbo,
+            ClearAll,
+            new SpriteProgram(),
+            new SimpleCamera(map.widthInPx(), map.heightInPx()),
+            grid,
+            new TileProgram(),
+            // We render a single layer,
+            // the active layer. Actually it would be better
+            // to render the layer that is concerned by
+            // the change.
+            map_tiled.createSingleLayerRenderer(this),
+            readpixel,
+            // CommandBuffer is now a Command as well
+            // (make the code simpler)
+            this.scene,
+            // "Fake" command, only used to switch back
+            // to the main scene.
+            () => {
+                if (this.buffer.length === 0) {
+                    this.surface.setCommandBuffer(this.scene);
+                }
+            },
+        ]);
+    }
+
+    currentLayer(): number {
+        return this.buffer[0];
+    }
+
+    private unsubscribe() {
+        if (this.readpixel_sub) {
+            this.readpixel_sub.unsubscribe();
+            this.readpixel_sub = undefined;
+        }
+        if (this.layerindex_sub) {
+            this.layerindex_sub.unsubscribe();
+            this.layerindex_sub = undefined;
+        }
     }
 
     //////////////////////////////////////////////
