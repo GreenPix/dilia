@@ -192,11 +192,11 @@ export class RuleEditor implements AfterViewInit {
             this.interpreter.execute(new_content);
         } catch (e) {
             let error: AaribaScriptError = e;
-            if (error.line && error.column) {
+            if (error.location) {
               this.editor.getSession().setAnnotations([
                   {
-                      row: error.line - 1,
-                      column: error.column - 1,
+                      row: error.location.start.line - 1,
+                      column: error.location.start.column - 1,
                       text: `${error.name}: ${error.message}`,
                       type: 'error',
                   }

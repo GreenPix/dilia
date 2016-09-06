@@ -5,6 +5,7 @@
     <input type="text" class="form-control" autocomplete="off"
       placeholder="Search / Open a file..." aria-describedby="addon-search"
       ngControl="search" minlength="1" [(ngModel)]="input_value"
+      name="search"
       select-this>
     <span class="control-label" *ngIf="isInputInvalid()">
         <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
