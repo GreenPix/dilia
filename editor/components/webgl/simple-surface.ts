@@ -2,7 +2,7 @@ import {Component, AfterViewInit, OnDestroy} from '@angular/core';
 import {TextureLoader, Pixels} from '../../gl/gl';
 import {SpriteProgram} from '../../rendering/shaders';
 import {SpriteObject} from '../../rendering/sprite';
-import {UniqueId} from '../../services/index';
+import * as uniqueId from 'lodash/uniqueId';
 import {init_gl_default} from './helpers';
 
 
@@ -18,16 +18,12 @@ import {init_gl_default} from './helpers';
 })
 export class WebGLSingleTextureSurface implements AfterViewInit, OnDestroy {
 
-    private id: string;
+    private id: string = uniqueId('single-tex');
     private gl: WebGLRenderingContext;
     private gl_not_supported: boolean = false;
     private tex_loader: TextureLoader;
     private sprite: SpriteObject;
     private program: SpriteProgram = new SpriteProgram();
-
-    constructor(id: UniqueId) {
-        this.id = id.get();
-    }
 
     ngOnDestroy(): void {
         this.gl = undefined;

@@ -1,4 +1,3 @@
-import * as uniqueId from 'lodash/uniqueId';
 import * as io from 'socket.io-client';
 import {SocketPacket, SocketMethod} from '../shared';
 import {Injectable} from '@angular/core';
@@ -12,17 +11,6 @@ import {Http, Response, Headers} from '@angular/http';
 
 export type Observable<T> = Observable<T>;
 
-export class UniqueId {
-    private id: string;
-
-    constructor() {
-        this.id = uniqueId();
-    }
-
-    get(): string {
-        return this.id;
-    }
-}
 
 export interface HttpEvent {
 

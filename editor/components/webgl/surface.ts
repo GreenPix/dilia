@@ -1,6 +1,6 @@
 import {Component, AfterViewInit, OnDestroy} from '@angular/core';
+import * as uniqueId from 'lodash/uniqueId';
 import {TextureLoader} from '../../gl/gl';
-import {UniqueId} from '../../services/index';
 import {CommandBuffer} from '../../rendering/pipeline';
 import {ViewportListener} from '../../rendering/viewport';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
@@ -41,7 +41,7 @@ export interface KeyHandler {
 })
 export class WebGLSurface implements AfterViewInit, OnDestroy {
 
-    private id: string;
+    private id: string = uniqueId('surface');
     private gl: WebGLRenderingContext;
     private gl_not_supported: boolean = false;
     private tex_loader: TextureLoader;
@@ -50,10 +50,6 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     private key_handler: KeyHandler;
     private pipeline: CommandBuffer = undefined;
     private viewports_listeners: Array<ViewportListener> = [];
-
-    constructor(id: UniqueId) {
-        this.id = id.get();
-    }
 
     focus() {
         this.gl.canvas.focus();
