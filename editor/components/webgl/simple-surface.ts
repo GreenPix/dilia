@@ -2,6 +2,8 @@ import {Component, AfterViewInit, OnDestroy} from '@angular/core';
 import {TextureLoader, Pixels} from '../../gl/gl';
 import {SpriteProgram} from '../../rendering/shaders';
 import {SpriteObject} from '../../rendering/sprite';
+import {Context} from '../../rendering/context';
+import {ClearAll} from '../../rendering/pipeline';
 import * as uniqueId from 'lodash/uniqueId';
 import {init_gl_default} from './helpers';
 
@@ -31,9 +33,13 @@ export class WebGLSingleTextureSurface implements AfterViewInit, OnDestroy {
 
     loadTexture(pixels: Pixels) {
         this.tex_loader.loadTextureFromPixels(pixels, tex => {
+            let gl = this.gl;
             this.sprite.tex = tex;
             this.sprite.buildWithEntireTexture();
-            this.refresh();
+            gl.bindTexture(gl.TEXTURE_2D, tex.tex_id);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            setTimeout(() => this.refresh(), 100);
         });
     }
 
@@ -53,8 +59,27 @@ export class WebGLSingleTextureSurface implements AfterViewInit, OnDestroy {
     }
 
     refresh() {
-        let ctx = { gl: this.gl, active_program: null, flip_y: true };
+        this.gl.canvas.width = this.gl.canvas.clientWidth;
+        this.gl.canvas.height = this.gl.canvas.clientHeight;
+
+        let ctx: Context = { gl: this.gl, active_program: null, flip_y: false };
+        this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+        ClearAll(ctx);
         this.program.execute(ctx);
+        // TODO: this code assume that the texture is squared
+        // and that the drawingBufferWidth is greater than drawingBufferHeight
+        // this is true for the current usage but needs to fixed to support
+        // any scenario.
+        const ratio = this.gl.drawingBufferWidth / this.gl.drawingBufferHeight;
+        this.gl.viewport(0, 0, this.gl.drawingBufferWidth, this.gl.drawingBufferHeight);
+        ctx.active_program.setUniforms({
+            view_pos: [this.sprite.tex.width * (1 - ratio) / 2, 0],
+            viewport_size: [
+                this.sprite.tex.width * ratio,
+                this.sprite.tex.height,
+            ],
+            flip_y: ctx.flip_y,
+        });
         this.sprite.draw(ctx.gl, ctx.active_program);
     }
 }

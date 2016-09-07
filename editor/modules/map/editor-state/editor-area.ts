@@ -126,15 +126,8 @@ export class EditorArea extends Area {
 
         // The pipeline that does the rendering of a layer:
         let fbo = new FBO(this.surface.getGLContext());
-        let ratio = map.width / map.height;
-        let width, height;
-        if (ratio >= 1) {
-            width = 256;
-            height = Math.floor(256 / ratio);
-        } else {
-            width = Math.floor(256 * ratio);
-            height = 256;
-        }
+        const width = 256;
+        const height = 256;
         fbo.setSize(width, height);
 
         this.unsubscribe();
@@ -151,6 +144,12 @@ export class EditorArea extends Area {
             pix.width = width;
             this.pixels_stream.next([pix, this.buffer.shift()]);
         });
+        let simple_camera = new SimpleCamera(
+            width,
+            height,
+            map.widthInPx(),
+            map.heightInPx()
+        );
         // We want part of this things
         // to be controlled by an observable that
         // is watching for changes in active layer
@@ -163,13 +162,14 @@ export class EditorArea extends Area {
             fbo,
             ClearAll,
             new SpriteProgram(),
-            new SimpleCamera(map.widthInPx(), map.heightInPx()),
+            simple_camera,
             grid,
             new TileProgram(),
             // We render a single layer,
             // the active layer. Actually it would be better
             // to render the layer that is concerned by
             // the change.
+            simple_camera,
             map_tiled.createSingleLayerRenderer(this),
             readpixel,
             // CommandBuffer is now a Command as well

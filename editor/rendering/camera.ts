@@ -114,12 +114,18 @@ export class SimpleCamera implements Command {
 
     constructor(
         private viewport_width,
-        private viewport_height
+        private viewport_height,
+        private object_viewport_width,
+        private object_viewport_height
     ) {}
 
     execute(ctx: Context) {
+        ctx.gl.viewport(0, 0, this.viewport_width, this.viewport_height);
         ctx.active_program.setUniforms({
-            viewport_size: [this.viewport_width, this.viewport_height],
+            viewport_size: [
+                this.object_viewport_width,
+                this.object_viewport_height
+            ],
             view_pos: [0, 0],
             flip_y: ctx.flip_y
         });
