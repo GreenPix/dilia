@@ -12,7 +12,7 @@
         </button>
         <h3 class="popover-title">Layers</h3>
     </div>
-    <div class="popover-content" [ngSwitch]="isMapValid()">
+    <div class="popover-content reverse" [ngSwitch]="isMapValid()">
         <template [ngSwitchCase]="true">
             <a href="#" *ngFor="let layer of layerList()"
                         (click)="selectLayer(layer, $event)"
