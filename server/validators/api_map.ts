@@ -8,7 +8,6 @@ const layerDataSchema = {
     minItems: 1,
     items: {
         type: 'array',
-        minItems: 1,
         items: {
             required: true,
             type: 'object',
@@ -54,7 +53,7 @@ export const validateMapNew = validator({
         },
         comment: {
             required: true,
-            type: 'number'
+            type: 'string'
         }
     }
 }, {

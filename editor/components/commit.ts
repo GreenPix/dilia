@@ -75,7 +75,7 @@ export class CommitModal {
                     this.hide();
                 }, err => {
                     this.committing = false;
-                    this.error_message = `Couldn't commit, cause: '${err}'`;
+                    this.error_message = `Couldn't commit, cause: '${err.json().message}'`;
                     console.log(err);
                 });
         }

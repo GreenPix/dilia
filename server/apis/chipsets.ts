@@ -38,19 +38,19 @@ app.post('/api/chipset/upload/', reqAuth, upload.single('chipset'),
 
 app.get('/api/chipset/', reqAuth, (req, res) => {
     ChipsetModel.find({})
-        .select('name')
+        .select('id')
         .exec((err, chipsets) => {
             if (err) {
                 werr(err);
                 serverError(res, `Couldn't get the list of chipsets.`);
             } else {
-                res.status(200).json(chipsets.map(c => c.name));
+                res.status(200).json(chipsets.map(c => c.id));
             }
         });
 });
 
-app.get('/api/chipset/:name/metadata', reqAuth, (req, res) => {
-    ChipsetModel.findOne({ name: req.params.name }, (err, chipset) => {
+app.get('/api/chipset/:id/metadata', reqAuth, (req, res) => {
+    ChipsetModel.findById(req.params.id, (err, chipset) => {
         if (err || !chipset) {
             if (err) werr(err);
             notFound(res, req.user);
@@ -60,8 +60,8 @@ app.get('/api/chipset/:name/metadata', reqAuth, (req, res) => {
     });
 });
 
-app.get('/api/chipset/:name', reqAuth, (req, res) => {
-    ChipsetModel.findOne({ name: req.params.name }, (err, chipset) => {
+app.get('/api/chipset/:id', reqAuth, (req, res) => {
+    ChipsetModel.findById(req.params.id, (err, chipset) => {
         if (err || !chipset) {
             if (err) werr(err);
             notFound(res, req.user);
