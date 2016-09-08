@@ -33,12 +33,8 @@ export class WebGLSingleTextureSurface implements AfterViewInit, OnDestroy {
 
     loadTexture(pixels: Pixels) {
         this.tex_loader.loadTextureFromPixels(pixels, tex => {
-            let gl = this.gl;
-            this.sprite.tex = tex;
+            this.sprite.initWith(tex);
             this.sprite.buildWithEntireTexture();
-            gl.bindTexture(gl.TEXTURE_2D, tex.tex_id);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             setTimeout(() => this.refresh(), 100);
         });
     }
