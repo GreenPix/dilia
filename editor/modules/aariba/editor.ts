@@ -1,7 +1,8 @@
+import * as uniqueId from 'lodash/uniqueId';
 import {Subscription} from 'rxjs/Subscription';
 import {Component, AfterViewInit} from '@angular/core';
 import {ViewChild} from '@angular/core';
-import {UniqueId, HttpService, SocketIOService} from '../../services/index';
+import {HttpService, SocketIOService} from '../../services/index';
 import {AaribaScriptSettings} from '../../models/user';
 import {AaribaScriptTextMode} from './ace';
 import {AaribaInterpreter, AaribaScriptError} from '../../rules/parser';
@@ -19,7 +20,7 @@ let ruleEditorCss = require<Webpack.Scss>('./editor.scss');
 })
 export class RuleEditor implements AfterViewInit {
 
-    id: string;
+    id: string = uniqueId('script');
     text_area_width: number;
     text_area_height: number;
     editor: AceAjax.Editor;
@@ -30,13 +31,11 @@ export class RuleEditor implements AfterViewInit {
     commit_modal: CommitModal;
 
     constructor(
-        id: UniqueId,
         private settings: AaribaScriptSettings,
         private http: HttpService,
         private io: SocketIOService,
         private file_manager: FileManager)
     {
-        this.id = id.get();
         this.text_area_width = 500;
         this.text_area_height = 400;
         this.interpreter = new AaribaInterpreter();

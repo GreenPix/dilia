@@ -13,6 +13,18 @@
     transition: 0.5s opacity;
 }
 
+.reverse {
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.thumbnail {
+    opacity: 0.3;
+    &.is_selected {
+        opacity: 1;
+    }
+}
+
 .map-layers-panel--close {
     margin: 8px;
 }

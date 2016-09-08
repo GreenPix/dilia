@@ -1,12 +1,15 @@
 import {Component, AfterViewInit, OnDestroy} from '@angular/core';
+import * as uniqueId from 'lodash/uniqueId';
 import {TextureLoader} from '../../gl/gl';
-import {UniqueId} from '../../services/index';
 import {CommandBuffer} from '../../rendering/pipeline';
 import {ViewportListener} from '../../rendering/viewport';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
 import {GenericRenderEl} from '../../rendering/draw';
 import {SpriteRenderEl} from '../../rendering/draw';
 import {TilesRenderEl} from '../../rendering/draw';
+
+import {init_gl_default} from './helpers';
+
 
 export interface MouseHandler {
     mouseWheel(event: WheelEvent): void;
@@ -23,7 +26,7 @@ export interface KeyHandler {
     selector: 'webgl-surface',
     styles: [
         `canvas { width: 100%; height: 100% }`,
-        `.diplay-none { display: none; }`
+        `.display-none { display: none; }`
     ],
     template: `<canvas id="{{id}}" tabindex="1"
         (keydown)="keyPressed($event)"
@@ -38,19 +41,18 @@ export interface KeyHandler {
 })
 export class WebGLSurface implements AfterViewInit, OnDestroy {
 
-    private id: string;
+    private id: string = uniqueId('surface');
     private gl: WebGLRenderingContext;
     private gl_not_supported: boolean = false;
     private tex_loader: TextureLoader;
-    private canvas: HTMLCanvasElement;
     private _loop: () => void;
     private mouse_handler: MouseHandler;
     private key_handler: KeyHandler;
     private pipeline: CommandBuffer = undefined;
     private viewports_listeners: Array<ViewportListener> = [];
 
-    constructor(id: UniqueId) {
-        this.id = id.get();
+    focus() {
+        this.gl.canvas.focus();
     }
 
     setMouseHandler(mouse_handler: MouseHandler) {
@@ -110,14 +112,13 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     ngOnDestroy(): void {
         this._loop = () => {
             this.gl = undefined;
-            this.canvas = undefined;
         };
     }
 
     ngAfterViewInit(): void {
-        this.canvas = document.getElementById(this.id) as HTMLCanvasElement;
-        this.gl = (this.canvas.getContext('webgl') ||
-            this.canvas.getContext('experimental-webgl')) as WebGLRenderingContext;
+        let canvas = document.getElementById(this.id) as HTMLCanvasElement;
+        this.gl = (canvas.getContext('webgl') ||
+            canvas.getContext('experimental-webgl')) as WebGLRenderingContext;
 
         if (!this.gl) {
             this.gl_not_supported = true;
@@ -128,13 +129,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
 
         window.onresize = () => this.viewport();
 
-        this.gl.enable(this.gl.DEPTH_TEST);
-        this.gl.depthFunc(this.gl.LEQUAL);
-        this.gl.enable(this.gl.BLEND);
-        this.gl.blendFuncSeparate(
-            this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA,
-            this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA
-        );
+        init_gl_default(this.gl);
 
         this._loop = () => {
             this.loop();
@@ -150,19 +145,19 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     }
 
     private viewport(viewport?: ViewportListener) {
-        this.canvas.width = this.canvas.clientWidth;
-        this.canvas.height = this.canvas.clientHeight;
+        this.gl.canvas.width = this.gl.canvas.clientWidth;
+        this.gl.canvas.height = this.gl.canvas.clientHeight;
         if (viewport) {
-            viewport.viewport(this.canvas.width, this.canvas.height);
+            viewport.viewport(this.gl.canvas.width, this.gl.canvas.height);
         } else {
             for (let vp of this.viewports_listeners) {
-                vp.viewport(this.canvas.width, this.canvas.height);
+                vp.viewport(this.gl.canvas.width, this.gl.canvas.height);
             }
         }
     }
 
     private loop() {
-        this.pipeline.execute(this.gl);
+        this.pipeline.render(this.gl);
     }
 
     wheelEvent(event: WheelEvent) {

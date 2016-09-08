@@ -67,7 +67,7 @@ type CommandLambda = (ctx: Context) => void;
 
 /// The pipeline class, this is where the execution
 /// takes place. This is also the context owner.
-export class CommandBuffer {
+export class CommandBuffer implements Command {
 
     private context: Context = undefined;
     private raw: Command[];
@@ -88,10 +88,14 @@ export class CommandBuffer {
         });
     }
 
-    execute(gl: WebGLRenderingContext) {
+    render(gl: WebGLRenderingContext) {
         this.reset_or_init(gl);
+        this.execute(this.context);
+    }
+
+    execute(ctx: Context) {
         for (let el of this.raw) {
-            el.execute(this.context);
+            el.execute(ctx);
         }
     }
 

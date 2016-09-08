@@ -42,9 +42,13 @@ abstract class BaseRenderEl implements Command, TextureGetter {
     }
 
     execute(ctx: Context) {
-        if (this.resources_not_yet_loaded === 0) {
+        if (this.isReady()) {
             this.drawImpl(ctx);
         }
+    }
+
+    isReady(): boolean {
+        return this.resources_not_yet_loaded === 0;
     }
 
     abstract getTextures(): Array<WebGLTexture>;
@@ -193,6 +197,25 @@ export class TilesRenderEl extends BaseRenderEl {
 
     getTextures(): Array<WebGLTexture> {
         return [];//this.tile_el.getTextures();
+    }
+
+    createSingleLayerRenderer(ref: { currentLayer(): number; }): Command {
+        let gl = this.gl;
+        let owner = this;
+
+        class SingleLayer implements Command {
+
+            constructor(private tile_el: TilesLayer) {}
+
+            execute(ctx: Context) {
+                if (owner.isReady()) {
+                    let i = ref.currentLayer();
+                    this.tile_el.drawSingleLayer(gl, ctx.active_program, i);
+                }
+            }
+        }
+
+        return new SingleLayer(this.tile_el);
     }
 
     protected drawImpl(ctx: Context) {

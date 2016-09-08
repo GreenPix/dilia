@@ -55,20 +55,7 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
     draw(gl: WebGLRenderingContext, program: Program) {
 
         // Initialization if not done previously
-        if (this.vertex_buffer instanceof VertexBuffer) {
-            this.vertex_buffer = new BufferLinkedToProgram(
-                program,
-                this.vertex_buffer as VertexBuffer,
-                'quad_pos'
-            );
-        }
-        if (this.tex_buffer instanceof VertexBuffer) {
-            this.tex_buffer = new BufferLinkedToProgram(
-                program,
-                this.tex_buffer as VertexBuffer,
-                'quad_tex'
-            );
-        }
+        this.initBuffersIfNeeded(program);
 
         // Set common program uniforms
         program.setUniforms({
@@ -76,7 +63,7 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
             inverse_map_size: [1.0 / this.width, 1.0 / this.height],
         });
 
-        // Render each layer.
+        // Render requested layer.
         for (let layer of this.layers) {
             for (let pl of layer.partial_layers) {
                 program.setUniforms({
@@ -92,6 +79,51 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
                     this.vertex_buffer as BufferLinkedToProgram
                 );
             }
+        }
+    }
+
+    drawSingleLayer(gl: WebGLRenderingContext, program: Program, layer_index: number) {
+        // Initialization if not done previously
+        this.initBuffersIfNeeded(program);
+
+        // Set common program uniforms
+        program.setUniforms({
+            tile_size: this.tile_size,
+            inverse_map_size: [1.0 / this.width, 1.0 / this.height],
+        });
+
+        // Render each layer.
+        let layer = this.layers[layer_index];
+        for (let pl of layer.partial_layers) {
+            program.setUniforms({
+                tiles_tex: pl.tex.tex_id,
+                tiles_index: pl.ids,
+                inverse_tiles_tex_size: [
+                    1.0 / pl.tex.width, 1.0 / pl.tex.height
+                ],
+            });
+            glDrawElements(Geom.TRIANGLES,
+                gl, this.index_buffer,
+                this.tex_buffer as BufferLinkedToProgram,
+                this.vertex_buffer as BufferLinkedToProgram
+            );
+        }
+    }
+
+    private initBuffersIfNeeded(program: Program) {
+        if (this.vertex_buffer instanceof VertexBuffer) {
+            this.vertex_buffer = new BufferLinkedToProgram(
+                program,
+                this.vertex_buffer as VertexBuffer,
+                'quad_pos'
+            );
+        }
+        if (this.tex_buffer instanceof VertexBuffer) {
+            this.tex_buffer = new BufferLinkedToProgram(
+                program,
+                this.tex_buffer as VertexBuffer,
+                'quad_tex'
+            );
         }
     }
 

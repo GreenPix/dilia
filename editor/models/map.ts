@@ -19,7 +19,8 @@ export class Layer {
 
     constructor(
         private owner: Map,
-        public raw: ChipsetLayer[]
+        public raw: ChipsetLayer[],
+        public index: number
     ) {}
 
     select(): number {
@@ -65,7 +66,7 @@ export class Map implements CommitObject {
     ) {}
 
     addLayer(layer: ChipsetLayer[]): void {
-        this.layers.push(new Layer(this, layer));
+        this.layers.push(new Layer(this, layer, this.layers.length));
     }
 
     tileSize(): number {

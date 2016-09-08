@@ -45,7 +45,7 @@ export class Camera implements Command, ViewportListener {
     }
 
     execute(ctx: Context) {
-        ctx.gl.viewport(0, 0, this.viewport_width, this.viewport_height);
+        ctx.gl.viewport(0, 0, ctx.gl.drawingBufferWidth, ctx.gl.drawingBufferHeight);
         ctx.active_program.setUniforms({
             viewport_size: [
                 this.viewport_width / this.zoom_factor,
@@ -107,5 +107,27 @@ export class Camera implements Command, ViewportListener {
     private updateScaledPos() {
         this.scaled_pos[0] = Math.floor(this.pos[0]);
         this.scaled_pos[1] = Math.floor(this.pos[1]);
+    }
+}
+
+export class SimpleCamera implements Command {
+
+    constructor(
+        private viewport_width,
+        private viewport_height,
+        private object_viewport_width,
+        private object_viewport_height
+    ) {}
+
+    execute(ctx: Context) {
+        ctx.gl.viewport(0, 0, this.viewport_width, this.viewport_height);
+        ctx.active_program.setUniforms({
+            viewport_size: [
+                this.object_viewport_width,
+                this.object_viewport_height
+            ],
+            view_pos: [0, 0],
+            flip_y: ctx.flip_y
+        });
     }
 }

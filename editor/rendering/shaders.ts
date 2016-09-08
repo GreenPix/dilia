@@ -28,12 +28,10 @@ export class ProgramEl implements Command {
     }
 }
 
-export const TileProgram = new ProgramEl(
-    tiles_vertex_shader,
-    tiles_fragment_shader
-);
+export class TileProgram extends ProgramEl {
+    constructor() { super(tiles_vertex_shader, tiles_fragment_shader); }
+}
 
-export const SpriteProgram = new ProgramEl(
-    sprite_vertex_shader,
-    sprite_fragment_shader
-);
+export class SpriteProgram extends ProgramEl {
+    constructor() { super(sprite_vertex_shader, sprite_fragment_shader); }
+}

@@ -5,8 +5,8 @@ import {ChipsetModal} from './chipset-upload';
 import {ChipsetService} from './chipset.service';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {MapManager} from '../../models/map';
-import {EditorState} from './editor-state';
 
+import {EditorState} from './editor-state';
 import {Brush} from './editor-state/brush';
 import {PaletteArea} from './editor-state/palette-area';
 import {EditorArea} from './editor-state/editor-area';

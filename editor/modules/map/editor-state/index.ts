@@ -36,12 +36,11 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     edit(map: Map) {
-        let surface = this.surface;
-
         this.editor_area.load(map);
         this.brush.setMap(map);
 
-        surface.setCommandBuffer(this.editor_area.getScene());
+        this.surface.setCommandBuffer(this.editor_area.getScene());
+        this.surface.focus();
     }
 
     cleanUp() {
@@ -86,6 +85,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     onSelectLayer(id: number): void {
         // maybe?
         // this.map_handle.setActiveLayer(id);
+        this.surface.focus();
         this.active_layer = id;
     }
 

@@ -7,7 +7,7 @@ import {MapModule} from './modules/map.module';
 import {AaribaModule} from './modules/aariba.module';
 import {ProfileModule} from './modules/profile.module';
 
-import {UniqueId, SocketIOService} from './services/index';
+import {SocketIOService} from './services/index';
 import {User, AaribaScriptSettings} from './models/user';
 import {AuthGuard} from './permissions/auth';
 import {AuthService} from './services/auth';
@@ -34,7 +34,6 @@ import {App} from './app';
         SocketIOService,
         { provide: User, useValue: User.default() },
         { provide: AaribaScriptSettings, useFactory: user => user.aaribaScriptSettings, deps: [User] },
-        { provide: UniqueId, useFactory: () => new UniqueId() },
         { provide: LocationStrategy, useClass: HashLocationStrategy },
     ],
     bootstrap: [App]

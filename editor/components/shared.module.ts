@@ -11,6 +11,7 @@ import {Dialog, DialogHeader, DialogFooter, DialogBody} from './modal/dialog';
 import {Toolbar} from './toolbar/toolbar';
 import {CommitModal} from './commit';
 import {WebGLSurface} from './webgl/surface';
+import {WebGLSingleTextureSurface} from './webgl/simple-surface';
 import {Upload} from './upload/upload';
 import {SelectEl, AnimFadeIn} from '../services/directives';
 import {HttpService} from '../services';
@@ -28,6 +29,7 @@ import {HttpService} from '../services';
         Toolbar,
         CommitModal,
         WebGLSurface,
+        WebGLSingleTextureSurface,
         Upload,
         SelectEl,
         AnimFadeIn,
@@ -47,6 +49,7 @@ import {HttpService} from '../services';
         Toolbar,
         CommitModal,
         WebGLSurface,
+        WebGLSingleTextureSurface,
         Upload,
         SelectEl,
         AnimFadeIn,
