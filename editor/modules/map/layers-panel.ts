@@ -37,8 +37,7 @@ export class LayersPanel implements OnChanges, AfterViewInit, OnDestroy {
         if (this.current_map) {
             this.selected_layer = this.current_map.currentLayer();
             if (changes['current_map']) {
-                this.current_map.layers
-                    .forEach((_, i) => this.area.layer_index_stream.next(i));
+                this.requestLayerPreviews();
             }
         }
     }
@@ -62,6 +61,7 @@ export class LayersPanel implements OnChanges, AfterViewInit, OnDestroy {
         }
         else if (this.is_shown !== is_shown && is_shown) {
             this.is_visible = true;
+            this.requestLayerPreviews();
         }
         this.is_shown = is_shown;
         return is_shown;
@@ -87,5 +87,10 @@ export class LayersPanel implements OnChanges, AfterViewInit, OnDestroy {
 
     hide() {
         this.state.activatePanel('');
+    }
+
+    private requestLayerPreviews() {
+        this.current_map.layers
+            .forEach((_, i) => this.area.layer_index_stream.next(i));
     }
 }

@@ -39,6 +39,7 @@ export class EditorArea extends Area {
 
     private map_handle: TilesHandle;
     private grid: GridHandle;
+    private map: Map;
     private is_mouse_pressed: boolean = false;
     private scene_with_fbo: CommandBuffer;
 
@@ -66,6 +67,7 @@ export class EditorArea extends Area {
     }
 
     load(map: Map) {
+        this.map = map;
         // Load the map. We compute first the position of the chipset that
         // are going to be loaded from the server.
         let chipsets_pos: {[path: string]: number} = {};
@@ -207,6 +209,9 @@ export class EditorArea extends Area {
     mouseUpEditor(event: MouseEvent): State {
         let [x, y] = this.objectSpace(event);
         this.zbehavior.mouseUp(event.button, x, y);
+        if (this.map && this.is_mouse_pressed) {
+            this.layer_index_stream.next(this.map.currentLayer());
+        }
         this.is_mouse_pressed = false;
         return State.Editor;
     }
