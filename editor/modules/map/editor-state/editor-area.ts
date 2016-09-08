@@ -123,6 +123,7 @@ export class EditorArea extends Area {
             map_tiled,
             FlipY,
             new SpriteProgram(),
+            this.camera,
             this.brush
         ]);
 
