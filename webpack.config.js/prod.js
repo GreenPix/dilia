@@ -13,7 +13,6 @@ const outputDir = path.join(path.dirname(__dirname), '/build/public/');
 
 const config = webpackMerge(commonConfig, {
     debug: false,
-    devtool: 'source-map',
     output: {
         path: outputDir,
         filename: 'js/[name].[chunkhash].js',
@@ -45,7 +44,16 @@ const config = webpackMerge(commonConfig, {
     ]
 });
 
-if (process.argv.includes('--uglify')) {
+if (process.argv.includes('--closure')) {
+    config.plugins.push(new ClosureCompPlugin({
+        compiler: {
+            language_in: 'ECMASCRIPT5',
+            language_out: 'ECMASCRIPT5',
+            compilation_level: 'ADVANCED',
+        },
+        concurrency: 4,
+    }));
+} else {
     config.plugins.push(new DedupePlugin());
     config.plugins.push(new UglifyJsPlugin({
         // beautify: true, // debug
@@ -58,15 +66,6 @@ if (process.argv.includes('--uglify')) {
         mangle: { screw_ie8: true, keep_fnames: true },
         compress: { screw_ie8: true },
         comments: false
-    }));
-} else {
-    config.plugins.push(new ClosureCompPlugin({
-        compiler: {
-            language_in: 'ECMASCRIPT5',
-            language_out: 'ECMASCRIPT5',
-            compilation_level: 'ADVANCED',
-        },
-        concurrency: 4,
     }));
 }
 

@@ -13,14 +13,20 @@
         window.unwrapedCancelAnimationFrame = window.cancelAnimationFrame;
         window.unwrapedSetTimeout = window.setTimeout;
     </script>
-    <script src="/js/polyfills.js"></script>
-    <script src="/js/vendor.js"></script>
-    <script src="/js/libs-free.js"></script>
+    <% for (var file of htmlWebpackPlugin.files.js) { %>
+        <% if (file.indexOf('index') == -1) { %>
+            <script src="<%= file %>"></script>
+        <% } %>
+    <% } %>
   </head>
   <body>
     <app></app>
     <script src="/js/ace-min.js"></script>
     <script src="/js/ext-language_tools.js"></script>
-    <script src="/js/index.js"></script>
+    <% for (var file of htmlWebpackPlugin.files.js) { %>
+        <% if (file.indexOf('index') != -1) { %>
+            <script src="<%= file %>"></script>
+        <% } %>
+    <% } %>
   </body>
 </html>
