@@ -26,7 +26,6 @@ export interface KeyHandler {
     selector: 'webgl-surface',
     styles: [
         `canvas { width: 100%; height: 100% }`,
-        `.display-none { display: none; }`
     ],
     template: `<canvas id="{{id}}" tabindex="1"
         (keydown)="keyPressed($event)"
