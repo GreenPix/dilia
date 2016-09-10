@@ -33,13 +33,8 @@
 
 </nav>
 
-<alert-box></alert-box>
-
-<div [ngSwitch]="state.stateStr()">
-    <template [ngSwitchCase]="'editor'">
-
-        <layer-panel [currentMap]="map_manager.currentMap()"
-                     (selectLayer)="onSelectLayer($event)"></layer-panel>
-
-    </template>
+<div>
+    <layer-panel [ngClass]="{ 'display-none': state.stateStr() !== 'editor' }"
+                 [currentMap]="map_manager.currentMap()"
+                 (selectLayer)="onSelectLayer($event)"></layer-panel>
 </div>

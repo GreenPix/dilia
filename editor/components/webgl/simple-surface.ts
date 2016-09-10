@@ -12,7 +12,6 @@ import {init_gl_default} from './helpers';
     selector: 'img-webgl-surface',
     styles: [
         `canvas { width: 100%; height: 100% }`,
-        `.display-none { display: none; }`
     ],
     template:
     `<canvas id="{{id}}" [ngClass] = "{'display-none': gl_not_supported }"></canvas>

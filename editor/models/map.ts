@@ -15,6 +15,10 @@ export interface ChipsetLayer {
     chipset: string;
 }
 
+function intoMongoDbId(chipset: ChipsetLayer): string {
+    return chipset.chipset.substr(chipset.chipset.lastIndexOf('/') + 1);
+}
+
 export class Layer {
 
     constructor(
@@ -131,30 +135,29 @@ export class MapManager implements Committer {
 
     commit(map: Map, comment: string): Observable<any> {
         if (map.is_new) {
-            let observable = this.http.post(`/api/map/new`, {
+            return this.http.post(`/api/maps/new`, {
                 name: map.name,
                 layers: map.layers.map(l =>
                     l.raw.map(c => ({
                         tiles_id_base64: intoBase64(c.tiles_id),
-                        chipset_id: c.chipset
+                        chipset_id: intoMongoDbId(c)
                     }))
                 ),
                 width: map.width,
                 height: map.height,
                 tile_size: map.tile_size,
                 comment,
-            } as MapData);
-            observable.subscribe(res => {
+            } as MapData)
+            .do(res => {
                 if (res.status === 200) {
                     map.is_new = false;
                 }
             });
-            return observable;
         }
-        return this.http.post(`/api/map/${map.name}/commit`, {
+        return this.http.post(`/api/maps/${map.name}/commit`, {
             layers: map.layers.map(l => l.raw.map(c => ({
                 tiles_id_base64: intoBase64(c.tiles_id),
-                chipset_id: c.chipset
+                chipset_id: intoMongoDbId(c)
             }))),
             comment,
         } as MapCommitData);

@@ -90,7 +90,9 @@ export class LayersPanel implements OnChanges, AfterViewInit, OnDestroy {
     }
 
     private requestLayerPreviews() {
-        this.current_map.layers
+        if (this.current_map) {
+            this.current_map.layers
             .forEach((_, i) => this.area.layer_index_stream.next(i));
+        }
     }
 }

@@ -29,9 +29,10 @@ export class LoginForm {
             this.password
         ).subscribe(res => {
             if (res.status === 200) {
-                this.username = '';
-                this.password = '';
-                this.router.navigate([this.auth.redirectUrl()]);
+                this.router.navigate([this.auth.redirectUrl()]).then(() => {
+                    this.username = '';
+                    this.password = '';
+                });
             } else {
                 this.loginAttemptFailed = true;
             }
