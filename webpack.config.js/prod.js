@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 
 const webpackMerge = require('webpack-merge');
@@ -41,6 +43,21 @@ const config = webpackMerge(commonConfig, {
                 },
             },
         }),
+        {
+            apply: (compiler) => compiler.plugin('emit', (compilation, cb) => {
+                let packageJson = require('../package.json');
+                delete packageJson.devDependencies;
+                packageJson.scripts = {
+                    start: 'node ./server/server.js'
+                };
+                let content = JSON.stringify(packageJson, null, 2);
+                compilation.assets['../package.json'] = {
+                    source: () => content,
+                    size: () => content.length,
+                };
+                cb();
+            }),
+        }
     ]
 });
 
