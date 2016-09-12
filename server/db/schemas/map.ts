@@ -60,6 +60,9 @@ export interface MapProperties {
 export interface MapJsmap {
     name: string;
     created_on: Date;
+    width: number;
+    height: number;
+    tile_size: number;
     layers: Array<Array<{
         tiles_ids: string;
         chipset: Types.ObjectId;
@@ -118,7 +121,7 @@ mongooseMapSchema.method({
 
         let self: MapSchema = this;
         let res: MapJsmap =  pick<any, MapSchema>(self,
-            ['name', 'created_on']
+            ['name', 'created_on', 'width', 'height', 'tile_size']
         );
 
         let layers_base64 = [];

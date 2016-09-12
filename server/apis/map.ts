@@ -4,7 +4,7 @@ import {app} from '../config/express';
 import {reqAuth} from './middlewares';
 import {success, badReq, notFound, serverError} from './post_response_fmt';
 import {unauthorized} from './post_response_fmt';
-import {MapData, MapStatus, MapCommitData, LayerData} from '../shared';
+import {MapData, MapStatusExtra, MapStatus, MapCommitData, LayerData} from '../shared';
 import {error as werror, warn} from 'winston';
 import {accessControlManager, ResourceKind as RK} from '../resources';
 import {validateMapNew, validateMapCommit} from '../validators/api_map';
@@ -54,11 +54,11 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
                     errorToJson(err));
             } else {
                 app.emitOn('/api/aariba/new', (client) => {
-                  let value: MapStatus = {
-                    name: properties.name,
-                    locked: !user._id.equals(client._id),
-                  };
-                  return value;
+                    let value: MapStatus = {
+                        name: properties.name,
+                        locked: !user._id.equals(client._id),
+                    };
+                    return value;
                 });
                 success(res, `Saved new map '${properties.name}'`);
             }
@@ -73,7 +73,7 @@ app.io().room('/api/maps/new');
 
 app.get('/api/maps/', reqAuth, (req, res) => {
     MapModel.find({})
-        .select('name')
+        .select('name tile_size height width')
         .exec((err, maps) => {
             if (err) {
                 werror(err);
@@ -91,8 +91,11 @@ app.get('/api/maps/', reqAuth, (req, res) => {
                 return {
                     locked: is_locked,
                     name: val.name,
+                    tile_size: val.tile_size,
+                    height: val.height,
+                    width: val.width,
                 };
-            }, [] as MapStatus[]));
+            }, [] as MapStatusExtra[]));
         });
 });
 
@@ -102,7 +105,7 @@ app.get('/api/maps/:name', reqAuth, (req, res) => {
             if (err) werror(err);
             notFound(res, req.user);
         } else {
-            res.send(200).json(map.toJsmap());
+            res.status(200).json(map.toJsmap());
         }
     });
 });
