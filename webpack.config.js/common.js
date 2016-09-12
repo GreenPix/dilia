@@ -2,6 +2,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     // Entry points
@@ -34,7 +36,7 @@ module.exports = {
             { test: /\b(?!normalize)\w+\.css$/,   loader: 'raw'   },
             // Json / html / pegjs / ts
             { test: /\.json$/,  loader: 'json'  },
-            { test: /\.html$/,  loader: 'url'   },
+            { test: /\b(?!index)\w+\.html$/,  loader: 'url'   },
             { test: /\.pegjs$/, loader: 'pegjs' },
             { test: /\.fs$/,    loader: 'raw'   },
             { test: /\.vs$/,    loader: 'raw'   },
@@ -49,6 +51,18 @@ module.exports = {
             name: ['vendor', 'polyfills'],
             minChunks: Infinity
         }),
+        new HtmlWebpackPlugin({
+            template: './editor/index.html',
+            chunkSortMode: 'dependency',
+            inject: false,
+        }),
+        new CopyWebpackPlugin([{
+            from: 'assets/img',
+            to: 'img/',
+        }, {
+            from: 'assets/fonts',
+            to: 'fonts/'
+        }]),
     ],
 
     node: {
