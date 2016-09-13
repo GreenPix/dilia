@@ -9,4 +9,8 @@
     .modal-dialog {
         transform: translate(0, $navbar-height + 100px);
     }
+
+    .modal-body {
+        overflow: hidden;
+    }
 }

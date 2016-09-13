@@ -1,4 +1,5 @@
 import {Schema, model, Document, Types} from 'mongoose';
+import {MapJsmap} from '../../shared';
 import {pick, find} from 'lodash';
 
 // A layer where all tiles ids share the same
@@ -15,6 +16,7 @@ const mongooseMapSchema = new Schema({
         'Name (`{VALUE}`) exceeds the ' +
         'maximum allowed length ({MAXLENGTH}).'
     ]},
+    preview: { type: Buffer },
     width: { type: Number },
     height: { type: Number },
     tile_size: { type: Number },
@@ -52,26 +54,10 @@ export interface MapProperties {
     width: number;
     height: number;
     tile_size: number;
+    preview: Buffer;
     created_on?: Date;
     revisions: Array<Revision>;
     contributors: Types.ObjectId[];
-}
-
-export interface MapJsmap {
-    name: string;
-    created_on: Date;
-    width: number;
-    height: number;
-    tile_size: number;
-    layers: Array<Array<{
-        tiles_ids: string;
-        chipset: Types.ObjectId;
-    }>>;
-    revisions: Array<{
-        author: Types.ObjectId;
-        date: Date;
-        comment: string;
-    }>;
 }
 
 export interface MapSchema extends MapProperties {
@@ -119,24 +105,24 @@ mongooseMapSchema.method({
 
     toJsmap: function (): MapJsmap {
 
-        let self: MapSchema = this;
+        let self: MapDocument = this;
         let res: MapJsmap =  pick<any, MapSchema>(self,
             ['name', 'created_on', 'width', 'height', 'tile_size']
         );
 
-        let layers_base64 = [];
         let partial_layers_base64 = [];
+        let layers_base64 = [partial_layers_base64];
         let current_depth: number = 0;
 
         for (let layer of self.revisions[self.revisions.length - 1].layers) {
             if (current_depth < layer.depth) {
-                layers_base64.push(partial_layers_base64);
                 partial_layers_base64 = [];
+                layers_base64.push(partial_layers_base64);
                 current_depth = layer.depth;
             }
             let semi_serialized_layer = {
                 tiles_ids: layer.tile_ids.toString('base64'),
-                chipset: layer.chipset
+                chipset: layer.chipset.toHexString()
             };
             partial_layers_base64.push(semi_serialized_layer);
         }
@@ -144,23 +130,24 @@ mongooseMapSchema.method({
         res.layers = layers_base64;
         res.revisions = self.revisions.map(r => {
             return {
-                author: r.author,
-                date: r.date,
+                author: r.author.toHexString(),
+                date: r.date.toUTCString(),
                 comment: r.comment,
             };
         });
+        res.id = self._id.toHexString();
 
         return res;
     },
 
     getLatest: function (): any {
-        let self: MapSchema = this;
+        let self: MapDocument = this;
         let id = self.revisions.length - 1;
         return pick(self.revisions[id], ['author', 'layers', 'comment', 'date']);
     },
 
     getRevision: function (id: number): any {
-        let self: MapSchema = this;
+        let self: MapDocument = this;
         return pick(self.revisions[id], ['author', 'layers', 'comment', 'date']);
     },
 

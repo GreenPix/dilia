@@ -36,6 +36,11 @@ export const validateMapNew = validator({
             required: true,
             type: 'string'
         },
+        preview: {
+            required: true,
+            type: 'string',
+            format: 'base64',
+        },
         layers: {
             $ref: '#layer'
         },

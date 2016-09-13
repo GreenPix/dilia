@@ -1,8 +1,9 @@
 import {HttpService, Observable} from '../services';
 import {Injectable} from '@angular/core';
 import {CommitObject, Committer} from './commitable';
-import {MapData, MapCommitData} from '../../shared/map';
-import {intoBase64} from '../util/base64';
+import {MapData, MapCommitData, MapStatusExtra, MapJsmap} from '../../shared/map';
+import {intoBase64, fromBase64} from '../util/base64';
+import {getChipsetPah} from './chipset';
 
 /// This ChipsetLayer is the high level view
 /// of the ChipsetLayer present in the `tile.ts` file.
@@ -60,7 +61,7 @@ export class Map implements CommitObject {
     private current_layer: number  = 0;
 
     public layers: Layer[] = [];
-    public is_new: boolean = true;
+    public id: string = undefined;
 
     constructor(
         public name: string,
@@ -68,6 +69,28 @@ export class Map implements CommitObject {
         public height: number,
         public tile_size: number = 16
     ) {}
+
+    static from(map_props: MapJsmap): Map {
+        let map = new Map(
+            map_props.name,
+            map_props.width,
+            map_props.height,
+            map_props.tile_size
+        );
+        map.id = map_props.id;
+        map.layers = map_props.layers.map((pl, i) => new Layer(
+            map, pl.map(cl => ({
+                tiles_id: fromBase64(cl.tiles_ids),
+                chipset: getChipsetPah(cl.chipset),
+            })),
+            i
+        ));
+        return map;
+    }
+
+    get is_new(): boolean {
+        return this.id === undefined;
+    }
 
     addLayer(layer: ChipsetLayer[]): void {
         this.layers.push(new Layer(this, layer, this.layers.length));
@@ -129,8 +152,15 @@ export class MapManager implements Committer {
         this.current_map = 0;
     }
 
-    openMap(sth: any) {
-        // TODO
+    openMap(map: MapStatusExtra): Observable<Map> {
+        return this.http.get(`/api/maps/${map.id}`)
+            .map(res => res.json() as MapJsmap)
+            .map(map_props => {
+                let map = Map.from(map_props);
+                this.current_map = this.map_list.length;
+                this.map_list.push(map);
+                return map;
+            });
     }
 
     commit(map: Map, comment: string): Observable<any> {
@@ -150,11 +180,11 @@ export class MapManager implements Committer {
             } as MapData)
             .do(res => {
                 if (res.status === 200) {
-                    map.is_new = false;
+                    map.id = res.json().id;
                 }
             });
         }
-        return this.http.post(`/api/maps/${map.name}/commit`, {
+        return this.http.post(`/api/maps/${map.id}/commit`, {
             layers: map.layers.map(l => l.raw.map(c => ({
                 tiles_id_base64: intoBase64(c.tiles_id),
                 chipset_id: intoMongoDbId(c)

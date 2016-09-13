@@ -12,6 +12,8 @@ import {MapModel, MapProperties, Layer} from '../db/schemas/map';
 import {ChipsetModel} from '../db/schemas/chipset';
 import {errorToJson} from '../db/error_helpers';
 import {UserDocument} from '../db/schemas/users';
+import * as hash from 'object-hash';
+
 
 app.post('/api/maps/new', reqAuth, (req, res) => {
     // Validation
@@ -37,6 +39,7 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
         }
         let properties: MapProperties = {
             contributors: [user._id],
+            preview: Buffer.from(map_data.preview, 'base64'),
             name: map_data.name,
             width: map_data.width,
             height: map_data.height,
@@ -55,12 +58,15 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
             } else {
                 app.emitOn('/api/aariba/new', (client) => {
                     let value: MapStatus = {
-                        name: properties.name,
+                        id: map.id,
                         locked: !user._id.equals(client._id),
                     };
                     return value;
                 });
-                success(res, `Saved new map '${properties.name}'`);
+                success(res).json({
+                    map_id: map.id,
+                    message: `Saved new map '${properties.name}'`,
+                });
             }
         });
     }, err => {
@@ -91,6 +97,7 @@ app.get('/api/maps/', reqAuth, (req, res) => {
                 return {
                     locked: is_locked,
                     name: val.name,
+                    id: val.id,
                     tile_size: val.tile_size,
                     height: val.height,
                     width: val.width,
@@ -99,8 +106,8 @@ app.get('/api/maps/', reqAuth, (req, res) => {
         });
 });
 
-app.get('/api/maps/:name', reqAuth, (req, res) => {
-    MapModel.findOne({ name: req.params.name }, (err, map) => {
+app.get('/api/maps/:id', reqAuth, (req, res) => {
+    MapModel.findById(req.params.id, (err, map) => {
         if (err || !map) {
             if (err) werror(err);
             notFound(res, req.user);
@@ -110,8 +117,24 @@ app.get('/api/maps/:name', reqAuth, (req, res) => {
     });
 });
 
-app.post('/api/maps/:name/lock', reqAuth, (req, res) => {
-    MapModel.findOne({ name: req.params.name }, (err, map) => {
+app.get('/api/maps/:id/preview', reqAuth, (req, res) => {
+    MapModel.findById(req.params.id).select('preview').exec((err, map) => {
+        if (err || !map) {
+            if (err) werror(err);
+            notFound(res, req.user);
+        } else {
+            res.writeHead(200, {
+                'Content-Type': 'image/png',
+                'Content-Length': map.preview.length,
+                'Accept-Ranges': 'bytes',
+                'ETag': hash(map.preview),
+            });
+        }
+    });
+});
+
+app.post('/api/maps/:id/lock', reqAuth, (req, res) => {
+    MapModel.findById(req.params.id, (err, map) => {
         if (err || !map) {
             werror(err || 'Map not found');
             notFound(res, req.user);
@@ -132,13 +155,13 @@ app.post('/api/maps/:name/lock', reqAuth, (req, res) => {
 });
 
 // Stream of the modified content of a script
-app.io().stream('/api/maps/:name/liveupdate', (req, res) => {
+app.io().stream('/api/maps/:id/liveupdate', (req, res) => {
 
     // TODO: validate the req.body object
     // Send back the content to everyone
     res.json(req.body);
 
-    let name = req.params['name'];
+    let id = req.params['id'];
 
     // Obtain a lock on the resource
     accessControlManager.maintainLockOnResource({
@@ -149,7 +172,7 @@ app.io().stream('/api/maps/:name/liveupdate', (req, res) => {
 
     app.emitOn(`/api/maps/lock_status`, (client) => {
       let value: MapStatus = {
-        name: name,
+        id,
         locked: !req.user._id.equals(client._id),
       };
       return value;
@@ -157,16 +180,16 @@ app.io().stream('/api/maps/:name/liveupdate', (req, res) => {
 
 });
 
-app.post('/api/maps/:name/commit', reqAuth, (req, res) => {
+app.post('/api/maps/:id/commit', reqAuth, (req, res) => {
     // Validation
     if (!validateMapCommit(req.body)) {
         return badReq(res, 'Invalid body', validateMapCommit.errors);
     }
 
-    MapModel.findOne({ name: req.params.name }, (err, map) => {
+    MapModel.findById(req.params.id, (err, map) => {
         if (err || !map) {
             werror(err);
-            badReq(res, `Couldn't find map: ${req.params.name}`);
+            badReq(res, `Couldn't find map: ${req.params.id}`);
         } else {
             // Processing
             let user: UserDocument = req.user;

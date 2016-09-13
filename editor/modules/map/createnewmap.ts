@@ -1,6 +1,5 @@
-import {Component} from '@angular/core';
+import {ViewChild, Component} from '@angular/core';
 import {Output, EventEmitter} from '@angular/core';
-import {ViewChild} from '@angular/core';
 import {Dialog} from '../../components';
 import {MapManager} from '../../models/map';
 
