@@ -21,9 +21,12 @@ export class OpenMap {
     @Output('openMap')
     private emitter = new EventEmitter<MapStatusExtra>();
 
+    // Used to solve a bug with Firefox (the animation was invisible)
+    private is_shown: boolean = false;
     private selected_map: MapStatusExtra = undefined;
     private list_of_maps: Observable<MapStatusExtra[]>;
     reset = () => {
+        this.is_shown = false;
         this.selected_map = undefined;
     };
 
@@ -33,6 +36,7 @@ export class OpenMap {
 
     selectMap(map: MapStatusExtra) {
         this.selected_map = map;
+        setTimeout(() => this.is_shown = true, 10);
     }
 
     openMap() {

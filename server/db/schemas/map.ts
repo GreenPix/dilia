@@ -49,6 +49,10 @@ export interface Revision {
     date?: Date;
 }
 
+export interface RevisionWithPreview extends Revision {
+    preview: Buffer;
+}
+
 export interface MapProperties {
     name: string;
     width: number;
@@ -65,7 +69,7 @@ export interface MapSchema extends MapProperties {
     toJsmap(): MapJsmap;
     getRevision(id: number): Revision;
     getLatest(): Revision;
-    commitRevision(rev: Revision, cb: (err: any) => void): void;
+    commitRevision(rev: RevisionWithPreview, cb: (err: any) => void): void;
 }
 
 // TODO: To convert between a Buffer and an Uint16Array:
@@ -151,7 +155,7 @@ mongooseMapSchema.method({
         return pick(self.revisions[id], ['author', 'layers', 'comment', 'date']);
     },
 
-    commitRevision: function (rev: Revision, cb: (err: any) => void): void {
+    commitRevision: function (rev: RevisionWithPreview, cb: (err: any) => void): void {
         let self: MapDocument = this;
         // Make sure the order is correct.
         rev.layers.sort((a, b) => a.depth - b.depth);
@@ -160,6 +164,7 @@ mongooseMapSchema.method({
         if (!find(self.contributors, contrib => contrib.equals(rev.author))) {
             self.contributors.push(rev.author);
         }
+        self.preview = rev.preview;
         self.save(cb);
     }
 });

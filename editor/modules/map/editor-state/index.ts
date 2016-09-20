@@ -1,9 +1,12 @@
 import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 import {WebGLSurface} from '../../../components';
 import {MouseHandler, KeyHandler} from '../../../components';
 import {Map} from '../../../models/map';
 import {EditorArea} from './editor-area';
 import {PaletteArea} from './palette-area';
+import {OneFrameSaveSwapBack} from './preview';
 import {Brush} from './brush';
 
 export enum State {
@@ -35,11 +38,22 @@ export class EditorState implements MouseHandler, KeyHandler {
         this.brush.setSurface(this.surface);
     }
 
+    getMapPreview(): Observable<string> {
+        let subject = new Subject<string>();
+        this.surface.setActivePipeline(new OneFrameSaveSwapBack(
+            this.surface.getActivePipeline(),
+            this.editor_area.getPreviewScene(),
+            this.surface,
+            subject
+        ));
+        return subject;
+    }
+
     edit(map: Map) {
         this.editor_area.load(map);
         this.brush.setMap(map);
 
-        this.surface.setCommandBuffer(this.editor_area.getScene());
+        this.surface.setActivePipeline(this.editor_area.getScene());
         this.surface.focus();
     }
 
@@ -47,7 +61,7 @@ export class EditorState implements MouseHandler, KeyHandler {
         if (this.surface) {
             this.editor_area.cleanUp();
             this.palette_area.cleanUp();
-            this.surface.setCommandBuffer(undefined);
+            this.surface.setActivePipeline(undefined);
             this.surface.setMouseHandler(undefined);
             this.surface.setKeyHandler(undefined);
         }
@@ -65,11 +79,11 @@ export class EditorState implements MouseHandler, KeyHandler {
             if (this.state == State.Palette) {
                 this.editor_area.deactivate();
                 this.palette_area.activate();
-                this.surface.setCommandBuffer(this.palette_area.getScene());
+                this.surface.setActivePipeline(this.palette_area.getScene());
             } else {
                 this.palette_area.deactivate();
                 this.editor_area.activate();
-                this.surface.setCommandBuffer(this.editor_area.getScene());
+                this.surface.setActivePipeline(this.editor_area.getScene());
             }
         }
     }

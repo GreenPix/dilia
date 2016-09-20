@@ -209,6 +209,7 @@ app.post('/api/maps/:id/commit', reqAuth, (req, res) => {
             map.commitRevision({
                 author: user._id,
                 comment: commit.comment,
+                preview: intoBuffer(commit.preview),
                 layers: intoInternalFmt(commit.layers),
             }, err => {
                 if (err) {
@@ -227,9 +228,13 @@ app.post('/api/maps/:id/commit', reqAuth, (req, res) => {
 function intoInternalFmt(layers: LayerData[][]): Layer[] {
     return layers.map((l, i) => {
         return l.map(d => ({
-            tile_ids: new Buffer(d.tiles_id_base64, 'base64'),
+            tile_ids: intoBuffer(d.tiles_id_base64),
             chipset: d.chipset_id as any,
             depth: i
         }));
     }).reduce((p, c) => p.concat(c), []);
+}
+
+function intoBuffer(base64: string): Buffer {
+    return new Buffer(base64, 'base64');
 }

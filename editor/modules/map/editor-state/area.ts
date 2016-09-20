@@ -1,6 +1,6 @@
 import {WebGLSurface} from '../../../components';
 import {Camera} from '../../../rendering/camera';
-import {CommandBuffer} from '../../../rendering/pipeline';
+import {CommandBuffer} from '../../../rendering/commands';
 import {ZoomBehavior} from '../../../components';
 
 

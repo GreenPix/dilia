@@ -26,6 +26,7 @@ export interface LayerData {
 
 export interface MapCommitData {
     layers: LayerData[][];
+    preview: string;
     comment: string;
 }
 

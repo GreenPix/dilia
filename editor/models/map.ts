@@ -61,6 +61,7 @@ export class Map implements CommitObject {
     private current_layer: number  = 0;
 
     public layers: Layer[] = [];
+    public preview: string = '';
     public id: string = undefined;
 
     constructor(
@@ -165,7 +166,7 @@ export class MapManager implements Committer {
 
     commit(map: Map, comment: string): Observable<any> {
         if (map.is_new) {
-            return this.http.post(`/api/maps/new`, {
+            return this.http.post<MapData>(`/api/maps/new`, {
                 name: map.name,
                 layers: map.layers.map(l =>
                     l.raw.map(c => ({
@@ -173,24 +174,26 @@ export class MapManager implements Committer {
                         chipset_id: intoMongoDbId(c)
                     }))
                 ),
+                preview: map.preview,
                 width: map.width,
                 height: map.height,
                 tile_size: map.tile_size,
                 comment,
-            } as MapData)
+            })
             .do(res => {
                 if (res.status === 200) {
                     map.id = res.json().id;
                 }
             });
         }
-        return this.http.post(`/api/maps/${map.id}/commit`, {
+        return this.http.post<MapCommitData>(`/api/maps/${map.id}/commit`, {
             layers: map.layers.map(l => l.raw.map(c => ({
                 tiles_id_base64: intoBase64(c.tiles_id),
                 chipset_id: intoMongoDbId(c)
             }))),
             comment,
-        } as MapCommitData);
+            preview: map.preview
+        });
     }
 
     currentMap(): Map {

@@ -4,7 +4,7 @@ import {Subscriber} from 'rxjs/Subscriber';
 import {WebGLSurface} from '../../../components';
 import {DefaultFBO} from '../../../rendering/fbo';
 import {SpriteHandle} from '../../../rendering/sprite';
-import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/pipeline';
+import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/commands';
 import {SpriteProgram} from '../../../rendering/shaders';
 import {ChipsetService} from '../chipset.service';
 import {Brush} from './brush';

@@ -9,7 +9,7 @@ import {Pixels} from '../../../gl/gl';
 import {SimpleCamera} from '../../../rendering/camera';
 import {TilesHandle} from '../../../rendering/tiles';
 import {SpriteProgram, TileProgram} from '../../../rendering/shaders';
-import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/pipeline';
+import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/commands';
 import {Map} from '../../../models/map';
 import {Brush} from './brush';
 import {State} from './index';
@@ -42,6 +42,7 @@ export class EditorArea extends Area {
     private map: Map;
     private is_mouse_pressed: boolean = false;
     private scene_with_fbo: CommandBuffer;
+    private scene_map_preview: CommandBuffer;
 
     pixels_stream = new Subject<[Pixels, number]>();
     layer_index_stream = new Subject<number>();
@@ -137,7 +138,7 @@ export class EditorArea extends Area {
 
         this.layer_index_stream.subscribe(index => {
             this.buffer.push(index);
-            this.surface.setCommandBuffer(this.scene_with_fbo);
+            this.surface.setActivePipeline(this.scene_with_fbo);
         });
 
         let readpixel = new ReadPixel(width, height);
@@ -182,10 +183,26 @@ export class EditorArea extends Area {
             // to the main scene.
             () => {
                 if (this.buffer.length === 0) {
-                    this.surface.setCommandBuffer(this.scene);
+                    this.surface.setActivePipeline(this.scene);
                 }
             },
         ]);
+
+        this.scene_map_preview = new CommandBuffer([
+            DefaultFBO,
+            ClearAll,
+            new TileProgram(),
+            new SimpleCamera(256, 256, 256 * 2, 256 * 2),
+            map_tiled,
+        ]);
+    }
+
+    getPreviewScene() {
+        return this.scene_map_preview;
+    }
+
+    buildMapPreview() {
+
     }
 
     currentLayer(): number {

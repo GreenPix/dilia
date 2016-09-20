@@ -38,7 +38,7 @@ export class HttpService {
         return this.observable;
     }
 
-    post(path: string, json?: any): Observable<Response> {
+    post<T>(path: string, json?: T): Observable<Response> {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         let observable = this.http.post(path, JSON.stringify(json || {}), {

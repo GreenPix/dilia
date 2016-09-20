@@ -76,7 +76,11 @@ export const validateMapCommit = validator({
         comment: {
             required: true,
             type: 'number'
-        }
+        },
+        preview: {
+            required: true,
+            type: 'string'
+        },
     }
 }, {
     formats: customFormats,
