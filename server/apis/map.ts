@@ -63,7 +63,7 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
                     };
                     return value;
                 });
-                success(res).json({
+                success(res, false).json({
                     map_id: map.id,
                     message: `Saved new map '${properties.name}'`,
                 });
@@ -123,12 +123,14 @@ app.get('/api/maps/:id/preview', reqAuth, (req, res) => {
             if (err) werror(err);
             notFound(res, req.user);
         } else {
+            let preview = map.preview || new Buffer(0);
             res.writeHead(200, {
                 'Content-Type': 'image/png',
-                'Content-Length': map.preview.length,
+                'Content-Length': preview.length,
                 'Accept-Ranges': 'bytes',
-                'ETag': hash(map.preview),
+                'ETag': hash(preview),
             });
+            res.end(preview);
         }
     });
 });

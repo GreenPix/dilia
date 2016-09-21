@@ -17,7 +17,7 @@ export interface MapStatus {
     locked: boolean;
 }
 
-export type MapStatusExtra = MapStatus & MapInfo;
+export interface MapStatusExtra extends MapStatus, MapInfo {}
 
 export interface LayerData {
     tiles_id_base64: string;

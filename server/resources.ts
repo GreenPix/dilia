@@ -21,7 +21,8 @@ class ResourceManager {
 
     constructor() {
         this.resources = {
-            [ResourceKind.AaribaScript]: []
+            [ResourceKind.AaribaScript]: [],
+            [ResourceKind.Map]: [],
         };
     }
 

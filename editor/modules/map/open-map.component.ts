@@ -8,6 +8,10 @@ import {MapStatusExtra} from '../../../shared/map';
 let openMapTemplate = require<string>('./open-map.html');
 let openMapScss = require<Webpack.Scss>('./open-map.scss');
 
+interface MapDetails extends MapStatusExtra {
+    preview: string;
+};
+
 @Component({
     selector: 'open-map',
     styles: [openMapScss.toString()],
@@ -19,22 +23,26 @@ export class OpenMap {
     private dialog: Dialog;
 
     @Output('openMap')
-    private emitter = new EventEmitter<MapStatusExtra>();
+    private emitter = new EventEmitter<MapDetails>();
 
     // Used to solve a bug with Firefox (the animation was invisible)
     private is_shown: boolean = false;
-    private selected_map: MapStatusExtra = undefined;
-    private list_of_maps: Observable<MapStatusExtra[]>;
+    private selected_map: MapDetails = undefined;
+    private list_of_maps: Observable<MapDetails[]>;
     reset = () => {
         this.is_shown = false;
         this.selected_map = undefined;
     };
 
     constructor(private manager: MapService) {
-        this.list_of_maps = manager.getMapList();
+        this.list_of_maps = manager.getMapList().map(l => l.map(m => {
+            let a = m as MapDetails;
+            a.preview = manager.getMapPreview(a.id);
+            return a;
+        }));
     }
 
-    selectMap(map: MapStatusExtra) {
+    selectMap(map: MapDetails) {
         this.selected_map = map;
         setTimeout(() => this.is_shown = true, 10);
     }

@@ -63,6 +63,7 @@ export class Map implements CommitObject {
     public layers: Layer[] = [];
     public preview: string = '';
     public id: string = undefined;
+    public read_only: boolean = false;
 
     constructor(
         public name: string,
@@ -156,6 +157,12 @@ export class MapManager implements Committer {
     openMap(map: MapStatusExtra): Observable<Map> {
         return this.http.get(`/api/maps/${map.id}`)
             .map(res => res.json() as MapJsmap)
+            .do(() => {
+                if (!map.locked) {
+                    this.http.post(`/api/maps/${map.id}/lock`)
+                        .subscribe(() => {}, () => {}, () => {});
+                }
+            })
             .map(map_props => {
                 let map = Map.from(map_props);
                 this.current_map = this.map_list.length;
@@ -186,14 +193,15 @@ export class MapManager implements Committer {
                 }
             });
         }
-        return this.http.post<MapCommitData>(`/api/maps/${map.id}/commit`, {
-            layers: map.layers.map(l => l.raw.map(c => ({
-                tiles_id_base64: intoBase64(c.tiles_id),
-                chipset_id: intoMongoDbId(c)
-            }))),
-            comment,
-            preview: map.preview
-        });
+        return this.http.post(`/api/maps/${map.id}/lock`).mergeMap(() =>
+            this.http.post<MapCommitData>(`/api/maps/${map.id}/commit`, {
+                layers: map.layers.map(l => l.raw.map(c => ({
+                    tiles_id_base64: intoBase64(c.tiles_id),
+                    chipset_id: intoMongoDbId(c)
+                }))),
+                comment,
+                preview: map.preview
+            }));
     }
 
     currentMap(): Map {

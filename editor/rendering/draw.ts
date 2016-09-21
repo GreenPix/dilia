@@ -176,7 +176,7 @@ export class TilesRenderEl extends BaseRenderEl {
     loadTileLayerObject(
         chipset_paths: string[],
         cb: (chipset_datas: Texture[], object: TilesLayerBuilder) => void
-    ): this {
+    ): TilesLayer {
         this.tile_el = new TilesLayer(this.gl);
         let nb_chipset = chipset_paths.length;
         let chipset_datas = new Array(nb_chipset);
@@ -192,7 +192,7 @@ export class TilesRenderEl extends BaseRenderEl {
         if (nb_chipset == 0) {
             cb(chipset_datas, this.tile_el);
         }
-        return this;
+        return this.tile_el;
     }
 
     getTextures(): Array<WebGLTexture> {

@@ -6,7 +6,7 @@ import {genPixelsForTextureWithBorder} from '../../../rendering/util';
 import {SpriteBuilder} from '../../../rendering/sprite';
 import {ReadPixel} from '../../../rendering/readpixel';
 import {Pixels} from '../../../gl/gl';
-import {SimpleCamera} from '../../../rendering/camera';
+import {SimpleCamera, Camera} from '../../../rendering/camera';
 import {TilesHandle} from '../../../rendering/tiles';
 import {SpriteProgram, TileProgram} from '../../../rendering/shaders';
 import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/commands';
@@ -83,7 +83,7 @@ export class EditorArea extends Area {
         }
 
         let map_tiled = this.surface.createTilesRenderEl();
-        map_tiled.loadTileLayerObject(chipsets_path, (chipsets, builder) => {
+        let map_obj2d = map_tiled.loadTileLayerObject(chipsets_path, (chipsets, builder) => {
             let handle = builder.setWidth(map.width)
                 .setHeight(map.height)
                 .tileSize(map.tile_size);
@@ -188,21 +188,23 @@ export class EditorArea extends Area {
             },
         ]);
 
+        let preview_camera = new Camera();
+        preview_camera.viewport(256, 256);
+        preview_camera.zoom(-1);
+        preview_camera.zoom(-1);
+        preview_camera.centerOn(map_obj2d);
         this.scene_map_preview = new CommandBuffer([
             DefaultFBO,
             ClearAll,
             new TileProgram(),
-            new SimpleCamera(256, 256, 256 * 2, 256 * 2),
+            preview_camera,
+            // new SimpleCamera(256, 256, 256 * 2, 256 * 2),
             map_tiled,
         ]);
     }
 
     getPreviewScene() {
         return this.scene_map_preview;
-    }
-
-    buildMapPreview() {
-
     }
 
     currentLayer(): number {

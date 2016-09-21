@@ -3,7 +3,7 @@
     flex-wrap: wrap;
     // justify-content: center;
     overflow-y: auto;
-    max-height: 450px;
+    height: 450px;
 }
 
 .map-item {
@@ -11,9 +11,10 @@
     flex-grow: 0;
     flex-basis: auto;
     margin: 1px;
+    height: 223px;
 
     &:hover {
-        box-shadow: 0px 0px 7px 3px #d0cccc;
+        background: #fffdf3;
         cursor: pointer;
     }
 
@@ -25,9 +26,8 @@
     }
 
     & .map-img {
-        height: 175px;
-        width: 100%;
-        display: block;
+        height: 172px;
+        max-width: 172px;
     }
 }
 
@@ -48,6 +48,12 @@
 
     &.shown {
         transform: translateX(100%);
+    }
+
+    .map-selected--img {
+        width: 80%;
+        margin: auto;
+        display: block;
     }
 }
 
