@@ -15,8 +15,6 @@ export class OneFrameSaveSwapBack implements Pipeline {
         // TODO: use a different canvas that is not visible and with
         // the proper size. OR
         // Reduce the size of the current canvas...
-        console.time('preview');
-        console.time('preview-resize');
         let prev_height = gl.canvas.height;
         let prev_width = gl.canvas.width;
         gl.canvas.width = 256;
@@ -26,9 +24,7 @@ export class OneFrameSaveSwapBack implements Pipeline {
         // Go back to original:
         gl.canvas.width = prev_width;
         gl.canvas.height = prev_height;
-        console.timeEnd('preview-resize');
         this.swap_to_scene.render(gl);
-        console.timeEnd('preview');
         this.emitter.next(dataurl.slice(22));
         this.surface.setActivePipeline(this.swap_to_scene);
     }
