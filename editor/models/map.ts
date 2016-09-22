@@ -150,11 +150,12 @@ export class MapManager implements Committer {
         // By default we have two layers
         map.addLayer([]);
         map.addLayer([]);
-        this.map_list.push(map);
-        this.current_map = 0;
+        this.pushNewMap(map);
     }
 
     openMap(map: MapStatusExtra): Observable<Map> {
+        // TODO: handle case were we actually already have
+        // the map locally.
         return this.http.get(`/api/maps/${map.id}`)
             .map(res => res.json() as MapJsmap)
             .do(() => {
@@ -163,12 +164,7 @@ export class MapManager implements Committer {
                         .subscribe(() => {}, () => {}, () => {});
                 }
             })
-            .map(map_props => {
-                let map = Map.from(map_props);
-                this.current_map = this.map_list.length;
-                this.map_list.push(map);
-                return map;
-            });
+            .map(map_props => this.pushNewMap(Map.from(map_props)));
     }
 
     commit(map: Map, comment: string): Observable<any> {
@@ -210,5 +206,11 @@ export class MapManager implements Committer {
         } else {
             return this.map_list[this.current_map];
         }
+    }
+
+    private pushNewMap(map: Map): Map {
+        this.current_map = this.map_list.length;
+        this.map_list.push(map);
+        return map;
     }
 }
