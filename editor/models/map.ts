@@ -94,6 +94,10 @@ export class Map implements CommitObject {
         return this.id === undefined;
     }
 
+    get is_ready(): boolean {
+        return this.preview !== '';
+    }
+
     addLayer(layer: ChipsetLayer[]): void {
         this.layers.push(new Layer(this, layer, this.layers.length));
     }

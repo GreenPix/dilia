@@ -76,9 +76,9 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     commit(): void {
         let map = this.map_manager.currentMap();
         if (map) {
+            this.commit_modal.show(map);
             this.state.getMapPreview().subscribe(prev => {
                 map.preview = prev;
-                this.commit_modal.show(map);
             });
         }
     }

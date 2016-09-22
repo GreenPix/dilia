@@ -50,7 +50,7 @@ export class CommitModal {
     canCommit(): boolean {
         return this.message.length > 8 &&
             this.object_name.length > 3 &&
-            !this.committing;
+            !this.committing && this.object.is_ready;
     }
 
     show(object: CommitObject) {
