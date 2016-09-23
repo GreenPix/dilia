@@ -35,6 +35,7 @@ export class FileManager implements Committer {
             active: false,
             readonly: false,
             is_new: true,
+            is_ready: true,
         };
         this.file_list.push(new_file);
         this.edit(new_file, previous_content);
@@ -49,6 +50,7 @@ export class FileManager implements Committer {
             active: false,
             readonly: file.locked,
             is_new: false,
+            is_ready: true,
         };
         this.file_list.push(new_file);
         this.edit(new_file, previous_content);

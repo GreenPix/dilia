@@ -16,6 +16,13 @@ export interface Command {
     execute(ctx: Context);
 }
 
+/// A pipeline is the unit executed by a surface.
+/// Within this single call, everything is expected to
+/// be rendered on screen.
+export interface Pipeline {
+    render(gl: WebGLRenderingContext);
+}
+
 export interface TextureGetter {
     getTextures(): Array<WebGLTexture>;
 }

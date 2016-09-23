@@ -6,10 +6,10 @@ import {genPixelsForTextureWithBorder} from '../../../rendering/util';
 import {SpriteBuilder} from '../../../rendering/sprite';
 import {ReadPixel} from '../../../rendering/readpixel';
 import {Pixels} from '../../../gl/gl';
-import {SimpleCamera} from '../../../rendering/camera';
+import {SimpleCamera, Camera} from '../../../rendering/camera';
 import {TilesHandle} from '../../../rendering/tiles';
 import {SpriteProgram, TileProgram} from '../../../rendering/shaders';
-import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/pipeline';
+import {CommandBuffer, ClearAll, FlipY} from '../../../rendering/commands';
 import {Map} from '../../../models/map';
 import {Brush} from './brush';
 import {State} from './index';
@@ -42,6 +42,7 @@ export class EditorArea extends Area {
     private map: Map;
     private is_mouse_pressed: boolean = false;
     private scene_with_fbo: CommandBuffer;
+    private scene_map_preview: CommandBuffer;
 
     pixels_stream = new Subject<[Pixels, number]>();
     layer_index_stream = new Subject<number>();
@@ -82,7 +83,7 @@ export class EditorArea extends Area {
         }
 
         let map_tiled = this.surface.createTilesRenderEl();
-        map_tiled.loadTileLayerObject(chipsets_path, (chipsets, builder) => {
+        let map_obj2d = map_tiled.loadTileLayerObject(chipsets_path, (chipsets, builder) => {
             let handle = builder.setWidth(map.width)
                 .setHeight(map.height)
                 .tileSize(map.tile_size);
@@ -137,7 +138,7 @@ export class EditorArea extends Area {
 
         this.layer_index_stream.subscribe(index => {
             this.buffer.push(index);
-            this.surface.setCommandBuffer(this.scene_with_fbo);
+            this.surface.setActivePipeline(this.scene_with_fbo);
         });
 
         let readpixel = new ReadPixel(width, height);
@@ -182,10 +183,28 @@ export class EditorArea extends Area {
             // to the main scene.
             () => {
                 if (this.buffer.length === 0) {
-                    this.surface.setCommandBuffer(this.scene);
+                    this.surface.setActivePipeline(this.scene);
                 }
             },
         ]);
+
+        let preview_camera = new Camera();
+        preview_camera.viewport(256, 256);
+        preview_camera.zoom(-1);
+        preview_camera.zoom(-1);
+        preview_camera.centerOn(map_obj2d);
+        this.scene_map_preview = new CommandBuffer([
+            DefaultFBO,
+            ClearAll,
+            new TileProgram(),
+            preview_camera,
+            // new SimpleCamera(256, 256, 256 * 2, 256 * 2),
+            map_tiled,
+        ]);
+    }
+
+    getPreviewScene() {
+        return this.scene_map_preview;
     }
 
     currentLayer(): number {

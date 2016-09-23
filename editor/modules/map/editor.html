@@ -1,6 +1,7 @@
 <commit-modal #commitmap [title]="'Map name'" [service]="map_manager"></commit-modal>
 <chipset-modal #chipsetupload></chipset-modal>
 <create-map-modal #newmapmodal (newMap)="onNewMap($event)"></create-map-modal>
+<open-map #openmapmodal (openMap)="openMap($event)"></open-map>
 
 <webgl-surface class="map-editor--canvas" #surface></webgl-surface>
 
@@ -19,6 +20,8 @@
         <button class="btn btn-success"
             [ngClass]="{ 'disabled': currentMapIsReadOnly() }"
             (click)="commit()">Commit</button>
+        <button class="btn btn-primary" (click)="openMapDialog()">
+            <span class="fa fa-folder-open"></span> Open</button>
         <button class="btn btn-primary" (click)="createNewMap()">
             <span class="fa fa-plus"></span> Create new</button>
     </div>

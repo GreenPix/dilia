@@ -1,0 +1,68 @@
+.map-list {
+    display: flex;
+    flex-wrap: wrap;
+    // justify-content: center;
+    overflow-y: auto;
+    height: 450px;
+}
+
+.map-item {
+    flex-shrink: 1;
+    flex-grow: 0;
+    flex-basis: auto;
+    margin: 1px;
+    height: 223px;
+
+    &:hover {
+        background: #fffdf3;
+        cursor: pointer;
+    }
+
+    & .map-name {
+        width: 100%;
+        padding: 5px;
+        text-align: center;
+        text-overflow: ellipsis;
+    }
+
+    & .map-img {
+        height: 172px;
+        max-width: 172px;
+    }
+}
+
+.flex-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.map-selected {
+    position: absolute;
+    width: 70%;
+    height: 100%;
+    transition: transform 0.5s;
+    right: 0;
+    z-index: 8;
+    top: 0;
+    background-color: white;
+
+    &.shown {
+        transform: translateX(100%);
+    }
+
+    .map-selected--img {
+        width: 80%;
+        margin: auto;
+        display: block;
+    }
+}
+
+.map-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    right: 0;
+    top: 0;
+    z-index: 4;
+    background-color: rgba(122, 122, 122, 0.53);
+}

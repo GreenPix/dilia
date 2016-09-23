@@ -1,17 +1,23 @@
 
-export interface MapData {
+export interface MapInfo {
     name: string;
-    layers: LayerData[][];
     width: number;
     height: number;
     tile_size: number;
+}
+
+export interface MapData extends MapInfo {
+    preview: string;
+    layers: LayerData[][];
     comment: string;
 }
 
 export interface MapStatus {
-    name: string;
+    id: string;
     locked: boolean;
 }
+
+export interface MapStatusExtra extends MapStatus, MapInfo {}
 
 export interface LayerData {
     tiles_id_base64: string;
@@ -20,6 +26,7 @@ export interface LayerData {
 
 export interface MapCommitData {
     layers: LayerData[][];
+    preview: string;
     comment: string;
 }
 
@@ -27,6 +34,24 @@ export interface ChipsetData {
     name: string;
     author: string;
     created_on: string;
+}
+
+export interface MapJsmap {
+    id: string;
+    name: string;
+    width: number;
+    height: number;
+    tile_size: number;
+    created_on: string;
+    layers: Array<Array<{
+        tiles_ids: string;
+        chipset: string;
+    }>>;
+    revisions: Array<{
+        author: string;
+        date: string;
+        comment: string;
+    }>;
 }
 
 export const ChipsetMaxFileSize = 20 * 1024 * 1024;

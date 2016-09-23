@@ -1,7 +1,7 @@
 import {Component, AfterViewInit, OnDestroy} from '@angular/core';
 import * as uniqueId from 'lodash/uniqueId';
 import {TextureLoader} from '../../gl/gl';
-import {CommandBuffer} from '../../rendering/pipeline';
+import {DoNothing, Pipeline} from '../../rendering/pipeline';
 import {ViewportListener} from '../../rendering/viewport';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
 import {GenericRenderEl} from '../../rendering/draw';
@@ -47,7 +47,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     private _loop: () => void;
     private mouse_handler: MouseHandler;
     private key_handler: KeyHandler;
-    private pipeline: CommandBuffer = undefined;
+    private pipeline: Pipeline = undefined;
     private viewports_listeners: Array<ViewportListener> = [];
 
     focus() {
@@ -66,7 +66,11 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         return this.gl;
     }
 
-    setCommandBuffer(pipeline: CommandBuffer) {
+    getActivePipeline(): Pipeline {
+        return this.pipeline;
+    }
+
+    setActivePipeline(pipeline: Pipeline) {
         if (this.pipeline === undefined) {
             this.pipeline = pipeline;
             this.start();
@@ -74,7 +78,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
             this.pipeline = pipeline;
             this.viewport();
         } else {
-            this.pipeline = new CommandBuffer([]);
+            this.pipeline = DoNothing;
         }
     }
 

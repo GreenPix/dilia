@@ -67,10 +67,11 @@ export class Camera implements Command, ViewportListener {
     centerOn(object: Obj2D): void {
         let w = object.getWidth();
         let h = object.getHeight();
+        let [x, y] = object.getPosition();
         let z = this.zoom_factor;
         this.pos = [
-            w / 2 - this.viewport_width  / (2 * z),
-            h / 2 - this.viewport_height / (2 * z)
+            x + w / 2 - this.viewport_width  / (2 * z),
+            y + h / 2 - this.viewport_height / (2 * z)
         ];
         this.updateScaledPos();
     }

@@ -2,11 +2,14 @@ import {info as winfo, error as werr, warn} from 'winston';
 import {UserDocument} from '../db/schemas/users';
 import {Response} from 'express';
 
-export function success(res: Response, msg?: string): Response {
-    winfo(msg || 'Request successufl');
-    return res.status(200).json({
-        message: msg || 'Request successful',
-    });
+export function success(res: Response, msg?: string | boolean): Response {
+    winfo((msg && `${msg}`) || 'Request successufl');
+    if (typeof msg === 'string') {
+        return res.status(200).json({
+            message: msg || 'Request successful',
+        });
+    }
+    return res.status(200);
 }
 
 export function notFound(res: Response, user?: UserDocument, msg?: string): Response {

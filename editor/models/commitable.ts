@@ -6,6 +6,7 @@ import {Observable} from 'rxjs/Observable';
 export interface CommitObject {
     name: string;
     is_new: boolean;
+    is_ready: boolean;
 }
 
 // Interface to verify when replacing a commit manager

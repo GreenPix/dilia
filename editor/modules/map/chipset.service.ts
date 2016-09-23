@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpService} from '../../services/index';
 import {ChipsetData} from '../../shared';
+import {getChipsetPah} from '../../models/chipset';
 import {Observable} from 'rxjs/Observable';
 
 @Injectable()
@@ -13,12 +14,12 @@ export class ChipsetService {
             .map(res => res.json());
     }
 
-    getChipsetDetail(chipset_name: string): Observable<ChipsetData> {
-        return this.http.get(`/api/chipset/${chipset_name}/metadata`)
+    getChipsetDetail(chipset_id: string): Observable<ChipsetData> {
+        return this.http.get(`/api/chipset/${chipset_id}/metadata`)
             .map(res => res.json());
     }
 
     getChipsetPath(chipset_name: string): string {
-        return `/api/chipset/${chipset_name}`;
+        return getChipsetPah(chipset_name);
     }
 }

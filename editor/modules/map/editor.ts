@@ -3,7 +3,9 @@ import {AfterViewInit, OnDestroy} from '@angular/core';
 import {WebGLSurface, CommitModal} from '../../components';
 import {ChipsetModal} from './chipset-upload';
 import {ChipsetService} from './chipset.service';
+import {MapService} from './map.service';
 import {CreateNewMapModal, NewMap} from './createnewmap';
+import {OpenMap} from './open-map.component';
 import {MapManager} from '../../models/map';
 
 import {EditorState} from './editor-state';
@@ -21,7 +23,7 @@ let mapEditorScss = require<Webpack.Scss>('./editor.scss');
     templateUrl: mapEditorTemplate,
     providers: [
         ChipsetService, EditorState, Brush,
-        EditorArea, PaletteArea
+        EditorArea, PaletteArea, MapService,
     ]
 })
 export class MapEditor implements AfterViewInit, OnDestroy {
@@ -34,6 +36,8 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     private create_map_modal: CreateNewMapModal;
     @ViewChild('commitmap')
     private commit_modal: CommitModal;
+    @ViewChild('openmapmodal')
+    private open_map_modal: OpenMap;
 
     constructor(
         private state: EditorState,
@@ -50,11 +54,18 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     }
 
     openMap(map: any) {
-        this.map_manager.openMap(map);
+        this.map_manager.openMap(map)
+            .subscribe(map => {
+                this.state.edit(map);
+            });
     }
 
     ngOnDestroy(): void {
         this.state.cleanUp();
+    }
+
+    openMapDialog(): void {
+        this.open_map_modal.show();
     }
 
     createNewMap(): void {
@@ -63,8 +74,12 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     }
 
     commit(): void {
-        if (this.map_manager.currentMap()) {
-            this.commit_modal.show(this.map_manager.currentMap());
+        let map = this.map_manager.currentMap();
+        if (map) {
+            this.commit_modal.show(map);
+            this.state.getMapPreview().subscribe(prev => {
+                map.preview = prev;
+            });
         }
     }
 

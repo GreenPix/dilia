@@ -36,6 +36,11 @@ export const validateMapNew = validator({
             required: true,
             type: 'string'
         },
+        preview: {
+            required: true,
+            type: 'string',
+            format: 'base64',
+        },
         layers: {
             $ref: '#layer'
         },
@@ -70,8 +75,12 @@ export const validateMapCommit = validator({
         },
         comment: {
             required: true,
-            type: 'number'
-        }
+            type: 'string'
+        },
+        preview: {
+            required: true,
+            type: 'string'
+        },
     }
 }, {
     formats: customFormats,

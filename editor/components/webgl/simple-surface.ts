@@ -3,7 +3,7 @@ import {TextureLoader, Pixels} from '../../gl/gl';
 import {SpriteProgram} from '../../rendering/shaders';
 import {SpriteObject} from '../../rendering/sprite';
 import {Context} from '../../rendering/context';
-import {ClearAll} from '../../rendering/pipeline';
+import {ClearAll} from '../../rendering/commands';
 import * as uniqueId from 'lodash/uniqueId';
 import {init_gl_default} from './helpers';
 
@@ -59,7 +59,7 @@ export class WebGLSingleTextureSurface implements AfterViewInit, OnDestroy {
 
         let ctx: Context = { gl: this.gl, active_program: null, flip_y: false };
         this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
-        ClearAll(ctx);
+        ClearAll.execute(ctx);
         this.program.execute(ctx);
         // TODO: this code assume that the texture is squared
         // and that the drawingBufferWidth is greater than drawingBufferHeight

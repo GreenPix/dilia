@@ -1,0 +1,34 @@
+<dialog-modal #openmapdialog [onHide]="reset">
+    <dialog-header>
+        <span>Open an existing map</span>
+    </dialog-header>
+    <dialog-body>
+        <div class="map-overlay" *ngIf="selected_map" (click)="reset()"></div>
+        <div class="map-selected container-fluid" [ngClass]="{'shown': !is_shown}">
+            <h4>{{selected_map?.name}}</h4>
+            <img *ngIf="selected_map" src="{{selected_map.preview}}" class="map-selected--img">
+            <dl class="dl-horizontal" *ngIf="selected_map">
+                <dt>width: </dt><dd>{{selected_map.width}}</dd>
+                <dt>height: </dt><dd>{{selected_map.height}}</dd>
+                <dt>locked: </dt><dd>{{selected_map.locked}}</dd>
+            </dl>
+        </div>
+        <div class="map-list">
+            <div *ngFor="let map_data of (list_of_maps | async)"
+                 (click)="selectMap(map_data)"
+                 class="map-item thumbnail">
+                <img class="map-img" [src]="map_data.preview">
+                <div class="map-name">{{map_data.name}}</div>
+            </div>
+        </div>
+        <div *ngIf="selected_map">
+        </div>
+    </dialog-body>
+    <dialog-footer>
+        <button type="button" class="btn btn-default"
+            (click)="hide($event)">Cancel</button>
+        <button type="button" class="btn btn-primary"
+            [disabled]="!selected_map"
+            (click)="openMap()">Open</button>
+    </dialog-footer>
+</dialog-modal>
