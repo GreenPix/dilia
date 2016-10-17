@@ -11,7 +11,7 @@ export interface SocketPacket {
     value?: any;
 }
 
-declare module SocketIOClient {
+export declare module SocketIOClient {
     interface Emitter {
         emit(event: 'data', data: SocketPacket): Emitter;
         emit(event: any, data: SocketPacket): Emitter;

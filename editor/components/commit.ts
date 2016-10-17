@@ -70,7 +70,7 @@ export class CommitModal {
             this.committing = true;
             this.object.name = this.object_name;
             this.service.commit(this.object, this.message)
-                .subscribe(res => {
+                .subscribe(() => {
                     this.committing = false;
                     this.hide();
                 }, err => {

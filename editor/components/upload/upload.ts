@@ -17,7 +17,7 @@ export class Upload {
 
     handleFileChange(event: Event) {
         let files = (event.target as HTMLInputElement).files;
-        let file: File = files && files[0];
+        let file = files && files[0];
         if (file) {
             this.fileChange(file);
         }

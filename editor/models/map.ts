@@ -62,7 +62,7 @@ export class Map implements CommitObject {
 
     public layers: Layer[] = [];
     public preview: string = '';
-    public id: string = undefined;
+    public id?: string = undefined;
     public read_only: boolean = false;
 
     constructor(
@@ -204,7 +204,7 @@ export class MapManager implements Committer {
             }));
     }
 
-    currentMap(): Map {
+    currentMap(): Map | undefined {
         if (this.current_map < 0) {
             return undefined;
         } else {

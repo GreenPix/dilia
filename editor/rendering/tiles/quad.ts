@@ -207,7 +207,8 @@ class PartialLayer implements TileIdSetter {
     ) {
         this.tex = chipset_layer.chipset;
         this.tile_ids = new Uint8Array(chipset_layer.tiles_id.length * 4);
-        this.ids = gl.createTexture();
+        // TODO: Remove cast and handle the error somehow.
+        this.ids = gl.createTexture() as WebGLTexture;
         gl.bindTexture(gl.TEXTURE_2D, this.ids);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);

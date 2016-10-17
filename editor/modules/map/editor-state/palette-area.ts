@@ -55,7 +55,7 @@ export class PaletteArea extends Area {
             .switchMap(chip_path => {
                 if (this.chipset) {
                     console.log(`Handle more than one chipset`);
-                    return;
+                    return [];
                 }
                 this.chipset_name = chip_path;
                 let observable = new Observable<void>((subscriber: Subscriber<void>) => {

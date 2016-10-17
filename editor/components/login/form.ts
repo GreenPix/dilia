@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {AuthService} from '../../services/auth';
-import {HttpService} from '../../services/index';
 
 let template = require<string>('./form.html');
 let style = require<Webpack.Scss>('./form.scss');
@@ -18,7 +17,6 @@ export class LoginForm {
 
     constructor(
         private router: Router,
-        private http: HttpService,
         private auth: AuthService) {
     }
 

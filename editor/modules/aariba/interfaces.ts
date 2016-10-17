@@ -20,16 +20,22 @@ export interface TextUpdate {
     selection: any[];
 }
 
-export interface BehaviourAction {
-    (state: string, action: 'insertion', editor: AceAjax.Editor,
-     session: AceAjax.IEditSession, range: AceAjax.Range): TextUpdate;
-    (state: string, action: 'deletion', editor: AceAjax.Editor,
-     session: AceAjax.IEditSession, text: string): AceAjax.Range;
-    (state: string, action: string, editor: AceAjax.Editor,
-     session: AceAjax.IEditSession, range_or_text: AceAjax.Range | string): any;
+export interface BehaviourAction {}
+
+export interface BehaviourActionDel extends BehaviourAction {
+    (this: any, state: string, action: string, editor: AceAjax.Editor,
+     session: AceAjax.IEditSession, range: AceAjax.Range): TextUpdate | undefined;
+}
+
+export interface BehaviourActionIns extends BehaviourAction {
+    (this: any, state: string, action: string, editor: AceAjax.Editor,
+     session: AceAjax.IEditSession, text: string): AceAjax.Range | undefined;
 }
 
 export interface IsBehaviour extends IsType<IsBehaviour> {
+    // This does not typecheck anything...
+    add(name: string, mode: 'deletion', cb: BehaviourActionDel): void;
+    add(name: string, mode: 'insertion', cb: BehaviourActionIns): void;
     add(name: string, mode: string, cb: BehaviourAction): void;
     addBehaviours(behaviours: any): void;
     remove(name: string): void;

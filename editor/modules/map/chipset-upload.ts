@@ -65,7 +65,7 @@ export class ChipsetModal {
     private percentage_upload: number = 0;
 
     private img_obj: HTMLImageElement;
-    private file: File;
+    private file?: File;
 
     @ViewChild('upload')
     private dialog: Dialog;

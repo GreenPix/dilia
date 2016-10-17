@@ -58,11 +58,12 @@ function getWrapped(selection, selected, opening, closing) {
 }
 
 function on_insert_brace(
-    state: string,
-    action: string,
+    this: any, // TODO: Improve typing for ace at some point
+    _state: string,
+    _action: 'deletion',
     editor: AceAjax.Editor,
     session: AceAjax.IEditSession,
-    text: string): TextUpdate
+    text: string): TextUpdate | undefined
 {
     let cursor = editor.getCursorPosition();
     let line = session.doc.getLine(cursor.row);
@@ -112,7 +113,7 @@ function on_insert_brace(
         if (rightChar === '}') {
             let openBracePos = session.findMatchingBracket({row: cursor.row, column: cursor.column+1}, '}');
             if (!openBracePos)
-                 return null;
+                 return;
             next_indent = this.$getIndent(session.getLine(openBracePos.row));
         } else if (closing) {
             next_indent = this.$getIndent(line);
@@ -132,11 +133,11 @@ function on_insert_brace(
 }
 
 function on_delete_brace(
-    state: string,
-    action: string,
+    _state: string,
+    _action: string,
     editor: AceAjax.Editor,
     session: AceAjax.IEditSession,
-    range: AceAjax.Range): AceAjax.Range
+    range: AceAjax.Range): AceAjax.Range | undefined
 {
     let selected = session.doc.getTextRange(range);
     if (!range.isMultiLine() && selected == '{') {
@@ -153,11 +154,11 @@ function on_delete_brace(
 }
 
 function on_insert_paren(
-    state: string,
-    action: string,
+    _state: string,
+    _action: string,
     editor: AceAjax.Editor,
     session: AceAjax.IEditSession,
-    text: string): TextUpdate
+    text: string): TextUpdate | undefined
 {
     if (text == '(') {
         initContext(editor);
@@ -191,11 +192,11 @@ function on_insert_paren(
 }
 
 function on_delete_paren(
-    state: string,
-    action: string,
+    _state: string,
+    _action: string,
     editor: AceAjax.Editor,
     session: AceAjax.IEditSession,
-    range: AceAjax.Range): AceAjax.Range
+    range: AceAjax.Range): AceAjax.Range | undefined
 {
    let selected = session.doc.getTextRange(range);
    if (!range.isMultiLine() && selected == '(') {

@@ -1,7 +1,6 @@
 
 const path = require('path');
 const webpack = require('webpack');
-const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
@@ -40,12 +39,11 @@ module.exports = {
             { test: /\.pegjs$/, loader: 'pegjs' },
             { test: /\.fs$/,    loader: 'raw'   },
             { test: /\.vs$/,    loader: 'raw'   },
-            { test: /\.ts$/,    loader: 'awesome-typescript' }
+            { test: /\.ts$/,    loader: 'ts' }
         ]
     },
 
     plugins: [
-        new ForkCheckerPlugin(),
         new webpack.optimize.OccurenceOrderPlugin(true),
         new webpack.optimize.CommonsChunkPlugin({
             name: ['vendor', 'polyfills'],

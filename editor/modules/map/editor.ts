@@ -6,7 +6,7 @@ import {ChipsetService} from './chipset.service';
 import {MapService} from './map.service';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {OpenMap} from './open-map.component';
-import {MapManager} from '../../models/map';
+import {MapManager, Map} from '../../models/map';
 
 import {EditorState} from './editor-state';
 import {Brush} from './editor-state/brush';
@@ -41,8 +41,7 @@ export class MapEditor implements AfterViewInit, OnDestroy {
 
     constructor(
         private state: EditorState,
-        private map_manager: MapManager,
-        private chipset_service: ChipsetService
+        private map_manager: MapManager
     ) {}
 
     currentMapIsReadOnly() {
@@ -74,8 +73,9 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     }
 
     commit(): void {
-        let map = this.map_manager.currentMap();
-        if (map) {
+        let _map = this.map_manager.currentMap();
+        if (_map) {
+            let map = _map;
             this.commit_modal.show(map);
             this.state.getMapPreview().subscribe(prev => {
                 map.preview = prev;
@@ -96,14 +96,14 @@ export class MapEditor implements AfterViewInit, OnDestroy {
             new_map.name,
             new_map.width,
             new_map.height);
-        this.state.edit(this.map_manager.currentMap());
+        this.state.edit(this.map_manager.currentMap() as Map);
     }
 
     ngAfterViewInit(): void {
         this.state.init(this.surface);
         let map = this.map_manager.currentMap();
         if (map) {
-            this.state.edit(this.map_manager.currentMap());
+            this.state.edit(this.map_manager.currentMap() as Map);
         }
     }
 }

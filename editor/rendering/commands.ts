@@ -73,7 +73,7 @@ export class TmpLinearFiltering implements Command {
 /// takes place. This is also the context owner.
 export class CommandBuffer implements Command, Pipeline {
 
-    private context: Context = undefined;
+    private context: Context | undefined = undefined;
     private raw: Command[];
 
     constructor(
@@ -93,19 +93,15 @@ export class CommandBuffer implements Command, Pipeline {
     }
 
     render(gl: WebGLRenderingContext) {
-        this.reset_or_init(gl);
+        if (!this.context || this.context.gl !== gl) {
+            this.context = new Context(gl);
+        }
         this.execute(this.context);
     }
 
     execute(ctx: Context) {
         for (let el of this.raw) {
             el.execute(ctx);
-        }
-    }
-
-    private reset_or_init(gl: WebGLRenderingContext) {
-        if (!this.context || this.context.gl !== gl) {
-            this.context = new Context(gl);
         }
     }
 }

@@ -37,7 +37,7 @@ class GridHandle {
 @Injectable()
 export class EditorArea extends Area {
 
-    private map_handle: TilesHandle;
+    private map_handle?: TilesHandle;
     private grid: GridHandle;
     private map: Map;
     private is_mouse_pressed: boolean = false;
@@ -48,8 +48,8 @@ export class EditorArea extends Area {
     layer_index_stream = new Subject<number>();
 
     private buffer: number[] = [];
-    private readpixel_sub: Subscription;
-    private layerindex_sub: Subscription;
+    private readpixel_sub?: Subscription;
+    private layerindex_sub?: Subscription;
 
     constructor(private brush: Brush) {
         super();
@@ -146,7 +146,7 @@ export class EditorArea extends Area {
             let pix = new Pixels();
             pix.raw = new Uint32Array(pixels.buffer);
             pix.width = width;
-            this.pixels_stream.next([pix, this.buffer.shift()]);
+            this.pixels_stream.next([pix, this.buffer.shift() as number]);
         });
         let simple_camera = new SimpleCamera(
             width,

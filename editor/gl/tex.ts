@@ -2,7 +2,7 @@
 export class Texture {
     width: number = 1;
     height: number = 1;
-    tex_id: WebGLTexture = undefined;
+    tex_id: WebGLTexture;
 }
 
 export class Pixels {
@@ -55,7 +55,7 @@ export class TextureLoader {
 
     private cache: { [path: string]: {
         cbs: Array<(tex: Texture) => void>,
-        tex: Texture
+        tex?: Texture
     }} = {};
 
     constructor(private gl: WebGLRenderingContext) {}
@@ -67,7 +67,8 @@ export class TextureLoader {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
             gl.UNSIGNED_BYTE, color);
         let tex = new Texture();
-        tex.tex_id = tex_id;
+        // TODO: Remove cast and handle the error somehow.
+        tex.tex_id = tex_id as WebGLTexture;
         tex.width = 1;
         tex.height = 1;
         cb(tex);
@@ -77,7 +78,8 @@ export class TextureLoader {
         let gl = this.gl;
         let tex_id = gl.createTexture();
         let tex = new Texture();
-        tex.tex_id = tex_id;
+        // TODO: Remove cast and handle the error somehow.
+        tex.tex_id = tex_id as WebGLTexture;
         updateTextureFromPixels(gl, tex, pixels);
         cb(tex);
     }
@@ -115,7 +117,8 @@ export class TextureLoader {
                     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
                 }
                 let tex = new Texture();
-                tex.tex_id = tex_id;
+                // TODO: Remove cast and handle the error somehow.
+                tex.tex_id = tex_id as WebGLTexture;
                 tex.width = img.width;
                 tex.height = img.height;
 
@@ -133,8 +136,9 @@ export class TextureLoader {
             };
 
         } else {
-            if (this.cache[path].tex) {
-                cb(this.cache[path].tex);
+            let tex = this.cache[path].tex;
+            if (tex) {
+                cb(tex);
             } else {
                 this.cache[path].cbs.push(cb);
             }

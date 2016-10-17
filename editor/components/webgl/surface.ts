@@ -45,20 +45,20 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     private gl_not_supported: boolean = false;
     private tex_loader: TextureLoader;
     private _loop: () => void;
-    private mouse_handler: MouseHandler;
-    private key_handler: KeyHandler;
-    private pipeline: Pipeline = undefined;
+    private mouse_handler?: MouseHandler;
+    private key_handler?: KeyHandler;
+    private pipeline: Pipeline = DoNothing;
     private viewports_listeners: Array<ViewportListener> = [];
 
     focus() {
         this.gl.canvas.focus();
     }
 
-    setMouseHandler(mouse_handler: MouseHandler) {
+    setMouseHandler(mouse_handler?: MouseHandler) {
         this.mouse_handler = mouse_handler;
     }
 
-    setKeyHandler(key_handler: KeyHandler) {
+    setKeyHandler(key_handler?: KeyHandler) {
         this.key_handler = key_handler;
     }
 
@@ -70,11 +70,11 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         return this.pipeline;
     }
 
-    setActivePipeline(pipeline: Pipeline) {
-        if (this.pipeline === undefined) {
+    setActivePipeline(pipeline?: Pipeline) {
+        if (this.pipeline === DoNothing && pipeline) {
             this.pipeline = pipeline;
             this.start();
-        } else if (pipeline != undefined){
+        } else if (pipeline){
             this.pipeline = pipeline;
             this.viewport();
         } else {
@@ -113,9 +113,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this._loop = () => {
-            this.gl = undefined;
-        };
+        this._loop = () => {};
     }
 
     ngAfterViewInit(): void {

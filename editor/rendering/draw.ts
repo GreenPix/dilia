@@ -110,12 +110,12 @@ export class GenericRenderEl extends BaseRenderEl {
             if (this.indices) {
                 glDrawElements(
                     Geom.TRIANGLES,
-                    this.gl,
+                    ctx.gl,
                     this.indices, ...this.buffers);
             } else {
                 glDrawBuffers(
                     Geom.TRIANGLES,
-                    this.gl,
+                    ctx.gl,
                     ...this.buffers);
             }
         }
@@ -222,6 +222,6 @@ export class TilesRenderEl extends BaseRenderEl {
 
     protected drawImpl(ctx: Context) {
 
-        this.tile_el.draw(this.gl, ctx.active_program);
+        this.tile_el.draw(ctx.gl, ctx.active_program);
     }
 }
