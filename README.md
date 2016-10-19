@@ -11,6 +11,7 @@ in the game.
 Dilia is made of two part: a `node.js` server and a web client.
 In order to work properly, the server has a few requirements:
 
+* NodeJS version 6 or above.
 * Some packages:
   * **[required]** `mongodb`
   * **[required]** `libkrb5-dev`
