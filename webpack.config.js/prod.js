@@ -61,7 +61,7 @@ const config = webpackMerge(commonConfig, {
     ]
 });
 
-if (process.argv.includes('--closure')) {
+if (process.argv.indexOf('--closure') !== -1) {
     config.plugins.push(new ClosureCompPlugin({
         compiler: {
             language_in: 'ECMASCRIPT5',

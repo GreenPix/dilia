@@ -43,6 +43,10 @@ module.exports = {
         ]
     },
 
+    ts: {
+        configFileName: path.join(path.dirname(__dirname), 'tsconfig.json')
+    },
+
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin(true),
         new webpack.optimize.CommonsChunkPlugin({
