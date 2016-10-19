@@ -57,7 +57,9 @@ mongooseChipsetSchema.path('name').validate(function (name, cb) {
 }, 'Name already exists');
 
 /// Document interface for more type-checking
-export interface ChipsetDocument extends Document, ChipsetSchema {}
+export interface ChipsetDocument extends Document, ChipsetSchema {
+    id: string;
+}
 
 /// Model<T> exported for convenience.
 export const ChipsetModel =

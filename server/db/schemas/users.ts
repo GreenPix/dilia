@@ -156,7 +156,9 @@ mongooseUserSchema.static('findAll', (authors: Types.ObjectId[], cb: (err:any, a
     });
 });
 
-export interface UserDocument extends Document, UserSchema {}
+export interface UserDocument extends Document, UserSchema {
+    id: string;
+}
 interface UserModel {
     findAll(authors: Types.ObjectId[], cb: (err: any, authors: AuthorMap) => void): void;
 }

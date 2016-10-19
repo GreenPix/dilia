@@ -133,7 +133,9 @@ mongooseAaribaScriptSchema.method({
 });
 
 /// Document interface for more type-checking
-export interface AaribaScriptDocument extends Document, AaribaScriptSchema {}
+export interface AaribaScriptDocument extends Document, AaribaScriptSchema {
+    id: string;
+}
 
 /// Model<T> exported for convenience.
 export const AaribaScript =
