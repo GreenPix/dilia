@@ -75,6 +75,10 @@ export class MapEditor implements AfterViewInit, OnDestroy {
     commit(): void {
         let _map = this.map_manager.currentMap();
         if (_map) {
+            // Create a local variable to force the type
+            // to `Map`. There's seems to be a bug in tsc.
+            // Without that statement, the closure capture
+            // a `map` object of type `Map | undefined` instead.
             let map = _map;
             this.commit_modal.show(map);
             this.state.getMapPreview().subscribe(prev => {

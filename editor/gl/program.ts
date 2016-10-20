@@ -17,8 +17,8 @@ export class Program {
         let fragment_shader = gl.createShader(gl.FRAGMENT_SHADER);
         let program = gl.createProgram();
 
-        // Make sure program is not null
-        // Removing that check make the compilation fail \o/
+        // Make sure at this point that `program` is not null,
+        // abort if it is as this means we cannot use the WebGL API
         if (!program) {
             throw `Could not create program!`;
         }
