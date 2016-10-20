@@ -1,6 +1,7 @@
 import {UserDocument} from '../db/schemas/users';
 import {app, upload} from '../config/express';
 import {max_file_size} from '../config/index';
+import {ChipsetSocketNewAPI} from '../shared';
 import {ChipsetModel, ChipsetProperties} from '../db/schemas/chipset';
 import {errorToJson} from '../db/error_helpers';
 import {reqAuth} from './middlewares';
@@ -29,12 +30,20 @@ app.post('/api/chipset/upload/', reqAuth, upload.single('chipset'),
                     badReq(res, `Couldn't save chipset '${properties.name}'`,
                         errorToJson(err));
                 } else {
-                    // TODO: emit on /api/chipset/new
+                    app.emitOn('/api/chipset/new', (client) => {
+                      let value: ChipsetSocketNewAPI = {
+                        name
+                      };
+                      return value;
+                    });
                     success(res, `Saved new chipset '${properties.name}'`);
                 }
             });
         }
     });
+
+// Allocate a room to listen to chipset creations
+app.io().room('/api/chipset/new');
 
 app.get('/api/chipset/', reqAuth, (req, res) => {
     ChipsetModel.find({})

@@ -18,7 +18,7 @@ let fragment_shader_overlay_src = require<string>('./shaders/dark_overlay.fs');
 export class PaletteArea extends Area {
 
     private brush_area: SpriteHandle;
-    private chipset: SpriteHandle;
+    private chipset?: SpriteHandle;
     private chipset_name: string;
 
     constructor(
@@ -50,6 +50,7 @@ export class PaletteArea extends Area {
         );
 
         this.chipset_service.getChipsetList()
+            .do(() => this.chipset = undefined)
             .flatMap(chip_list => chip_list)
             .map(chip => this.chipset_service.getChipsetPath(chip))
             .switchMap(chip_path => {

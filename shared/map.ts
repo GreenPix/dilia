@@ -36,6 +36,10 @@ export interface ChipsetData {
     created_on: string;
 }
 
+export interface ChipsetSocketNewAPI {
+    name: string;
+}
+
 export interface MapJsmap {
     id: string;
     name: string;
