@@ -11,7 +11,7 @@ import {ChipsetMaxFileSize} from '../../../shared/map';
 const chipsetUploadCss = require<Webpack.Scss>('./chipset-upload.scss');
 const XSSI_PREFIX = /^\)\]\}',?\n/;
 
-enum ImgState {
+const enum ImgState {
     Nothing = 0,
     LoadingImg = 1,
     ImgPresent = 2,
@@ -30,6 +30,7 @@ enum ImgState {
                 <upload [fileChange]="_fc" *ngIf="img_state == 0"></upload>
                 <div class="img-area" [ngClass]="{'uploading': uploading}">
                     <img id={{id}} [ngClass]="{'hidden': img_state != 2 }"/>
+                    <canvas id={{id_canvas}} class="hidden absolute"></canvas>
                     <div class="upload-bar">
                         <div class="subbar">{{percentage_upload.toFixed(0) +'%'}}</div>
                     </div>
@@ -57,7 +58,8 @@ export class ChipsetModal {
     _fc = (f: File) => this.handleFileChange(f);
     _rd = () => this.resetData();
 
-    private id: string;
+    private id: string = uniqueId('upload');
+    private id_canvas: string = uniqueId('hidden_canvas');
     private error_message: string = '';
     private img_state: ImgState = ImgState.Nothing;
     private uploading: boolean = false;
@@ -65,17 +67,17 @@ export class ChipsetModal {
     private percentage_upload: number = 0;
 
     private img_obj: HTMLImageElement;
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
     private file?: File;
 
     @ViewChild('upload')
     private dialog: Dialog;
 
-    constructor() {
-        this.id = uniqueId('upload');
-    }
-
     ngAfterViewInit() {
         this.img_obj = document.getElementById(this.id) as HTMLImageElement;
+        this.canvas = document.getElementById(this.id_canvas) as HTMLCanvasElement;
+        this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
     }
 
     show() {
@@ -116,11 +118,7 @@ export class ChipsetModal {
     submit() {
         this.lock();
         (new Observable<number>((subscriber: Subscriber<number>) => {
-            const form = new FormData();
             const xhr = new XMLHttpRequest();
-
-            form.append('chipset', this.file);
-            form.append('chipset_name', this.chipset_name);
 
             xhr.upload.ontimeout = () => {
                 subscriber.error('Error: time out.');
@@ -154,11 +152,30 @@ export class ChipsetModal {
                     subscriber.error(`Error: ${message}, reason: ${reason}`);
                 }
             };
+
             function isDef(obj: any): boolean {
                 return obj !== undefined && obj !== null;
             }
-            xhr.open('POST', '/api/chipset/upload/', true);
-            xhr.send(form);
+
+            let w = this.img_obj.naturalWidth;
+            let h = this.img_obj.naturalHeight;
+            this.canvas.height = h;
+            this.canvas.width = w;
+            this.ctx.drawImage(this.img_obj, 0, 0, w, h);
+
+            this.canvas.toBlob(blob => {
+                if (!blob) {
+                    subscriber.error(`Couldn't submit the file: 'toBlob' failed`);
+                    return;
+                }
+
+                const form = new FormData();
+                form.append('chipset', blob);
+                form.append('chipset_name', this.chipset_name);
+
+                xhr.open('POST', '/api/chipset/upload/', true);
+                xhr.send(form);
+            });
         })).subscribe(
             val => this.percentage_upload = val,
             err => {
