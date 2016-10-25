@@ -27,14 +27,14 @@ export class OpenMap {
 
     // Used to solve a bug with Firefox (the animation was invisible)
     private is_shown: boolean = false;
-    private selected_map: MapDetails = undefined;
+    private selected_map?: MapDetails = undefined;
     private list_of_maps: Observable<MapDetails[]>;
     reset = () => {
         this.is_shown = false;
         this.selected_map = undefined;
     };
 
-    constructor(private manager: MapService) {
+    constructor(manager: MapService) {
         this.list_of_maps = manager.getMapList().map(l => l.map(m => {
             let a = m as MapDetails;
             a.preview = manager.getMapPreview(a.id);

@@ -1,7 +1,6 @@
 import {ViewChild, Component} from '@angular/core';
 import {Output, EventEmitter} from '@angular/core';
 import {Dialog} from '../../components';
-import {MapManager} from '../../models/map';
 
 let templateUrl = require<string>('./createnewmap.html');
 
@@ -25,9 +24,7 @@ export class CreateNewMapModal {
 
     private new_map: NewMap = { name: '' } as any;
 
-    constructor(
-        private map_manager: MapManager
-    ) {}
+    constructor() {}
 
     clear() {
         this.new_map = { name: '' } as any;

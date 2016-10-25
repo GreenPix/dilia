@@ -22,7 +22,7 @@ export class AutocompleteFiles {
 
     private file_filtered: Array<AaribaFile> = [];
     private file_list: Array<AaribaFile> = [];
-    private selected: AaribaFile = null;
+    private selected?: AaribaFile = undefined;
     private selected_index: number = -1;
     private minlength: number = 1;
     private input_value: string;
@@ -73,7 +73,7 @@ export class AutocompleteFiles {
     }
 
     mapKeyCode(event: KeyboardEvent & { key: string }): string {
-        let result: string = null;
+        let result: string = '';
         if (event.key !== undefined) {
             switch (event.key) {
                 case 'ArrowDown': result = 'down';   break;
@@ -93,7 +93,7 @@ export class AutocompleteFiles {
                 case 40: result = 'down';   break;
             }
         }
-        if (result !== null) {
+        if (result !== '') {
             event.preventDefault();
         }
         return result;

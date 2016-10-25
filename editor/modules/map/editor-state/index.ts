@@ -58,15 +58,12 @@ export class EditorState implements MouseHandler, KeyHandler {
     }
 
     cleanUp() {
-        if (this.surface) {
-            this.editor_area.cleanUp();
-            this.palette_area.cleanUp();
-            this.surface.setActivePipeline(undefined);
-            this.surface.setMouseHandler(undefined);
-            this.surface.setKeyHandler(undefined);
-        }
+        this.editor_area.cleanUp();
+        this.palette_area.cleanUp();
+        this.surface.setActivePipeline();
+        this.surface.setMouseHandler();
+        this.surface.setKeyHandler();
         this.brush.sprite = undefined;
-        this.surface = undefined;
     }
 
     //////////////////////////////////////////////
@@ -130,6 +127,7 @@ export class EditorState implements MouseHandler, KeyHandler {
         switch (this.state) {
             case State.Palette: next_state = this.palette_area.mouseUpPalette(event); break;
             case State.Editor: next_state = this.editor_area.mouseUpEditor(event); break;
+            default: throw 'Unreachable code reached';
         }
         if (this.state !== next_state) {
             this.switchToState(next_state);
@@ -142,6 +140,7 @@ export class EditorState implements MouseHandler, KeyHandler {
         switch (this.state) {
             case State.Palette: next_state = this.palette_area.mouseDownPalette(event); break;
             case State.Editor: next_state = this.editor_area.mouseDownEditor(event); break;
+            default: throw 'Unreachable code reached';
         }
         if (this.state !== next_state) {
             this.switchToState(next_state);
@@ -154,6 +153,7 @@ export class EditorState implements MouseHandler, KeyHandler {
         switch (this.state) {
             case State.Palette: next_state = this.palette_area.mouseMovePalette(event); break;
             case State.Editor: next_state = this.editor_area.mouseMoveEditor(event); break;
+            default: throw 'Unreachable code reached';
         }
         if (this.state !== next_state) {
             this.switchToState(next_state);
@@ -166,6 +166,7 @@ export class EditorState implements MouseHandler, KeyHandler {
         switch (this.state) {
             case State.Palette: next_state = this.palette_area.mouseWheelPalette(event); break;
             case State.Editor: next_state = this.editor_area.mouseWheelEditor(event); break;
+            default: throw 'Unreachable code reached';
         }
         if (this.state !== next_state) {
             this.switchToState(next_state);

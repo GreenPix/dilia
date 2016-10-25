@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Response} from '@angular/http';
 import {AaribaFile} from '../shared';
-import {HttpService, Observable, SocketIOService} from '../services';
+import {HttpService, Observable} from '../services';
 import {CommitObject, Committer} from './commitable';
 import * as some from 'lodash/some';
 import * as filter from 'lodash/filter';
@@ -24,8 +24,8 @@ export class FileManager implements Committer {
     }
 
     constructor(
-        private http: HttpService,
-        private io: SocketIOService) {}
+        private http: HttpService
+    ) {}
 
     createNewFile(previous_content: string): FileTab {
         let new_file: FileTab = {

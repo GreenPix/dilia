@@ -16,6 +16,13 @@ export class Program {
         let vertex_shader = gl.createShader(gl.VERTEX_SHADER);
         let fragment_shader = gl.createShader(gl.FRAGMENT_SHADER);
         let program = gl.createProgram();
+
+        // Make sure at this point that `program` is not null,
+        // abort if it is as this means we cannot use the WebGL API
+        if (!program) {
+            throw `Could not create program!`;
+        }
+
         this.program = program;
         this.uniforms = {};
         this.attrs_to_buffer = {};
@@ -58,7 +65,9 @@ export class Program {
         for (let i = 0; i < nb_uniforms; ++i) {
             let uniform_info = gl.getActiveUniform(program, i);
             if (uniform_info) {
-                let loc = gl.getUniformLocation(program, uniform_info.name);
+                // This can't be null as the uniform_info is provided by
+                // the gl context. So we assert that.
+                let loc = gl.getUniformLocation(program, uniform_info.name) as WebGLUniformLocation;
                 let [uniform, new_ltu] = newUniform(
                     gl, loc, uniform_info, last_used_texture_unit
                 );

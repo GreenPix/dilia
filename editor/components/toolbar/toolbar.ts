@@ -25,7 +25,7 @@ export class Toolbar {
     }
 
     logout(): void {
-        this.auth.logout().subscribe(res => {
+        this.auth.logout().subscribe(() => {
             this.router.navigate(['/login']);
         });
     }

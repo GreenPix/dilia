@@ -1,5 +1,5 @@
 import {TestBed} from '@angular/core/testing';
-import {NgModuleMetadata, ComponentMetadata, Type} from '@angular/core';
+import {NgModule, Component, Type} from '@angular/core';
 import {provideRoutes} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 import {PROVIDERS} from './mocks';
@@ -13,9 +13,9 @@ import {SharedModule} from '../editor/components/shared.module';
 
 // Override all components
 [AaribaModule, ProfileModule, MapModule, SharedModule].forEach(module => {
-    let annot: NgModuleMetadata = Reflect.getOwnMetadata('annotations', module)[0];
+    let annot: NgModule = Reflect.getOwnMetadata('annotations', module)[0];
     for (let component of (annot.declarations as Type<any>[])) {
-        let comp: ComponentMetadata = Reflect.getOwnMetadata('annotations', component)[0];
+        let comp: Component = Reflect.getOwnMetadata('annotations', component)[0];
         if (comp.templateUrl !== undefined) {
             comp.template = comp.templateUrl;
             comp.templateUrl = undefined;
@@ -41,7 +41,7 @@ describe('App', () => {
                 provideRoutes(routes)
             ]
         });
-        let comp: ComponentMetadata = Reflect.getOwnMetadata('annotations', App)[0];
+        let comp: Component = Reflect.getOwnMetadata('annotations', App)[0];
         TestBed.overrideComponent(App, {set: {template: comp.templateUrl, templateUrl: undefined}});
     });
 

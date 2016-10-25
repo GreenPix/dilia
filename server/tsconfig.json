@@ -1,5 +1,4 @@
 {
-    "version": "1.7.5",
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
@@ -14,7 +13,35 @@
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "lib": [
+            "es5",
+            "es6",
+            "es2016"
+        ],
+        "types": [
+            "body-parser",
+            "compression",
+            "connect-mongo",
+            "cookie-parser",
+            "csurf",
+            "express",
+            "express-session",
+            "is-my-json-valid",
+            "mime",
+            "mongodb",
+            "mongoose",
+            "multer",
+            "node",
+            "object-hash",
+            "passport",
+            "passport-local",
+            "passport-google-oauth",
+            "serve-static",
+            "socket.io",
+            "validator",
+            "winston"
+        ]
     },
     "compileOnSave": false,
     "buildOnSave": false,

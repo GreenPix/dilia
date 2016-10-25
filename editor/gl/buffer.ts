@@ -17,7 +17,8 @@ export class IndicesBuffer {
         private gl: WebGLRenderingContext,
         draw_type = BufferDrawKind.STATIC_DRAW
     ) {
-        this.handle = gl.createBuffer();
+        // TODO: Remove cast and handle the error somehow.
+        this.handle = gl.createBuffer() as WebGLBuffer;
         this.draw_type = toNumber(gl, draw_type);
     }
 
@@ -63,7 +64,8 @@ export class VertexBuffer {
         private gl: WebGLRenderingContext,
         draw_type = BufferDrawKind.STATIC_DRAW
     ) {
-        this.handle = gl.createBuffer();
+        // TODO: Remove cast and handle the error somehow.
+        this.handle = gl.createBuffer() as WebGLBuffer;
         this.draw_type = toNumber(gl, draw_type);
         this.data_type = gl.FLOAT;
     }

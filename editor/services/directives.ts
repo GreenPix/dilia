@@ -30,8 +30,6 @@ class Tooltip {
     text: string;
     opacity: number;
 
-    constructor(private element: ElementRef) {}
-
     show() {
         this.opacity = 0;
     }

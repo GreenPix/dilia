@@ -25,7 +25,7 @@ export class RuleEditor implements AfterViewInit {
     text_area_height: number;
     editor: AceAjax.Editor;
     interpreter: AaribaInterpreter;
-    content_observable: Subscription = null;
+    content_observable: Subscription | undefined = undefined;
 
     @ViewChild('commitscript')
     commit_modal: CommitModal;
@@ -124,15 +124,15 @@ export class RuleEditor implements AfterViewInit {
         let current_file = this.currentFile();
         if (current_file && !current_file.readonly) {
             current_file.content = this.editor.getSession().getValue();
-            this.commit_modal.show(this.currentFile());
+            this.commit_modal.show(current_file);
         }
     }
 
-    currentFile(): FileTab {
+    currentFile(): FileTab | undefined {
         if (this.file_manager.hasAnyFile()) {
             return this.file_manager.currentFile();
         }
-        return null;
+        return undefined;
     }
 
     currentFileIsReadOnly(): boolean {
@@ -176,11 +176,11 @@ export class RuleEditor implements AfterViewInit {
         this.listenToChange(null, this.editor);
     }
 
-    private listenToChange(action: any, editor: any): void {
+    private listenToChange(_action: any, editor: any): void {
         try {
             let file = this.currentFile();
             let new_content = editor.getValue();
-            if (!file.readonly) {
+            if (file && !file.readonly) {
                 this.io.post<string>(
                     `/api/aariba/${file.name}/liveupdate`,
                     new_content

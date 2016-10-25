@@ -169,7 +169,7 @@ app.io().stream('/api/maps/:id/liveupdate', (req, res) => {
     accessControlManager.maintainLockOnResource({
         owner: req.user._id,
         kind: RK.Map,
-        resource: name,
+        resource: id,
     });
 
     app.emitOn(`/api/maps/lock_status`, (client) => {

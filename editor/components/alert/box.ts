@@ -18,7 +18,7 @@ export class AlertBox {
 
     // warning|success|danger|info
     alert_kind: string;
-    last_error: string;
+    last_error: string | undefined;
 
     constructor(private http: HttpService) {
         this.http.httpEvents().subscribe(ev => {
@@ -39,6 +39,6 @@ export class AlertBox {
     }
 
     close() {
-        this.last_error = null;
+        this.last_error = undefined;
     }
 }

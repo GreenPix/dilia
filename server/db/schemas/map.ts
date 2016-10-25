@@ -212,7 +212,9 @@ mongooseMapSchema.path('tile_size').validate(function (tile_size) {
 }, 'Tile size must be strictly positive');
 
 /// Document interface for more type-checking
-export interface MapDocument extends Document, MapSchema {}
+export interface MapDocument extends Document, MapSchema {
+    id: string;
+}
 
 /// Model<T> exported for convenience.
 export const MapModel = model<MapDocument>('MapModel', mongooseMapSchema);

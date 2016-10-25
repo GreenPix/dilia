@@ -21,7 +21,7 @@ export class ZoomBehavior implements MouseObjectSpace {
         this.last_button_pressed = -1;
     }
 
-    mouseUp(button: number, mx: number, my: number) {
+    mouseUp(_button: number, _mx: number, _my: number) {
         this.last_button_pressed = -1;
     }
 

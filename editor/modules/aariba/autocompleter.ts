@@ -13,7 +13,7 @@ let globals = {
 export class AaribaScriptCompleter {
 
     // TODO: collect local variables and propose completion for them
-    getCompletions(editor, session, pos, prefix, callback) {
+    getCompletions(_editor, _session, _pos, prefix, callback) {
         if (prefix.length === 0) { callback(null, []); return; }
         callback(null, map(globals, (val: any, key) => {
             return {

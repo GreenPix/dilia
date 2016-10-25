@@ -107,7 +107,7 @@ class AaribaFoldMode extends FoldMode {
     }
 
     getFoldWidgetRange(session: AceAjax.IEditSession, foldStyle: string, row: number, forceMultiline?: boolean)
-        : AceAjax.Range
+        : AceAjax.Range | undefined
     {
         let line = session.getLine(row);
 
@@ -118,16 +118,17 @@ class AaribaFoldMode extends FoldMode {
         if (match) {
             let i = match.index;
 
-            if (match[1])
+            if (match[1] && i)
                 return this.openingBracketBlock(session, match[1], row, i);
 
-            let range = session.getCommentFoldRange(row, i + match[0].length, 1);
+            let range: AceAjax.Range | undefined =
+                session.getCommentFoldRange(row, i + match[0].length, 1);
 
             if (range && !range.isMultiLine()) {
                 if (forceMultiline) {
                     range = this.getSectionRange(session, row);
                 } else if (foldStyle != 'all')
-                    range = null;
+                    range = undefined;
             }
 
             return range;
@@ -253,7 +254,7 @@ export class AaribaScriptTextMode extends TextMode
         return /^\s*\}/.test(input);
     }
 
-    autoOutdent(state, doc, row) {
+    autoOutdent(_state, doc, row) {
         let line = doc.getLine(row);
         let match = line.match(/^(\s*\})/);
 

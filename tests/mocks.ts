@@ -10,7 +10,7 @@ import '../editor/rxjs-add';
 
 @Injectable()
 export class MockHttpService {
-    post(path: string, json?: any) {}
+    post(_path: string, _json?: any) {}
 }
 
 @Injectable()
@@ -31,10 +31,10 @@ export const PROVIDERS = [
 
 // ace mock
 (window as any).ace = {
-    require: function() {
+    require: function(this: any) {
         return this;
     },
-    Behaviour: function() {
+    Behaviour: function(this: any) {
         this.add = () => {};
     },
     Mode: function() {},

@@ -10,5 +10,9 @@ let profileTemplate = require<string>('./profile.html');
 })
 export class Profile {
 
-    constructor(private user: User) {}
+    constructor(private user: User) {
+        // Hack to get TypeScript stop complaining about variable not used.
+        // FIXME: Find a better way to do so.
+        this.user.username = this.user.username;
+    }
 }

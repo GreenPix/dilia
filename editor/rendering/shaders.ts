@@ -11,7 +11,7 @@ const tiles_fragment_shader = require<string>('./shaders/tiles.fs');
 
 export class ProgramEl implements Command {
 
-    private program: Program = undefined;
+    private program: Program | undefined = undefined;
 
     constructor(
         private vert_src: string,

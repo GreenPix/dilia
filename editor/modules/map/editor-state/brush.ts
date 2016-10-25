@@ -15,7 +15,7 @@ export class Brush implements Command {
     width: number = 1;
     tiles_ids: Uint16Array = new Uint16Array([93]);
     sprite_renderer: SpriteRenderEl;
-    sprite: SpriteHandle;
+    sprite?: SpriteHandle;
 
     // To track where and when to apply the changes
     private active_layer: number = 0;
@@ -109,7 +109,7 @@ export class Brush implements Command {
         selected_layer.finalize();
     }
 
-    replaceWith(width: number, tile_id: number, chipset_tex: Texture, chipset_path: string) {
+    replaceWith(_width: number, tile_id: number, chipset_tex: Texture, chipset_path: string) {
 
         if (this.chipset_path !== chipset_path) {
             this.has_changed = true;

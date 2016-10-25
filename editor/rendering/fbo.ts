@@ -16,9 +16,11 @@ export class FBO implements Command {
     constructor(
         private gl: WebGLRenderingContext
     ) {
-        this.fbo = this.gl.createFramebuffer();
+        // TODO: Remove cast and handle the error somehow.
+        this.fbo = this.gl.createFramebuffer() as WebGLFramebuffer;
         this.texture = new Texture();
-        this.texture.tex_id = this.gl.createTexture();
+        // TODO: Remove cast and handle the error somehow.
+        this.texture.tex_id = this.gl.createTexture() as WebGLTexture;
     }
 
     getTexture(): Texture {
@@ -42,7 +44,7 @@ export class FBO implements Command {
             0,                  // border
             gl.RGBA,            // format
             gl.UNSIGNED_BYTE,   // type
-            null                // pixels (ArrayBufferView)
+            undefined           // pixels (ArrayBufferView)
         );
         this.use();
         gl.framebufferTexture2D(
@@ -56,7 +58,7 @@ export class FBO implements Command {
         this.texture.height = height;
     }
 
-    execute(ctx: Context) {
+    execute(_ctx: Context) {
         this.use();
     }
 
