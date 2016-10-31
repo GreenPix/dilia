@@ -4,7 +4,8 @@ import {app} from '../config/express';
 import {reqAuth} from './middlewares';
 import {success, badReq, notFound, serverError} from './post_response_fmt';
 import {unauthorized} from './post_response_fmt';
-import {MapData, MapStatusExtra, MapStatus, MapCommitData, LayerData} from '../shared';
+import {MapData, MapSocketNewAPI, MapStatusExtra} from '../shared';
+import {MapStatus, MapCommitData, LayerData} from '../shared';
 import {error as werror, warn} from 'winston';
 import {accessControlManager, ResourceKind as RK} from '../resources';
 import {validateMapNew, validateMapCommit} from '../validators/api_map';
@@ -56,8 +57,12 @@ app.post('/api/maps/new', reqAuth, (req, res) => {
                 badReq(res, `Couldn't save map '${properties.name}'`,
                     errorToJson(err));
             } else {
-                app.emitOn('/api/aariba/new', (client) => {
-                    let value: MapStatus = {
+                app.emitOn('/api/maps/new', (client) => {
+                    let value: MapSocketNewAPI = {
+                        name: map.name,
+                        width: map.width,
+                        height: map.height,
+                        tile_size: map.tile_size,
                         id: map.id,
                         locked: !user._id.equals(client._id),
                     };

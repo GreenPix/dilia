@@ -8,7 +8,6 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 @Injectable()
 export class ChipsetService {
 
-    private raw_chipsets_list: string[] = [];
     private chipsets: BehaviorSubject<string[]> = new BehaviorSubject([]);
 
     constructor(
@@ -19,8 +18,8 @@ export class ChipsetService {
           .map(x => [x.name])
           .merge(this.http.get('/api/chipset').map(res => res.json() as string[]))
           .subscribe(res => {
-              this.raw_chipsets_list.push(...res);
-              this.chipsets.next(this.raw_chipsets_list);
+              this.chipsets.value.push(...res);
+              this.chipsets.next(this.chipsets.value);
           });
     }
 

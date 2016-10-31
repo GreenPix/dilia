@@ -18,6 +18,7 @@ export interface MapStatus {
 }
 
 export interface MapStatusExtra extends MapStatus, MapInfo {}
+export interface MapSocketNewAPI extends MapStatusExtra {}
 
 export interface LayerData {
     tiles_id_base64: string;
