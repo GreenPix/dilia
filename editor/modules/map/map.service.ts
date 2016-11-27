@@ -1,12 +1,27 @@
 import {Injectable} from '@angular/core';
-import {HttpService} from '../../services/index';
-import {MapStatusExtra, MapData} from '../../shared';
+import {HttpService, SocketIOService} from '../../services/index';
+import {MapStatusExtra, MapSocketNewAPI} from '../../shared';
 import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class MapService {
 
-    constructor(private http: HttpService) {}
+    private maps: BehaviorSubject<MapStatusExtra[]> = new BehaviorSubject([]);
+
+    constructor(
+        private http: HttpService,
+        io: SocketIOService
+    ) {
+        io.get<MapSocketNewAPI>(`/api/maps/new`)
+            .map(x => [x])
+            .merge(this.http.get('/api/maps')
+                .map(res => res.json() as MapStatusExtra[])
+            ).subscribe(res => {
+                this.maps.value.push(...res);
+                this.maps.next(this.maps.value);
+            });
+    }
 
     getMapList(): Observable<MapStatusExtra[]> {
         return this.http.get('/api/maps/')
@@ -15,10 +30,5 @@ export class MapService {
 
     getMapPreview(map_id: string): string {
         return `/api/maps/${map_id}/preview`;
-    }
-
-    getMapDetail(map_id: string): Observable<MapData> {
-        return this.http.get(`/api/maps/${map_id}`)
-            .map(res => res.json());
     }
 }

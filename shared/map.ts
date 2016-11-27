@@ -18,6 +18,7 @@ export interface MapStatus {
 }
 
 export interface MapStatusExtra extends MapStatus, MapInfo {}
+export interface MapSocketNewAPI extends MapStatusExtra {}
 
 export interface LayerData {
     tiles_id_base64: string;
@@ -34,6 +35,10 @@ export interface ChipsetData {
     name: string;
     author: string;
     created_on: string;
+}
+
+export interface ChipsetSocketNewAPI {
+    name: string;
 }
 
 export interface MapJsmap {
