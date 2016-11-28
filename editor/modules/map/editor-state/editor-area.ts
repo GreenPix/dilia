@@ -73,14 +73,7 @@ export class EditorArea extends Area {
         // are going to be loaded from the server.
         let chipsets_pos: {[path: string]: number} = {};
         let chipsets_path: string[] = [];
-        for (let l of map.layers) {
-            for (let pl of l.raw) {
-                if (!(pl.chipset in chipsets_pos)) {
-                    chipsets_pos[pl.chipset] = chipsets_path.length;
-                    chipsets_path.push(pl.chipset);
-                }
-            }
-        }
+        map.fillChipsetsInfo(chipsets_pos, chipsets_path);
 
         let map_tiled = this.surface.createTilesRenderEl();
         let map_obj2d = map_tiled.loadTileLayerObject(chipsets_path, (chipsets, builder) => {

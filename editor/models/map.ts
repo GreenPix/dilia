@@ -1,7 +1,7 @@
 import {HttpService, Observable} from '../services';
 import {Injectable} from '@angular/core';
 import {CommitObject, Committer} from './commitable';
-import {MapData, MapCommitData, MapStatusExtra, MapJsmap} from '../../shared/map';
+import {MapData, MapCommitData, MapJsmap} from '../../shared/map';
 import {intoBase64, fromBase64} from '../util/base64';
 import {getChipsetPah} from './chipset';
 
@@ -122,6 +122,19 @@ export class Map implements CommitObject {
         return this.current_layer;
     }
 
+    fillChipsetsInfo(chipsets_pos: {[path: string]: number},
+                     chipsets_path: string[])
+    {
+        for (let l of this.layers) {
+            for (let pl of l.raw) {
+                if (!(pl.chipset in chipsets_pos)) {
+                    chipsets_pos[pl.chipset] = chipsets_path.length;
+                    chipsets_path.push(pl.chipset);
+                }
+            }
+        }
+    }
+
     selectLayer(layer: Layer): number {
         let index = this.layers.findIndex(l => l === layer);
         if (index > -1 && index < this.layers.length) {
@@ -157,14 +170,12 @@ export class MapManager implements Committer {
         this.pushNewMap(map);
     }
 
-    openMap(map: MapStatusExtra): Observable<Map> {
-        // TODO: handle case were we actually already have
-        // the map locally.
-        return this.http.get(`/api/maps/${map.id}`)
+    openMap(map_id: string, try_lock: boolean = false): Observable<Map> {
+        return this.http.get(`/api/maps/${map_id}`)
             .map(res => res.json() as MapJsmap)
             .do(() => {
-                if (!map.locked) {
-                    this.http.post(`/api/maps/${map.id}/lock`)
+                if (try_lock) {
+                    this.http.post(`/api/maps/${map_id}/lock`)
                         .subscribe(() => {}, () => {}, () => {});
                 }
             })
