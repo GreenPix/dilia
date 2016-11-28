@@ -9,6 +9,7 @@ import {MouseHandler, KeyHandler} from '../../components';
 import {WebGLSurface} from '../../components';
 
 import {Map} from '../../models/map';
+import {PhysicsEngine} from './physics-engine';
 
 
 @Injectable()
@@ -16,6 +17,7 @@ export class GameState implements MouseHandler, KeyHandler {
 
     private surface: WebGLSurface;
     private camera: Camera = new Camera();
+    private physics: PhysicsEngine = new PhysicsEngine();
 
     init(surface: WebGLSurface) {
         this.surface = surface;
@@ -64,7 +66,7 @@ export class GameState implements MouseHandler, KeyHandler {
             FlipY,
             new SpriteProgram(),
             this.camera,
-            player
+            player,
         ]);
 
         this.surface.setActivePipeline(pipeline);
