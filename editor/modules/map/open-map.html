@@ -27,6 +27,9 @@
     <dialog-footer>
         <button type="button" class="btn btn-default"
             (click)="hide($event)">Cancel</button>
+        <button type="button" class="btn btn-success"
+            [disabled]="!selected_map"
+            (click)="playMap()">Play</button>
         <button type="button" class="btn btn-primary"
             [disabled]="!selected_map"
             (click)="openMap()">Open</button>

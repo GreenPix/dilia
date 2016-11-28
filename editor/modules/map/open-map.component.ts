@@ -1,5 +1,6 @@
 import {ViewChild, Component} from '@angular/core';
 import {Output, EventEmitter} from '@angular/core';
+import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {Dialog} from '../../components';
 import {MapService} from './map.service';
@@ -34,7 +35,7 @@ export class OpenMap {
         this.selected_map = undefined;
     };
 
-    constructor(manager: MapService) {
+    constructor(manager: MapService, private router: Router) {
         this.list_of_maps = manager.getMapList().map(l => l.map(m => {
             let a = m as MapDetails;
             a.preview = manager.getMapPreview(a.id);
@@ -51,6 +52,12 @@ export class OpenMap {
         if (this.selected_map) {
             this.emitter.emit(this.selected_map);
             this.hide();
+        }
+    }
+
+    playMap() {
+        if (this.selected_map) {
+            this.router.navigate(['/runner', this.selected_map.id]);
         }
     }
 

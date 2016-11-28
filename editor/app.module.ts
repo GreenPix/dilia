@@ -3,6 +3,7 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {SharedModule} from './components/shared.module';
+import {RunnerModule} from './modules/runner.module';
 import {MapModule} from './modules/map.module';
 import {AaribaModule} from './modules/aariba.module';
 import {ProfileModule} from './modules/profile.module';
@@ -23,6 +24,7 @@ import {App} from './app';
         ProfileModule,
         AaribaModule,
         MapModule,
+        RunnerModule,
         RouterModule.forRoot(routes)
     ],
     declarations: [
