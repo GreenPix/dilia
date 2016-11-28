@@ -7,6 +7,7 @@ import {MapService} from './map.service';
 import {CreateNewMapModal, NewMap} from './createnewmap';
 import {OpenMap} from './open-map.component';
 import {MapManager, Map} from '../../models/map';
+import {MapStatusExtra} from '../../shared';
 
 import {EditorState} from './editor-state';
 import {Brush} from './editor-state/brush';
@@ -52,8 +53,8 @@ export class MapEditor implements AfterViewInit, OnDestroy {
         this.chipset_modal.show();
     }
 
-    openMap(map: any) {
-        this.map_manager.openMap(map)
+    openMap(map: MapStatusExtra) {
+        this.map_manager.openMap(map.id, !map.locked)
             .subscribe(map => {
                 this.state.edit(map);
             });
