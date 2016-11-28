@@ -12,6 +12,10 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/trusty64"
 
+  config.vm.provider "docker" do |d|
+    d.image = "tknerr/baseimage-ubuntu:16.04"
+  end
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
