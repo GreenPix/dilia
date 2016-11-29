@@ -11,6 +11,8 @@ import {WebGLSurface} from '../../components';
 import {Map} from '../../models/map';
 import {PhysicsEngine} from './physics-engine';
 
+import {LycanService} from '../../services/lycan';
+
 
 @Injectable()
 export class GameState implements MouseHandler, KeyHandler {
@@ -18,6 +20,8 @@ export class GameState implements MouseHandler, KeyHandler {
     private surface: WebGLSurface;
     private camera: Camera = new Camera();
     private physics: PhysicsEngine = new PhysicsEngine();
+
+    constructor(private lycan: LycanService) {}
 
     init(surface: WebGLSurface) {
         this.surface = surface;
