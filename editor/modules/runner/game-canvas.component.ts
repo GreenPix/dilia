@@ -21,12 +21,12 @@ export class GameCanvas implements AfterViewInit {
     @ViewChild('surface')
     private surface: WebGLSurface;
     private map: Map;
-    private state = new GameState();
 
     constructor(
         private map_manager: MapManager,
         private route: ActivatedRoute,
-        private location: Location
+        private location: Location,
+        private state: GameState,
     ) {}
 
     goToPreviousView() {
