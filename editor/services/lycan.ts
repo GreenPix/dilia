@@ -16,26 +16,30 @@ export const enum Direction {
     Right,
 }
 
-export interface LycanMessagePosition {
-    kind: 'position';
-    entity: number;
+export interface LycanEntityUpdate {
+    entity_id: number;
     position: Point;
     speed: Point;
     pv: number;
 }
 
+export interface LycanMessageGameUpdate {
+    kind: 'GameUpdate';
+    entities: [LycanEntityUpdate];
+}
+
 export interface LycanMessageThisIsYou {
-    kind: 'thisIsYou';
+    kind: 'ThisIsYou';
     entity: number;
 }
 
 export interface LycanMessageResponse {
-    kind: 'response';
+    kind: 'Response';
     code: number;
 }
 
 export interface LycanMessageNewEntity {
-    kind: 'newEntity';
+    kind: 'NewEntity';
     entity: number;
     position: Point;
     skin: number;
@@ -43,28 +47,41 @@ export interface LycanMessageNewEntity {
 }
 
 export interface LycanMessageEntityHasQuit {
-    kind: 'entityHasQuit';
+    kind: 'EntityHasQuit';
     entity: number;
 }
 
-export type LycanMessage = LycanMessagePosition | LycanMessageResponse |
-    LycanMessageThisIsYou | LycanMessageNewEntity | LycanMessageEntityHasQuit;
+export interface LycanMessageDamage {
+    kind: 'Damage';
+    source: number;
+    victim: number;
+    amount: number;
+}
+
+export interface LycanMessageDeath {
+    kind: 'Death';
+    entity: number;
+}
+
+export type LycanMessage = LycanMessageGameUpdate | LycanMessageResponse |
+    LycanMessageThisIsYou | LycanMessageNewEntity | LycanMessageEntityHasQuit |
+    LycanMessageDamage | LycanMessageDeath;
 
 
 export interface LycanCommandAuthenticate {
-    kind: 'authenticate';
+    kind: 'Authenticate';
     guid: string;
     token: string;
 }
 
 export interface LycanOrderWalk {
-    kind: 'walk';
+    kind: 'Walk';
     entity: number;
     direction: Direction | null;
 }
 
 export interface LycanOrderAttack {
-    kind: 'attack';
+    kind: 'Attack';
     entity: number;
 }
 
@@ -114,16 +131,13 @@ export class LycanService {
     private mockThings() {
         this.observable.subscribe({
             next: (message) => {
-                // Position message are just too frequent
-                if (message.kind != 'position') {
-                    console.log(`Parsed message: ${JSON.stringify(message)}`);
-                }
+                console.log(`Parsed message: ${JSON.stringify(message)}`);
 
                 // Start walking when receiving ThisIsYou
-                if (message.kind == 'thisIsYou') {
+                if (message.kind == 'ThisIsYou') {
                     let me = message.entity;
                     let goUp: LycanOrderWalk = {
-                        kind: 'walk',
+                        kind: 'Walk',
                         entity: me,
                         direction: Direction.Up,
                     };
@@ -134,7 +148,7 @@ export class LycanService {
         });
 
         let authenticate: LycanCommandAuthenticate = {
-            kind: 'authenticate',
+            kind: 'Authenticate',
             guid: '00000032-0000-0000-0000-000000000000',
             token: '50',
         };
@@ -143,38 +157,50 @@ export class LycanService {
 }
 
 interface RawLycanMessage {
-    Position?: LycanMessagePosition;
+    GameUpdate?: LycanMessageGameUpdate;
     ThisIsYou?: LycanMessageThisIsYou;
     Response?: LycanMessageResponse;
     NewEntity?: LycanMessageNewEntity;
     EntityHasQuit?: LycanMessageEntityHasQuit;
+    Damage?: LycanMessageDamage;
+    Death?: LycanMessageDeath;
 }
 
 function parse(message: string): LycanMessage | null {
     let json: RawLycanMessage = JSON.parse(message);
     if (json.ThisIsYou) {
         let ret = json.ThisIsYou;
-        ret.kind = 'thisIsYou';
+        ret.kind = 'ThisIsYou';
         return ret;
     }
     if (json.Response) {
         let ret = json.Response;
-        ret.kind = 'response';
+        ret.kind = 'Response';
         return ret;
     }
     if (json.NewEntity) {
         let ret = json.NewEntity;
-        ret.kind = 'newEntity';
+        ret.kind = 'NewEntity';
         return ret;
     }
-    if (json.Position) {
-        let ret = json.Position;
-        ret.kind = 'position';
+    if (json.GameUpdate) {
+        let ret = json.GameUpdate;
+        ret.kind = 'GameUpdate';
         return ret;
     }
     if (json.EntityHasQuit) {
         let ret = json.EntityHasQuit;
-        ret.kind = 'entityHasQuit';
+        ret.kind = 'EntityHasQuit';
+        return ret;
+    }
+    if (json.Damage) {
+        let ret = json.Damage;
+        ret.kind = 'Damage';
+        return ret;
+    }
+    if (json.Death) {
+        let ret = json.Death;
+        ret.kind = 'Death';
         return ret;
     }
 
@@ -185,7 +211,7 @@ function parse(message: string): LycanMessage | null {
 function serialize(command: LycanCommand): string {
     let json;
     switch (command.kind) {
-        case 'authenticate': {
+        case 'Authenticate': {
             json = {
                 GameCommand: {
                     Authenticate: [command.guid, command.token],
@@ -194,7 +220,7 @@ function serialize(command: LycanCommand): string {
             break;
         }
 
-        case 'walk': {
+        case 'Walk': {
             // WHY did I take North/South/East/West? It is stupid ...
             let direction;
             switch (command.direction) {
@@ -222,7 +248,7 @@ function serialize(command: LycanCommand): string {
             break;
         }
 
-        case 'attack': {
+        case 'Attack': {
             json = {
                 EntityOrder: {
                     entity: command.entity,
