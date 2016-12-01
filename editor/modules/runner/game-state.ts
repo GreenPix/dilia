@@ -11,7 +11,7 @@ import {WebGLSurface} from '../../components';
 import {Map} from '../../models/map';
 import {PhysicsEngine} from './physics-engine';
 
-import {LycanService} from '../../services/lycan';
+import {LycanService} from './lycan.service';
 
 
 @Injectable()
