@@ -4,6 +4,7 @@ import {CommandBuffer, ClearAll, FlipY} from '../../rendering/commands';
 import {SpriteProgram, TileProgram} from '../../rendering/shaders';
 import {DefaultFBO} from '../../rendering/fbo';
 import {Camera} from '../../rendering/camera';
+import {SpriteHandle} from '../../rendering/sprite';
 
 import {WebGLSurface} from '../../components';
 
@@ -21,6 +22,7 @@ export class GameState {
     private surface: WebGLSurface;
     private camera = new Camera();
     private last_time: number;
+    private player_handle: SpriteHandle;
 
     constructor(
         private lycan: LycanService,
@@ -64,8 +66,8 @@ export class GameState {
             this.camera.centerOn(handle.build());
         });
         let player = this.surface.createSpriteRenderEl();
-        player.loadSpriteObject([125, 125, 125, 125], builder => {
-            builder.buildWithSize(50, 200);
+        player.loadSpriteObject([125, 125, 125, 255], builder => {
+            this.player_handle = builder.buildWithSize(16, 24);
         });
         let hud = new Hud(this.player, this.lycan, this.surface);
 
@@ -94,5 +96,10 @@ export class GameState {
         this.surface.setActivePipeline(pipeline);
         this.surface.focus();
         this.lycan.connectToLycan();
+        this.lycan.playerGameUpdateStream().subscribe(player_update => {
+            this.player_handle.position(
+                [player_update.position.x, player_update.position.y]
+            );
+        });
     }
 }

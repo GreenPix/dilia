@@ -54,7 +54,7 @@ export class KeyboardLayoutDetector {
 
     ingestPressed(event: KeyboardEvent) {
         if (!isKeyValid(event)) return;
-        if (this.state != DetectionState.NONE) {
+        if (this.state == DetectionState.NONE) {
             this.keyoccurences[event.keyCode] += 1;
             this.detect();
         } else {
@@ -148,10 +148,10 @@ function isPressed(value: KeyState): boolean {
 }
 
 function isKeyValid(event: KeyboardEvent): boolean {
-    return  event.keyCode == Keys.Z ||
+    return (event.keyCode == Keys.Z ||
             event.keyCode == Keys.Q ||
             event.keyCode == Keys.S ||
             event.keyCode == Keys.D ||
             event.keyCode == Keys.W ||
-            event.keyCode == Keys.A;
+            event.keyCode == Keys.A) && !event.repeat;
 }

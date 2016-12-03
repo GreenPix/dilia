@@ -19,21 +19,8 @@ export class Hud implements Command {
         surface: WebGLSurface,
     ) {
         surface.addViewportListener(this.camera);
-        lycan.getUpdateStream().subscribe(up => {
-            switch (up.kind) {
-                case 'GameUpdate':
-                    let player_update;
-                    for (let update of up.entities) {
-                        if (update.entity_id == player.id) {
-                            player_update = update;
-                            break;
-                        }
-                    }
-                    if (player_update) {
-                        this.setHealth(player_update.pv);
-                    }
-                    break;
-            }
+        lycan.playerGameUpdateStream().subscribe(player_update => {
+            this.setHealth(player_update.pv);
         });
         let lifebar = surface.createSpriteRenderEl();
         lifebar.loadSpriteObject([0, 255, 0, 255], builder => {

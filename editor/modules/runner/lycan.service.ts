@@ -139,6 +139,12 @@ export class LycanService {
         return this.input_stream;
     }
 
+    playerGameUpdateStream(): Observable<LycanEntityUpdate> {
+        return this.input_stream.filter(val => val.kind == 'GameUpdate')
+            .flatMap(up => (up as GameUpdate).entities)
+            .filter(up => up.entity_id == this.player.id);
+    }
+
     sendWalk(direction: Direction) {
         this.sendRawCommand({
             kind: 'Walk',
