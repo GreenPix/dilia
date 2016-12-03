@@ -1,7 +1,8 @@
 import * as io from 'socket.io-client';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {Subscriber} from 'rxjs/Subscriber';
+import {Subscription} from 'rxjs/Subscription';
+import {Subject} from 'rxjs/Subject';
 
 // Definition of messages
 export interface Point {
@@ -23,22 +24,22 @@ export interface LycanEntityUpdate {
     pv: number;
 }
 
-export interface LycanMessageGameUpdate {
+export interface GameUpdate {
     kind: 'GameUpdate';
-    entities: [LycanEntityUpdate];
+    entities: LycanEntityUpdate[];
 }
 
-export interface LycanMessageThisIsYou {
+export interface ThisIsYou {
     kind: 'ThisIsYou';
     entity: number;
 }
 
-export interface LycanMessageResponse {
+export interface Response {
     kind: 'Response';
     code: number;
 }
 
-export interface LycanMessageNewEntity {
+export interface NewEntity {
     kind: 'NewEntity';
     entity: number;
     position: Point;
@@ -46,26 +47,30 @@ export interface LycanMessageNewEntity {
     pv: number;
 }
 
-export interface LycanMessageEntityHasQuit {
+export interface EntityHasQuit {
     kind: 'EntityHasQuit';
     entity: number;
 }
 
-export interface LycanMessageDamage {
+export interface Damage {
     kind: 'Damage';
     source: number;
     victim: number;
     amount: number;
 }
 
-export interface LycanMessageDeath {
+export interface Death {
     kind: 'Death';
     entity: number;
 }
 
-export type LycanMessage = LycanMessageGameUpdate | LycanMessageResponse |
-    LycanMessageThisIsYou | LycanMessageNewEntity | LycanMessageEntityHasQuit |
-    LycanMessageDamage | LycanMessageDeath;
+export type LycanMessage = GameUpdate
+    | Response
+    | ThisIsYou
+    | NewEntity
+    | EntityHasQuit
+    | Damage
+    | Death;
 
 
 export interface LycanCommandAuthenticate {
@@ -89,63 +94,28 @@ export type LycanCommand = LycanCommandAuthenticate | LycanOrderWalk | LycanOrde
 
 @Injectable()
 export class LycanService {
-    private observable: Observable<LycanMessage>;
-    private subscriber: Subscriber<LycanMessage>;
+    private input_stream: Subject<LycanMessage> = new Subject<LycanMessage>();
+    private output_stream: Subject<LycanCommand> = new Subject<LycanCommand>();
+    private output_sub: Subscription;
     private socket: SocketIOClient.Socket;
 
-    constructor() {
-        this.observable = new Observable<LycanMessage>(subscriber => {
-            this.subscriber = subscriber;
-        }).share();
-
-        // TODO: rework how we connect to the lycan proxy
+    connectToLycan() {
+        if (this.socket) {
+            this.socket.disconnect();
+            this.output_sub.unsubscribe();
+        }
         this.socket = io('ws://localhost:9010', {
             path: '/lycan',
-            //transports: ['websocket'],
-        });
-        this.socket.on('connect', () => {
-            console.log('Connected to Lycan Proxy');
         });
         this.socket.on('message', (message) => {
-            if (!this.subscriber) return;
-
             let parsed = parse(message);
-            if (parsed !== null) {
-                this.subscriber.next(parsed);
+            if (parsed !== undefined) {
+                this.input_stream.next(parsed);
             }
         });
-
-        this.mockThings();
-    }
-
-    getMessages(): Observable<LycanMessage> {
-        return this.observable;
-    }
-
-    sendCommand(command: LycanCommand) {
-        let message = serialize(command);
-        this.socket.send(message);
-    }
-
-    // Mock code to be removed later
-    private mockThings() {
-        this.observable.subscribe({
-            next: (message) => {
-                console.log(`Parsed message: ${JSON.stringify(message)}`);
-
-                // Start walking when receiving ThisIsYou
-                if (message.kind == 'ThisIsYou') {
-                    let me = message.entity;
-                    let goUp: LycanOrderWalk = {
-                        kind: 'Walk',
-                        entity: me,
-                        direction: Direction.Up,
-                    };
-                    this.sendCommand(goUp);
-                }
-            },
-            error: (err) => { console.log('An error occured ' + err); },
-        });
+        this.output_sub = this.output_stream
+            .map(serialize)
+            .subscribe(v => this.socket.send(v));
 
         let authenticate: LycanCommandAuthenticate = {
             kind: 'Authenticate',
@@ -154,19 +124,27 @@ export class LycanService {
         };
         this.sendCommand(authenticate);
     }
+
+    getInputStream(): Observable<LycanMessage> {
+        return this.input_stream;
+    }
+
+    sendCommand(command: LycanCommand) {
+        this.output_stream.next(command);
+    }
 }
 
 interface RawLycanMessage {
-    GameUpdate?: LycanMessageGameUpdate;
-    ThisIsYou?: LycanMessageThisIsYou;
-    Response?: LycanMessageResponse;
-    NewEntity?: LycanMessageNewEntity;
-    EntityHasQuit?: LycanMessageEntityHasQuit;
-    Damage?: LycanMessageDamage;
-    Death?: LycanMessageDeath;
+    GameUpdate?: GameUpdate;
+    ThisIsYou?: ThisIsYou;
+    Response?: Response;
+    NewEntity?: NewEntity;
+    EntityHasQuit?: EntityHasQuit;
+    Damage?: Damage;
+    Death?: Death;
 }
 
-function parse(message: string): LycanMessage | null {
+function parse(message: string): LycanMessage | undefined {
     let json: RawLycanMessage = JSON.parse(message);
     if (json.ThisIsYou) {
         let ret = json.ThisIsYou;
@@ -205,7 +183,6 @@ function parse(message: string): LycanMessage | null {
     }
 
     console.log(`Warning: could not parse ${message}`);
-    return null;
 }
 
 function serialize(command: LycanCommand): string {
@@ -222,6 +199,7 @@ function serialize(command: LycanCommand): string {
 
         case 'Walk': {
             // WHY did I take North/South/East/West? It is stupid ...
+            // :D
             let direction;
             switch (command.direction) {
                 case Direction.Up:
