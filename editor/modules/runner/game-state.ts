@@ -5,28 +5,31 @@ import {SpriteProgram, TileProgram} from '../../rendering/shaders';
 import {DefaultFBO} from '../../rendering/fbo';
 import {Camera} from '../../rendering/camera';
 
-import {MouseHandler, KeyHandler} from '../../components';
 import {WebGLSurface} from '../../components';
 
 import {Map} from '../../models/map';
 import {PhysicsEngine} from './physics-engine';
-
+import {GameInput} from './game-input';
 import {LycanService} from './lycan.service';
 
 
 @Injectable()
-export class GameState implements MouseHandler, KeyHandler {
+export class GameState {
 
     private surface: WebGLSurface;
-    private camera: Camera = new Camera();
-    private physics: PhysicsEngine = new PhysicsEngine();
+    private camera = new Camera();
+    private last_time: number;
 
-    constructor(private lycan: LycanService) {}
+    constructor(
+        private lycan: LycanService,
+        private input: GameInput,
+        private physics: PhysicsEngine,
+    ) {}
 
     init(surface: WebGLSurface) {
         this.surface = surface;
-        this.surface.setKeyHandler(this);
-        this.surface.setMouseHandler(this);
+        this.surface.setKeyHandler(this.input);
+        this.surface.setMouseHandler(this.input);
         this.surface.addViewportListener(this.camera);
     }
 
@@ -71,29 +74,19 @@ export class GameState implements MouseHandler, KeyHandler {
             new SpriteProgram(),
             this.camera,
             player,
+            () => {
+                let new_time = Date.now();
+                if (!this.last_time) {
+                    this.last_time = new_time;
+                }
+                this.input.update();
+                this.physics.update((new_time - this.last_time) / 1000);
+                this.last_time = new_time;
+            }
         ]);
 
         this.surface.setActivePipeline(pipeline);
         this.surface.focus();
-    }
-
-    keyPressed(event: KeyboardEvent) {
-        // FIXME
-    }
-
-    mouseDown(event: MouseEvent) {
-        // FIXME
-    }
-
-    mouseUp(event: MouseEvent) {
-        // FIXME
-    }
-
-    mouseMove(event: MouseEvent) {
-        // FIXME
-    }
-
-    mouseWheel(event: WheelEvent) {
-        // FIXME
+        this.lycan.connectToLycan();
     }
 }

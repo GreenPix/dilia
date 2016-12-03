@@ -4,6 +4,8 @@ import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {Subject} from 'rxjs/Subject';
 
+import {Player} from './player';
+
 // Definition of messages
 export interface Point {
     x: number;
@@ -11,10 +13,10 @@ export interface Point {
 }
 
 export const enum Direction {
-    Up,
-    Down,
-    Left,
-    Right,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
 }
 
 export interface LycanEntityUpdate {
@@ -82,7 +84,7 @@ export interface LycanCommandAuthenticate {
 export interface LycanOrderWalk {
     kind: 'Walk';
     entity: number;
-    direction: Direction | null;
+    direction?: Direction;
 }
 
 export interface LycanOrderAttack {
@@ -90,7 +92,9 @@ export interface LycanOrderAttack {
     entity: number;
 }
 
-export type LycanCommand = LycanCommandAuthenticate | LycanOrderWalk | LycanOrderAttack;
+export type LycanCommand = LycanCommandAuthenticate
+    | LycanOrderWalk
+    | LycanOrderAttack;
 
 @Injectable()
 export class LycanService {
@@ -98,6 +102,8 @@ export class LycanService {
     private output_stream: Subject<LycanCommand> = new Subject<LycanCommand>();
     private output_sub: Subscription;
     private socket: SocketIOClient.Socket;
+
+    constructor(private player: Player) {}
 
     connectToLycan() {
         if (this.socket) {
@@ -122,14 +128,33 @@ export class LycanService {
             guid: '00000032-0000-0000-0000-000000000000',
             token: '50',
         };
-        this.sendCommand(authenticate);
+        this.getInputStream()
+            .filter(val => val.kind == 'ThisIsYou')
+            .take(1)
+            .subscribe(val => this.player.id = (val as ThisIsYou).entity);
+        this.sendRawCommand(authenticate);
     }
 
     getInputStream(): Observable<LycanMessage> {
         return this.input_stream;
     }
 
-    sendCommand(command: LycanCommand) {
+    sendWalk(direction: Direction) {
+        this.sendRawCommand({
+            kind: 'Walk',
+            entity: this.player.id,
+            direction: direction
+        });
+    }
+
+    sendStopWalk() {
+        this.sendRawCommand({
+            kind: 'Walk',
+            entity: this.player.id,
+        });
+    }
+
+    sendRawCommand(command: LycanCommand) {
         this.output_stream.next(command);
     }
 }
@@ -186,10 +211,10 @@ function parse(message: string): LycanMessage | undefined {
 }
 
 function serialize(command: LycanCommand): string {
-    let json;
+    let res: any;
     switch (command.kind) {
         case 'Authenticate': {
-            json = {
+            res = {
                 GameCommand: {
                     Authenticate: [command.guid, command.token],
                 }
@@ -202,20 +227,20 @@ function serialize(command: LycanCommand): string {
             // :D
             let direction;
             switch (command.direction) {
-                case Direction.Up:
+                case Direction.UP:
                     direction = 'North';
                     break;
-                case Direction.Down:
+                case Direction.DOWN:
                     direction = 'South';
                     break;
-                case Direction.Left:
+                case Direction.LEFT:
                     direction = 'West';
                     break;
-                case Direction.Right:
+                case Direction.RIGHT:
                     direction = 'East';
                     break;
             }
-            json = {
+            res = {
                 EntityOrder: {
                     entity: command.entity,
                     order: {
@@ -227,7 +252,7 @@ function serialize(command: LycanCommand): string {
         }
 
         case 'Attack': {
-            json = {
+            res = {
                 EntityOrder: {
                     entity: command.entity,
                     order: 'Attack',
@@ -236,5 +261,5 @@ function serialize(command: LycanCommand): string {
             break;
         }
     }
-    return JSON.stringify(json);
+    return JSON.stringify(res);
 }
