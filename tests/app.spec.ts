@@ -9,10 +9,11 @@ import {routes} from '../editor/routes';
 import {MapModule} from '../editor/modules/map.module';
 import {AaribaModule} from '../editor/modules/aariba.module';
 import {ProfileModule} from '../editor/modules/profile.module';
+import {RunnerModule} from '../editor/modules/runner.module';
 import {SharedModule} from '../editor/components/shared.module';
 
 // Override all components
-[AaribaModule, ProfileModule, MapModule, SharedModule].forEach(module => {
+[AaribaModule, RunnerModule, ProfileModule, MapModule, SharedModule].forEach(module => {
     let annot: NgModule = Reflect.getOwnMetadata('annotations', module)[0];
     for (let component of (annot.declarations as Type<any>[])) {
         let comp: Component = Reflect.getOwnMetadata('annotations', component)[0];
@@ -32,6 +33,7 @@ describe('App', () => {
                 RouterTestingModule,
                 ProfileModule,
                 AaribaModule,
+                RunnerModule,
                 MapModule,
                 SharedModule,
             ],
