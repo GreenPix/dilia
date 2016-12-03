@@ -128,14 +128,14 @@ export class LycanService {
             guid: '00000032-0000-0000-0000-000000000000',
             token: '50',
         };
-        this.getInputStream()
+        this.getUpdateStream()
             .filter(val => val.kind == 'ThisIsYou')
             .take(1)
             .subscribe(val => this.player.id = (val as ThisIsYou).entity);
         this.sendRawCommand(authenticate);
     }
 
-    getInputStream(): Observable<LycanMessage> {
+    getUpdateStream(): Observable<LycanMessage> {
         return this.input_stream;
     }
 
