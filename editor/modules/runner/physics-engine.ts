@@ -1,3 +1,4 @@
+import {Injectable} from '@angular/core';
 
 interface Entity {
     pos: Vec2;
@@ -11,6 +12,7 @@ interface Vec2 {
     y: number;
 }
 
+@Injectable()
 export class PhysicsEngine {
 
     // The list of entities except the player.

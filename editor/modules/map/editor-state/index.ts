@@ -121,6 +121,8 @@ export class EditorState implements MouseHandler, KeyHandler {
         }
     }
 
+    keyReleased() {}
+
     mouseUp(event: MouseEvent): void {
         if (!this.isReady()) return;
         let next_state: State;

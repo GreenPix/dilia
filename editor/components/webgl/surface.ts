@@ -20,6 +20,7 @@ export interface MouseHandler {
 
 export interface KeyHandler {
     keyPressed(event: KeyboardEvent): void;
+    keyReleased(event: KeyboardEvent): void;
 }
 
 @Component({
@@ -29,6 +30,7 @@ export interface KeyHandler {
     ],
     template: `<canvas id="{{id}}" tabindex="1"
         (keydown)="keyPressed($event)"
+        (keyup)="keyReleased($event)"
         (wheel)="wheelEvent($event)"
         (mousemove)="mouseMove($event)"
         (mousedown)="mouseDown($event)"
@@ -188,6 +190,12 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     keyPressed(event: KeyboardEvent) {
         if (this.key_handler) {
             this.key_handler.keyPressed(event);
+        }
+    }
+
+    keyReleased(event: KeyboardEvent) {
+        if (this.key_handler) {
+            this.key_handler.keyReleased(event);
         }
     }
 }
