@@ -1,0 +1,9 @@
+@import "theme/constants";
+
+.game-canvas {
+    width: 100vw;
+    position: absolute;
+    left: 0;
+    top: $navbar-height;
+    height: calc(100vh - #{$navbar-height});
+}

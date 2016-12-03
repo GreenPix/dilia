@@ -9,6 +9,7 @@ import {MapManager, Map} from '../../models/map';
 import {GameState} from './game-state';
 import {LycanService} from './lycan.service';
 import {GameInput} from './game-input';
+import {Player} from './player';
 import {PhysicsEngine} from './physics-engine';
 
 
@@ -17,11 +18,12 @@ let gameCanvasScss = require<Webpack.Scss>('./game-canvas.scss');
 @Component({
     selector: 'game-canvas',
     styles: [gameCanvasScss.toString()],
-    template: `<webgl-surface #surface></webgl-surface>`,
+    template: `<webgl-surface class="game-canvas" #surface></webgl-surface>`,
     providers: [
         LycanService,
         GameInput,
         PhysicsEngine,
+        Player,
         GameState,
     ]
 })

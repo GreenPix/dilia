@@ -10,7 +10,9 @@ import {WebGLSurface} from '../../components';
 import {Map} from '../../models/map';
 import {PhysicsEngine} from './physics-engine';
 import {GameInput} from './game-input';
+import {Player} from './player';
 import {LycanService} from './lycan.service';
+import {Hud} from './hud';
 
 
 @Injectable()
@@ -23,6 +25,7 @@ export class GameState {
     constructor(
         private lycan: LycanService,
         private input: GameInput,
+        private player: Player,
         private physics: PhysicsEngine,
     ) {}
 
@@ -64,6 +67,8 @@ export class GameState {
         player.loadSpriteObject([125, 125, 125, 125], builder => {
             builder.buildWithSize(50, 200);
         });
+        let hud = new Hud(this.player, this.lycan, this.surface);
+
         let pipeline = new CommandBuffer([
             DefaultFBO,
             ClearAll,
@@ -74,6 +79,7 @@ export class GameState {
             new SpriteProgram(),
             this.camera,
             player,
+            hud,
             () => {
                 let new_time = Date.now();
                 if (!this.last_time) {
