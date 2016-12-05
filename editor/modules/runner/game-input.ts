@@ -4,6 +4,8 @@ import {Keys} from './keyboard-layout';
 import {MouseHandler, KeyHandler} from '../../components';
 import {LycanService} from './lycan.service';
 import {Direction} from './lycan.service';
+import {Player} from './player';
+
 
 export const enum Actions {
     UP = 1,
@@ -18,7 +20,7 @@ export class GameInput implements MouseHandler, KeyHandler {
     private keyboard = new KeyboardLayoutDetector();
     private actions_active: Actions[] = [];
 
-    constructor(private lycan: LycanService) {
+    constructor(private lycan: LycanService, private player: Player) {
         this.keyboard.register('qwerty', Actions.UP, Keys.W);
         this.keyboard.register('qwerty', Actions.DOWN, Keys.S);
         this.keyboard.register('qwerty', Actions.LEFT, Keys.A);
@@ -29,7 +31,32 @@ export class GameInput implements MouseHandler, KeyHandler {
         this.keyboard.register('azerty', Actions.RIGHT, Keys.D);
     }
 
-    update() {
+    update(dt: number) {
+        let last_action = this.last_action();
+        if (last_action) {
+            switch (last_action) {
+                case Actions.UP:
+                    this.player.pos.y += this.player.nominal_speed * dt;
+                    break;
+                case Actions.DOWN:
+                    this.player.pos.y -= this.player.nominal_speed * dt;
+                    break;
+                case Actions.LEFT:
+                    this.player.pos.x -= this.player.nominal_speed * dt;
+                    break;
+                case Actions.RIGHT:
+                    this.player.pos.x += this.player.nominal_speed * dt;
+                    break;
+            }
+        }
+    }
+
+    private last_action(): number {
+        let len = this.actions_active.length;
+        if (this.actions_active.length > 0) {
+            return this.actions_active[len - 1];
+        }
+        return 0;
     }
 
     keyPressed(event: KeyboardEvent) {
@@ -80,12 +107,11 @@ export class GameInput implements MouseHandler, KeyHandler {
             }
         }
         if (send_action) {
-            let len = this.actions_active.length;
-            if (len == 0) {
+            let last_action = this.last_action();
+            if (last_action == 0) {
                 this.lycan.sendStopWalk();
             } else {
-                let last = this.actions_active[len - 1];
-                this.lycan.sendWalk(dir(last));
+                this.lycan.sendWalk(dir(last_action));
             }
         }
     }

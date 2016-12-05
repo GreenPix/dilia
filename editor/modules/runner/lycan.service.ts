@@ -47,6 +47,7 @@ export interface NewEntity {
     position: Point;
     skin: number;
     pv: number;
+    nominal_speed: number;
 }
 
 export interface EntityHasQuit {
@@ -231,7 +232,7 @@ function serialize(command: LycanCommand): string {
         case 'Walk': {
             // WHY did I take North/South/East/West? It is stupid ...
             // :D
-            let direction;
+            let direction: string | null = null;
             switch (command.direction) {
                 case Direction.UP:
                     direction = 'North';

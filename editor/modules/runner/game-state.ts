@@ -87,8 +87,12 @@ export class GameState {
                 if (!this.last_time) {
                     this.last_time = new_time;
                 }
-                this.input.update();
-                this.physics.update((new_time - this.last_time) / 1000);
+                let elapsed = (new_time - this.last_time) / 1000;
+                this.input.update(elapsed);
+                this.physics.update(elapsed);
+                this.player_handle.position(
+                    [this.player.pos.x, this.player.pos.y]
+                );
                 this.last_time = new_time;
             }
         ]);
@@ -96,10 +100,15 @@ export class GameState {
         this.surface.setActivePipeline(pipeline);
         this.surface.focus();
         this.lycan.connectToLycan();
+
+        // TODO(Nemikolh): Move the two below elsewhere.
+        this.lycan.getUpdateStream().subscribe(up => {
+            if (up.kind === 'NewEntity' && up.entity == this.player.id) {
+                this.player.nominal_speed = up.nominal_speed;
+            }
+        });
         this.lycan.playerGameUpdateStream().subscribe(player_update => {
-            this.player_handle.position(
-                [player_update.position.x, player_update.position.y]
-            );
+            this.player.pos = player_update.position;
         });
     }
 }
