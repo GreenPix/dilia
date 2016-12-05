@@ -35,7 +35,7 @@ export class PhysicsEngine {
                     let entity: Entity = {
                         pos: up.position,
                         next_pos: up.position,
-                        nominal_speed: 0,
+                        nominal_speed: up.nominal_speed,
                         speed: { x: 0, y: 0 },
                         id: up.entity,
                     };
