@@ -6,16 +6,17 @@ import {LycanService} from './lycan.service';
 import {Direction} from './lycan.service';
 
 export const enum Actions {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
+    UP = 1,
+    DOWN = 2,
+    LEFT = 3,
+    RIGHT = 4
 }
 
 @Injectable()
 export class GameInput implements MouseHandler, KeyHandler {
 
     private keyboard = new KeyboardLayoutDetector();
+    private actions_active: Actions[] = [];
 
     constructor(private lycan: LycanService) {
         this.keyboard.register('qwerty', Actions.UP, Keys.W);
@@ -29,29 +30,63 @@ export class GameInput implements MouseHandler, KeyHandler {
     }
 
     update() {
-        this.keyboard.nextKeyState();
     }
 
     keyPressed(event: KeyboardEvent) {
+        this.keyboard.nextKeyState();
         this.keyboard.ingestPressed(event);
         if (this.keyboard.isJustPressed(Actions.UP)) {
+            this.actions_active.push(Actions.UP);
             this.lycan.sendWalk(Direction.UP);
         } else if (this.keyboard.isJustPressed(Actions.DOWN)) {
+            this.actions_active.push(Actions.DOWN);
             this.lycan.sendWalk(Direction.DOWN);
         } else if (this.keyboard.isJustPressed(Actions.LEFT)) {
+            this.actions_active.push(Actions.LEFT);
             this.lycan.sendWalk(Direction.LEFT);
         } else if (this.keyboard.isJustPressed(Actions.RIGHT)) {
+            this.actions_active.push(Actions.RIGHT);
             this.lycan.sendWalk(Direction.RIGHT);
         }
     }
 
     keyReleased(event: KeyboardEvent) {
+        this.keyboard.nextKeyState();
         this.keyboard.ingestReleased(event);
-        if (this.keyboard.isReleased(Actions.UP) &&
-            this.keyboard.isReleased(Actions.DOWN) &&
-            this.keyboard.isReleased(Actions.LEFT) &&
-            this.keyboard.isReleased(Actions.RIGHT)) {
-            this.lycan.sendStopWalk();
+        let send_action = false;
+        if (this.keyboard.isJustReleased(Actions.UP)) {
+            let pos = this.actions_active.indexOf(Actions.UP);
+            if (pos != -1) {
+                this.actions_active.splice(pos, 1);
+                send_action = true;
+            }
+        } else if (this.keyboard.isJustReleased(Actions.DOWN)) {
+            let pos = this.actions_active.indexOf(Actions.DOWN);
+            if (pos != -1) {
+                this.actions_active.splice(pos, 1);
+                send_action = true;
+            }
+        } else if (this.keyboard.isJustReleased(Actions.LEFT)) {
+            let pos = this.actions_active.indexOf(Actions.LEFT);
+            if (pos != -1) {
+                this.actions_active.splice(pos, 1);
+                send_action = true;
+            }
+        } else if (this.keyboard.isJustReleased(Actions.RIGHT)) {
+            let pos = this.actions_active.indexOf(Actions.RIGHT);
+            if (pos != -1) {
+                this.actions_active.splice(pos, 1);
+                send_action = true;
+            }
+        }
+        if (send_action) {
+            let len = this.actions_active.length;
+            if (len == 0) {
+                this.lycan.sendStopWalk();
+            } else {
+                let last = this.actions_active[len - 1];
+                this.lycan.sendWalk(dir(last));
+            }
         }
     }
 
@@ -66,4 +101,14 @@ export class GameInput implements MouseHandler, KeyHandler {
 
     mouseWheel(_event: WheelEvent) {
     }
+}
+
+function dir(action: Actions): Direction {
+    switch(action) {
+        case Actions.UP: return Direction.UP;
+        case Actions.DOWN: return Direction.DOWN;
+        case Actions.LEFT: return Direction.LEFT;
+        case Actions.RIGHT: return Direction.RIGHT;
+    }
+    return Direction.UP;
 }
