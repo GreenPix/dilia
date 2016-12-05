@@ -58,14 +58,19 @@ export class KeyboardLayoutDetector {
             this.keyoccurences[event.keyCode] += 1;
             this.detect();
         } else {
-            this.keystate[event.keyCode] = KeyState.JUST_PRESSED;
+            let s = this.keystate[event.keyCode];
+            this.keystate[event.keyCode] =
+                ((~s & KeyState.PRESSED) << 1) | KeyState.PRESSED;
         }
     }
 
     ingestReleased(event: KeyboardEvent) {
         if (!isKeyValid(event)) return;
         if (this.state != DetectionState.NONE) {
-            this.keystate[event.keyCode] = KeyState.JUST_RELEASED;
+            let s = this.keystate[event.keyCode];
+            this.keystate[event.keyCode] =
+                ((~s & KeyState.RELEASED) << 1) | KeyState.RELEASED;
+
         }
     }
 
