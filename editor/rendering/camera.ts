@@ -45,7 +45,7 @@ export class Camera implements Command, ViewportListener {
     }
 
     execute(ctx: Context) {
-        ctx.gl.viewport(0, 0, ctx.gl.drawingBufferWidth, ctx.gl.drawingBufferHeight);
+        ctx.gl.viewport(0, 0, this.viewport_width, this.viewport_height);
         ctx.active_program.setUniforms({
             viewport_size: [
                 this.viewport_width / this.zoom_factor,
