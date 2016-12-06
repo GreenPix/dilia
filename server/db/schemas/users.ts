@@ -1,12 +1,13 @@
 import {Schema, model, Document, Model, Types} from 'mongoose';
-import crypto = require('crypto');
+import {paramsSync, kdfSync, verifyKdf} from 'scrypt';
+
+let kdfParams = paramsSync(0.1);
 
 let mongooseUserSchema = new Schema({
     username: { type: String, default: ''},
     email: { type: String, default: '' },
     provider: { type: String, default: '' },
-    hashed_password: { type: String, default: '' },
-    salt: { type: String, default: '' },
+    hashed_password: Buffer,
     authToken: { type: String, default: '' },
     github: {},
     google: {},
@@ -20,15 +21,14 @@ export interface UserSchema {
     username: string;
     email: string;
     provider: string;
-    hashed_password?: string;
-    salt?: string;
+    hashed_password?: Buffer;
     authToken?: string;
     google?: any;
     github?: any;
     lastUsedResources: Array<{ assocSchema: string; id: Types.ObjectId }>;
 
     // Need to be in sync with 'method' call
-    authenticate(password: string): boolean;
+    authenticate(password: string): Promise<boolean>;
 }
 
 
@@ -38,7 +38,6 @@ export interface UserSchema {
 mongooseUserSchema.virtual('password')
     .set(function (password) {
         this._password = password;
-        this.salt = this.makeSalt();
         this.hashed_password = this.encryptPassword(password);
     })
     .get(function () { return this._password; });
@@ -101,23 +100,16 @@ mongooseUserSchema.pre('save', function (next) {
 
 mongooseUserSchema.method({
 
-    authenticate: function (password: string): boolean {
-        return this.encryptPassword(password) === this.hashed_password;
+    authenticate: function (password: string): Promise<boolean> {
+        return verifyKdf(this.hashed_password, password);
     },
 
-    makeSalt: function (): string {
-        return Math.round((new Date().valueOf() * Math.random())) + '';
-    },
-
-    encryptPassword: function (password: string): string {
-        if (!password) return '';
+    encryptPassword: function (password: string): Buffer {
+        if (!password) return undefined;
         try {
-            return crypto
-                .createHmac('sha1', this.salt)
-                .update(password)
-                .digest('hex');
+            return kdfSync(password, kdfParams);
         } catch (err) {
-            return '';
+            return undefined;
         }
     },
 
