@@ -27,10 +27,19 @@ passportUse(new LocalStrategy({
         .select('username email hashed_password salt')
         .exec((err, user) => {
             if (err) return done(err);
+            let errorObject = { message: 'wrong username or password' };
             if (!user || !user.authenticate(password)) {
-                return done(null, false, { message: 'wrong username or password' });
+                return done(null, false, errorObject);
+            } else {
+                user.authenticate(password)
+                    .then(res => {
+                        if (res) {
+                            done(null, user);
+                        } else {
+                            done(null, false, errorObject);
+                        }
+                    });
             }
-            return done(null, user);
         });
 }));
 
