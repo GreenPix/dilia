@@ -24,8 +24,7 @@ export class MapService {
     }
 
     getMapList(): Observable<MapStatusExtra[]> {
-        return this.http.get('/api/maps/')
-            .map(res => res.json());
+        return this.maps;
     }
 
     getMapPreview(map_id: string): string {
