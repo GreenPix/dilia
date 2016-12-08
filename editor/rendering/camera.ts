@@ -114,10 +114,10 @@ export class Camera implements Command, ViewportListener {
 export class SimpleCamera implements Command {
 
     constructor(
-        private viewport_width,
-        private viewport_height,
-        private object_viewport_width,
-        private object_viewport_height
+        private viewport_width: number,
+        private viewport_height: number,
+        private object_viewport_width: number,
+        private object_viewport_height: number
     ) {}
 
     execute(ctx: Context) {

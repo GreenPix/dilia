@@ -98,7 +98,7 @@ export class TextureLoader {
                           new Uint8Array([0, 0, 255, 255]));
             img.src = path;
 
-            let isPowerOf2 = (value) => (value & (value - 1)) == 0;
+            let isPowerOf2 = (value: number) => (value & (value - 1)) == 0;
 
             img.onload = () => {
                 gl.bindTexture(gl.TEXTURE_2D, tex_id);

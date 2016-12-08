@@ -3,6 +3,7 @@ import {SocketPacket, SocketMethod} from '../shared';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Subscriber} from 'rxjs/Subscriber';
+import {Subject} from 'rxjs/Subject';
 import {Http, Response, Headers} from '@angular/http';
 // Temporary
 // import {getResponseURL, isSuccess} from '@angular/http';
@@ -25,30 +26,23 @@ export interface HttpEvent {
 @Injectable()
 export class HttpService {
 
-    private observable: Observable<HttpEvent>;
-    private _subscriber: Subscriber<HttpEvent>;
+    private alert_stream: Subject<HttpEvent> = new Subject();
 
-    constructor(private http: Http) {
-        this.observable = new Observable<HttpEvent>(subscriber => {
-            this._subscriber = subscriber;
-        }).share();
-    }
+    constructor(private http: Http) {}
 
     httpEvents(): Observable<HttpEvent> {
-        return this.observable;
+        return this.alert_stream;
     }
 
     post<T>(path: string, json?: T): Observable<Response> {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
-        let observable = this.http.post(path, JSON.stringify(json || {}), {
+        return this.http.post(path, JSON.stringify(json || {}), {
             headers: headers
-        }).share();
-        observable.subscribe(
+        }).do(
             res => this.injectHttpEvent(res),
             res => this.injectHttpEvent(res)
         );
-        return observable;
     }
 
     get(path: string): Observable<Response> {
@@ -61,29 +55,28 @@ export class HttpService {
     }
 
     private injectHttpEvent(res: Response) {
-        if (!this._subscriber) return;
         if (!res) {
-            this._subscriber.next({
+            this.alert_stream.next({
                 kind: 'error',
                 message: 'Server unreachable'
             });
         }
         else if (res.status === 200) {
-            this._subscriber.next({
+            this.alert_stream.next({
                 kind: 'success',
                 message: (<any>res.json()).message
             });
         }
         else if (res.status === 400) {
             let ev: any = res.json();
-            this._subscriber.next({
+            this.alert_stream.next({
                 kind: 'error',
                 message: ev.message,
                 errors: ev.errors
             });
         }
         else {
-            this._subscriber.next({
+            this.alert_stream.next({
                 kind: 'warning',
                 message: (<any>res.json()).message
             });
@@ -102,7 +95,7 @@ export class SocketIOService {
 
     get<T>(apicall: string): Observable<T> {
         return new Observable<T>((subscriber: Subscriber<T>) => {
-            this.socket.on(apicall, (value) => subscriber.next(value));
+            this.socket.on(apicall, (value: T) => subscriber.next(value));
             this.socket.emit('data', {
                 apicall: apicall,
                 method: SocketMethod.GET,

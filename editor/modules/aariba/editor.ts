@@ -165,7 +165,7 @@ export class RuleEditor implements AfterViewInit {
         this.editor.getSession().setMode(new AaribaScriptTextMode());
         this.editor.getSession().setTabSize(2);
         this.editor.getSession().setUseSoftTabs(true);
-        this.editor.addEventListener('change', (action, editor) => {
+        this.editor.addEventListener('change', (action: any, editor: any) => {
             this.listenToChange(action, editor);
         });
     }

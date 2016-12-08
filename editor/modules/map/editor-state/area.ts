@@ -28,6 +28,6 @@ export abstract class Area {
         return this.scene;
     }
 
-    abstract activate();
-    abstract deactivate();
+    abstract activate(): void;
+    abstract deactivate(): void;
 }

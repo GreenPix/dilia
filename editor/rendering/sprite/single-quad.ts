@@ -1,9 +1,9 @@
-import {Program, VertexBuffer, texRepeat, Pixels} from '../gl/gl';
-import {BufferLinkedToProgram, IndicesBuffer} from '../gl/gl';
-import {glDrawElements, Geom, Texture} from '../gl/gl';
-import {updateTextureFromPixels} from '../gl/gl';
-import {genQuadI, genQuadData} from '../gl/gl';
-import {Obj2D} from './interfaces';
+import {Program, VertexBuffer, texRepeat, Pixels} from '../../gl/gl';
+import {BufferLinkedToProgram, IndicesBuffer} from '../../gl/gl';
+import {glDrawElements, Geom, Texture} from '../../gl/gl';
+import {updateTextureFromPixels} from '../../gl/gl';
+import {genQuadI, genQuadData} from '../../gl/gl';
+import {Obj2D} from '../interfaces';
 
 
 /// Sprite builder to customize
@@ -121,10 +121,6 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         return this;
     }
 
-    initWith(tex: Texture) {
-        this.tex = tex;
-    }
-
     draw(gl: WebGLRenderingContext, program: Program) {
         // Don't draw if this sprite is hidden.
         if (this.is_hidden) return;
@@ -132,9 +128,11 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         if (this.vertex_linked instanceof VertexBuffer &&
             this.texCoord_linked instanceof VertexBuffer) {
             this.vertex_linked = new BufferLinkedToProgram(
-                program, this.vertex_linked as VertexBuffer, 'pos');
+                program, this.vertex_linked, 'pos'
+            );
             this.texCoord_linked = new BufferLinkedToProgram(
-                program, this.texCoord_linked as VertexBuffer, 'tex');
+                program, this.texCoord_linked, 'tex'
+            );
         }
 
         program.setUniforms({

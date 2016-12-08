@@ -215,7 +215,7 @@ export class AaribaScriptTextMode extends TextMode
         this.$behaviour = new AaribaBehaviour();
     }
 
-    getNextLineIndent(state, line, tab): string {
+    getNextLineIndent(state: any, line: any, tab: any): string {
         let indent = this.$getIndent(line);
 
         let tokenizedLine = this.getTokenizer().getLineTokens(line, state);
@@ -247,14 +247,14 @@ export class AaribaScriptTextMode extends TextMode
         return indent;
     };
 
-    checkOutdent(line, input): boolean {
+    checkOutdent(line: any, input: any): boolean {
         if (! /^\s+$/.test(line))
             return false;
 
         return /^\s*\}/.test(input);
     }
 
-    autoOutdent(_state, doc, row) {
+    autoOutdent(_state: any, doc: any, row: any) {
         let line = doc.getLine(row);
         let match = line.match(/^(\s*\})/);
 
@@ -269,7 +269,7 @@ export class AaribaScriptTextMode extends TextMode
         doc.replace(new Range(row, 0, row, column-1), indent);
     }
 
-    $getIndent(line) {
+    $getIndent(line: any) {
         return line.match(/^\s*/)[0];
     }
 }

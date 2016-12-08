@@ -114,7 +114,7 @@ export class LycanService {
         this.socket = io('ws://localhost:9010', {
             path: '/lycan',
         });
-        this.socket.on('message', (message) => {
+        this.socket.on('message', (message: string) => {
             let parsed = parse(message);
             if (parsed !== undefined) {
                 this.input_stream.next(parsed);
