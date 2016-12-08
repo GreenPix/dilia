@@ -8,6 +8,9 @@ const sprite_fragment_shader = require<string>('./shaders/sprite.fs');
 const tiles_vertex_shader = require<string>('./shaders/tiles.vs');
 const tiles_fragment_shader = require<string>('./shaders/tiles.fs');
 
+const sprite_batch_vertex_shader = require<string>('./shaders/sprite_batch.vs');
+const sprite_batch_fragment_shader = require<string>('./shaders/sprite_batch.fs');
+
 
 export class ProgramEl implements Command {
 
@@ -34,4 +37,10 @@ export class TileProgram extends ProgramEl {
 
 export class SpriteProgram extends ProgramEl {
     constructor() { super(sprite_vertex_shader, sprite_fragment_shader); }
+}
+
+export class SpriteBatchProgram extends ProgramEl {
+    constructor() {
+        super(sprite_batch_vertex_shader, sprite_batch_fragment_shader);
+    }
 }

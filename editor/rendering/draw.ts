@@ -5,6 +5,7 @@ import {Command, TextureGetter} from './interfaces';
 import {Context} from './context';
 import {TilesLayer, TilesLayerBuilder} from './tiles';
 import {SpriteObject, SpriteBuilder} from './sprite';
+import {SpriteBatchObject} from './sprite';
 import {Texture, Pixels} from '../gl/tex';
 import * as values from 'lodash/values';
 
@@ -123,6 +124,42 @@ export class GenericRenderEl extends BaseRenderEl {
 
 }
 
+export class SpriteBatchRenderEl extends BaseRenderEl {
+
+    private sprite_batch: SpriteBatchObject;
+
+    constructor(
+        gl: WebGLRenderingContext,
+        tex_loader: TextureLoader
+    ) {
+        super(gl, tex_loader);
+    }
+
+    loadSpriteObject(
+        tex_desc: string | [number, number, number, number] | Pixels | Texture,
+        cb: (object: SpriteBatchObject) => void
+    ): this {
+        this.sprite_batch = new SpriteBatchObject(this.gl);
+        if (tex_desc instanceof Texture) {
+            this.sprite_batch.tex = tex_desc;
+            cb(this.sprite_batch);
+        } else {
+            this.loadTexture(tex_desc, tex => {
+                this.sprite_batch.tex = tex;
+                cb(this.sprite_batch);
+            });
+        }
+        return this;
+    }
+
+    getTextures(): Array<WebGLTexture> {
+        return [this.sprite_batch.tex.tex_id];
+    }
+
+    protected drawImpl(ctx: Context) {
+        this.sprite_batch.draw(this.gl, ctx.active_program);
+    }
+}
 
 export class SpriteRenderEl extends BaseRenderEl {
 
