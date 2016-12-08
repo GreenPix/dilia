@@ -83,6 +83,10 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
     }
 
     drawSingleLayer(gl: WebGLRenderingContext, program: Program, layer_index: number) {
+
+        // Skip malformed indexes
+        if (layer_index >= this.layers.length) return;
+
         // Initialization if not done previously
         this.initBuffersIfNeeded(program);
 
