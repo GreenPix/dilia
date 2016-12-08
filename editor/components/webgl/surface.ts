@@ -6,6 +6,7 @@ import {ViewportListener} from '../../rendering/viewport';
 import {requestAnimationFrame} from '../../util/requestAnimationFrame';
 import {GenericRenderEl} from '../../rendering/draw';
 import {SpriteRenderEl} from '../../rendering/draw';
+import {SpriteBatchRenderEl} from '../../rendering/draw';
 import {TilesRenderEl} from '../../rendering/draw';
 
 import {init_gl_default} from './helpers';
@@ -100,18 +101,19 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     }
 
     createGenericRenderingContext(): GenericRenderEl {
-        let render_ctx = new GenericRenderEl(this.gl, this.tex_loader);
-        return render_ctx;
+        return new GenericRenderEl(this.gl, this.tex_loader);
     }
 
     createTilesRenderEl(): TilesRenderEl {
-        let render_ctx = new TilesRenderEl(this.gl, this.tex_loader);
-        return render_ctx;
+        return new TilesRenderEl(this.gl, this.tex_loader);
     }
 
     createSpriteRenderEl(): SpriteRenderEl {
-        let render_ctx = new SpriteRenderEl(this.gl, this.tex_loader);
-        return render_ctx;
+        return new SpriteRenderEl(this.gl, this.tex_loader);
+    }
+
+    createSpriteBatchRenderEl(): SpriteBatchRenderEl {
+        return new SpriteBatchRenderEl(this.gl, this.tex_loader);
     }
 
     ngOnDestroy(): void {
