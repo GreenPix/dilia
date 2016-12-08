@@ -30,7 +30,7 @@ export class WebGLSingleTextureSurface implements AfterViewInit {
         this.tex_loader.loadTextureFromPixels(pixels, tex => {
             this.sprite.tex = tex;
             this.sprite.buildWithEntireTexture();
-            setTimeout(() => this.refresh(), 100);
+            setTimeout(() => this.refresh(), 10);
         });
     }
 

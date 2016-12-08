@@ -6,6 +6,7 @@ import {ActivatedRoute} from '@angular/router';
 import {WebGLSurface} from '../../components';
 import {MapManager, Map} from '../../models/map';
 
+import {GameEngine} from './game-engine';
 import {GameState} from './game-state';
 import {LycanService} from './lycan.service';
 import {GameInput} from './game-input';
@@ -22,9 +23,10 @@ let gameCanvasScss = require<Webpack.Scss>('./game-canvas.scss');
     providers: [
         LycanService,
         GameInput,
+        GameState,
         PhysicsEngine,
         Player,
-        GameState,
+        GameEngine,
     ]
 })
 export class GameCanvas implements AfterViewInit {
@@ -37,7 +39,7 @@ export class GameCanvas implements AfterViewInit {
         private map_manager: MapManager,
         private route: ActivatedRoute,
         private location: Location,
-        private state: GameState,
+        private state: GameEngine,
     ) {}
 
     goToPreviousView() {
