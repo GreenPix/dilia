@@ -23,8 +23,8 @@ cd /vagrant
 if ! type "npm" > /dev/null; then
 
   # Install node / npm
-  nvm install stable
-  nvm alias default stable
+  nvm install 6
+  nvm alias default 6
 
   # Install dev-tools
   npm install -g mongo-express
@@ -44,15 +44,9 @@ export NODE_ENV="development"
 if [ ! -d "node_modules" ]; then
   npm install
 else
-  npm run copy
   echo "node_modules folder is already present"
 fi
 
-echo ""
-echo "###################################"
-echo "        building the client"
-echo ""
-npm run build-client
 echo ""
 echo "###################################"
 echo "        building the server"
