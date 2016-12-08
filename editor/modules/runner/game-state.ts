@@ -1,114 +1,102 @@
+import * as sortedIndexBy from 'lodash/sortedIndexBy';
+
 import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
-import {CommandBuffer, ClearAll, FlipY} from '../../rendering/commands';
-import {SpriteProgram, TileProgram} from '../../rendering/shaders';
-import {DefaultFBO} from '../../rendering/fbo';
-import {Camera} from '../../rendering/camera';
-import {SpriteHandle} from '../../rendering/sprite';
-
-import {WebGLSurface} from '../../components';
-
-import {Map} from '../../models/map';
-import {PhysicsEngine} from './physics-engine';
-import {GameInput} from './game-input';
-import {Player} from './player';
+import {Vec2, length2} from '../../util/math';
 import {LycanService} from './lycan.service';
-import {Hud} from './hud';
+import {Player} from './player';
+
+
+interface Entity {
+    pos: Vec2;
+    id: number;
+    next_pos: Vec2;
+    nominal_speed: number;
+    speed: Vec2;
+}
 
 
 @Injectable()
 export class GameState {
 
-    private surface: WebGLSurface;
-    private camera = new Camera();
-    private last_time: number;
-    private player_handle: SpriteHandle;
+    entities: Entity[] = [];
+
+    // The player entity
+    player: Entity;
+
+    private count_changed = new BehaviorSubject<Entity[]>(this.entities);
 
     constructor(
         private lycan: LycanService,
-        private input: GameInput,
-        private player: Player,
-        private physics: PhysicsEngine,
-    ) {}
-
-    init(surface: WebGLSurface) {
-        this.surface = surface;
-        this.surface.setKeyHandler(this.input);
-        this.surface.setMouseHandler(this.input);
-        this.surface.addViewportListener(this.camera);
-    }
-
-    cleanUp() {
-        this.surface.removeViewportListener(this.camera);
-        this.surface.setKeyHandler();
-        this.surface.setMouseHandler();
-    }
-
-    play(map: Map) {
-        let chipsets_pos: {[path: string]: number} = {};
-        let chipsets_path: string[] = [];
-        map.fillChipsetsInfo(chipsets_pos, chipsets_path);
-
-        let map_tiled = this.surface.createTilesRenderEl();
-        map_tiled.loadTileLayerObject(chipsets_path, (chipsets, builder) => {
-            let handle = builder.setWidth(map.width)
-                .setHeight(map.height)
-                .tileSize(map.tile_size);
-            for (let i = 0; i < map.layers.length; ++i) {
-                let layer = map.layers[i].raw.map(pl => {
-                    return {
-                        tiles_id: pl.tiles_id,
-                        chipset: chipsets[chipsets_pos[pl.chipset]]
-                    };
-                });
-                handle.addLayer(layer);
-            }
-            this.camera.centerOn(handle.build());
-        });
-        let player = this.surface.createSpriteRenderEl();
-        player.loadSpriteObject([125, 125, 125, 255], builder => {
-            this.player_handle = builder.buildWithSize(16, 24);
-        });
-        let hud = new Hud(this.player, this.lycan, this.surface);
-
-        let pipeline = new CommandBuffer([
-            DefaultFBO,
-            ClearAll,
-            new TileProgram(),
-            this.camera,
-            map_tiled,
-            FlipY,
-            new SpriteProgram(),
-            this.camera,
-            player,
-            hud,
-            () => {
-                let new_time = Date.now();
-                if (!this.last_time) {
-                    this.last_time = new_time;
-                }
-                let elapsed = (new_time - this.last_time) / 1000;
-                this.input.update(elapsed);
-                this.physics.update(elapsed);
-                this.player_handle.position(
-                    [this.player.pos.x, this.player.pos.y]
-                );
-                this.last_time = new_time;
-            }
-        ]);
-
-        this.surface.setActivePipeline(pipeline);
-        this.surface.focus();
-        this.lycan.connectToLycan();
-
-        // TODO(Nemikolh): Move the two below elsewhere.
+        private player_info: Player
+    ) {
         this.lycan.getUpdateStream().subscribe(up => {
-            if (up.kind === 'NewEntity' && up.entity == this.player.id) {
-                this.player.nominal_speed = up.nominal_speed;
+            switch (up.kind) {
+                case 'NewEntity':
+                    let entity: Entity = {
+                        pos: up.position,
+                        next_pos: up.position,
+                        nominal_speed: up.nominal_speed,
+                        speed: { x: 0, y: 0 },
+                        id: up.entity,
+                    };
+                    if (this.player_info.id == up.entity) {
+                        this.player = entity;
+                        this.player_info.nominal_speed = up.nominal_speed;
+                    } else {
+                        this.addNewEntity(entity);
+                    }
+                    break;
+                case 'EntityHasQuit':
+                    this.removeEntity(up.entity);
+                    break;
+                case 'GameUpdate':
+                    let player_update;
+                    for (let update of up.entities) {
+                        if (update.entity_id == this.player.id) {
+                            player_update = update;
+                            continue;
+                        }
+                        let index = sortedIndexBy(
+                            this.entities, {id: update.entity_id}, v => v.id
+                        );
+                        let entity = this.entities[index];
+                        entity.next_pos = update.position;
+                        entity.nominal_speed = length2(update.speed);
+                    }
+                    if (player_update) {
+                        this.player.next_pos = player_update.position;
+                        this.player_info.pos = player_update.position;
+                    }
+                    break;
             }
         });
-        this.lycan.playerGameUpdateStream().subscribe(player_update => {
-            this.player.pos = player_update.position;
-        });
+
     }
+
+    getEntityCountChangedObservable(): Observable<Entity[]> {
+        return this.count_changed;
+    }
+
+    private addNewEntity(entity: Entity) {
+        let index = sortedIndexBy(
+            this.entities, entity, v => v.id
+        );
+        if (index < this.entities.length && this.entities[index].id === entity.id) {
+            return;
+        }
+        this.entities.splice(index, 0, entity);
+        this.count_changed.next(this.entities);
+    }
+
+    private removeEntity(entity_id: number) {
+        let index = sortedIndexBy(
+            this.entities, {id: entity_id}, v => v.id
+        );
+        this.entities.splice(index, 1);
+        this.count_changed.next(this.entities);
+    }
+
 }

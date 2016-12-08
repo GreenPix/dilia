@@ -133,6 +133,9 @@ export class LycanService {
             .filter(val => val.kind == 'ThisIsYou')
             .take(1)
             .subscribe(val => this.player.id = (val as ThisIsYou).entity);
+        this.getUpdateStream()
+            .filter(val => val.kind !== 'GameUpdate')
+            .subscribe(val => console.log(val));
         this.sendRawCommand(authenticate);
     }
 
