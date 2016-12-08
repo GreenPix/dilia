@@ -53,7 +53,7 @@ abstract class BaseRenderEl implements Command, TextureGetter {
 
     abstract getTextures(): Array<WebGLTexture>;
 
-    protected abstract drawImpl(ctx: Context);
+    protected abstract drawImpl(ctx: Context): void;
 }
 
 export class GenericRenderEl extends BaseRenderEl {
@@ -141,11 +141,11 @@ export class SpriteRenderEl extends BaseRenderEl {
     ): this {
         this.sprite_el = new SpriteObject(this.gl);
         if (tex_desc instanceof Texture) {
-            this.sprite_el.initWith(tex_desc);
+            this.sprite_el.tex = tex_desc;
             cb(this.sprite_el);
         } else {
             this.loadTexture(tex_desc, tex => {
-                this.sprite_el.initWith(tex);
+                this.sprite_el.tex = tex;
                 cb(this.sprite_el);
             });
         }
@@ -157,7 +157,6 @@ export class SpriteRenderEl extends BaseRenderEl {
     }
 
     protected drawImpl(ctx: Context) {
-
         this.sprite_el.draw(this.gl, ctx.active_program);
     }
 }

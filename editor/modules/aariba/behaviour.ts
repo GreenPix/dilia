@@ -21,7 +21,7 @@ let SAFE_INSERT_BEFORE_TOKENS =
 // everything except the '{' and then adding again a '\n'
 // does not behave identically. Furthermore, I think we should
 // match the brackets. (Lookup for the next possible bracket).
-let context;
+let context: any;
 let contextCache: any = {};
 
 function initContext(editor: AceAjax.Editor) {
@@ -44,7 +44,7 @@ function initContext(editor: AceAjax.Editor) {
     };
 }
 
-function getWrapped(selection, selected, opening, closing) {
+function getWrapped(selection: any, selected: any, opening: any, closing: any) {
     let rowDiff = selection.end.row - selection.start.row;
     return {
         text: opening + selected + closing,
@@ -220,7 +220,7 @@ export class AaribaBehaviour extends Behaviour {
         this.add('parens', 'deletion', on_delete_paren);
     }
 
-    static isSaneInsertion(editor, session) {
+    static isSaneInsertion(editor: any, session: any) {
         let cursor = editor.getCursorPosition();
         let iterator = new TokenIterator(session, cursor.row, cursor.column);
 
@@ -238,11 +238,11 @@ export class AaribaBehaviour extends Behaviour {
             this.$matchTokenType(iterator.getCurrentToken() || 'text', SAFE_INSERT_BEFORE_TOKENS);
     }
 
-    static $matchTokenType(token, types) {
+    static $matchTokenType(token: any, types: any) {
         return types.indexOf(token.type || token) > -1;
     }
 
-    static recordAutoInsert(editor, session, bracket) {
+    static recordAutoInsert(editor: any, session: any, bracket: any) {
         let cursor = editor.getCursorPosition();
         let line = session.doc.getLine(cursor.row);
         // Reset previous state if text or context changed too much
@@ -253,7 +253,7 @@ export class AaribaBehaviour extends Behaviour {
         context.autoInsertedBrackets++;
     }
 
-    static recordMaybeInsert(editor, session, bracket) {
+    static recordMaybeInsert(editor: any, session: any, bracket: any) {
         let cursor = editor.getCursorPosition();
         let line = session.doc.getLine(cursor.row);
         if (!this.isMaybeInsertedClosing(cursor, line))
@@ -264,14 +264,14 @@ export class AaribaBehaviour extends Behaviour {
         context.maybeInsertedBrackets++;
     }
 
-    static isAutoInsertedClosing(cursor, line, bracket) {
+    static isAutoInsertedClosing(cursor: any, line: any, bracket: any) {
         return context.autoInsertedBrackets > 0 &&
             cursor.row === context.autoInsertedRow &&
             bracket === context.autoInsertedLineEnd[0] &&
             line.substr(cursor.column) === context.autoInsertedLineEnd;
     }
 
-    static isMaybeInsertedClosing(cursor, line) {
+    static isMaybeInsertedClosing(cursor: any, line: any) {
         return context.maybeInsertedBrackets > 0 &&
             cursor.row === context.maybeInsertedRow &&
             line.substr(cursor.column) === context.maybeInsertedLineEnd &&

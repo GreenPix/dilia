@@ -35,7 +35,11 @@ import {App} from './app';
         AuthGuard,
         SocketIOService,
         { provide: User, useValue: User.default() },
-        { provide: AaribaScriptSettings, useFactory: user => user.aaribaScriptSettings, deps: [User] },
+        {
+            provide: AaribaScriptSettings,
+            useFactory: (user: User) => user.aaribaScriptSettings,
+            deps: [User]
+        },
         { provide: LocationStrategy, useClass: HashLocationStrategy },
     ],
     bootstrap: [App]

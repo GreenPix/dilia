@@ -7,7 +7,7 @@ export interface Any {}
 
 export interface IsHighlightRules extends IsType<IsHighlightRules> {
     normalizeRules(): void;
-    embedRules<T extends IsHighlightRules>(highlightRule: T, a: string, b: any[]);
+    embedRules<T extends IsHighlightRules>(highlightRule: T, a: string, b: any[]): void;
 }
 
 export interface IsTextMode extends IsType<IsTextMode>, AceAjax.TextMode {

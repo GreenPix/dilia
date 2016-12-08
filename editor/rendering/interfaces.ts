@@ -13,14 +13,14 @@ export interface Command {
 
     /// Execute this element. This can modify the context
     /// as well as changing the WebGL state.
-    execute(ctx: Context);
+    execute(ctx: Context): void;
 }
 
 /// A pipeline is the unit executed by a surface.
 /// Within this single call, everything is expected to
 /// be rendered on screen.
 export interface Pipeline {
-    render(gl: WebGLRenderingContext);
+    render(gl: WebGLRenderingContext): void;
 }
 
 export interface TextureGetter {

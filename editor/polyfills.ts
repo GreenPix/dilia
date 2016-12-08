@@ -10,9 +10,6 @@ import 'core-js/client/shim';
 import 'reflect-metadata';
 import 'zone.js/dist/zone';
 
-// Typescript emit helpers polyfill
-import 'ts-helpers';
-
 if (IS_PRODUCTION) {
   // Production
 

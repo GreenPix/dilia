@@ -56,7 +56,7 @@ export class AutocompleteFiles {
     }
 
     ngAfterViewInit() {
-        let throttled = throttle(value => this.filterFiles(value.search), 10);
+        let throttled = throttle((value: any) => this.filterFiles(value.search), 10);
         this.form.control.valueChanges
             .filter(_ => this.form.valid &&
                 this.input_search.getHtmlElement() === document.activeElement)

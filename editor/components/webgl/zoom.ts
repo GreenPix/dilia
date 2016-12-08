@@ -1,10 +1,10 @@
 import {Camera} from '../../rendering/camera';
 
 export interface MouseObjectSpace {
-    mouseUp(button: number, mx: number, my: number);
-    mouseDown(button: number, mx: number, my: number);
-    mouseMove(event: MouseEvent, mx: number, my: number);
-    mouseWheel(event: WheelEvent);
+    mouseUp(button: number, mx: number, my: number): void;
+    mouseDown(button: number, mx: number, my: number): void;
+    mouseMove(event: MouseEvent, mx: number, my: number): void;
+    mouseWheel(event: WheelEvent): void;
 }
 
 

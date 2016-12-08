@@ -1,4 +1,4 @@
 
 export interface ViewportListener {
-    viewport(width: number, height: number);
+    viewport(width: number, height: number): void;
 }
