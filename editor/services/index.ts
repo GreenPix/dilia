@@ -1,6 +1,7 @@
 import * as io from 'socket.io-client';
 import {SocketPacket, SocketMethod} from '../shared';
 import {Injectable} from '@angular/core';
+import {NgZone} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Subscriber} from 'rxjs/Subscriber';
 import {Subject} from 'rxjs/Subject';
@@ -89,13 +90,15 @@ export class SocketIOService {
 
     private socket: SocketIOClient.Socket;
 
-    constructor() {
+    constructor(private zone: NgZone) {
         this.socket = io();
     }
 
     get<T>(apicall: string): Observable<T> {
         return new Observable<T>((subscriber: Subscriber<T>) => {
-            this.socket.on(apicall, (value: T) => subscriber.next(value));
+            this.socket.on(apicall, (value: T) =>
+                this.zone.run(() => subscriber.next(value))
+            );
             this.socket.emit('data', {
                 apicall: apicall,
                 method: SocketMethod.GET,
