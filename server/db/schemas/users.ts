@@ -36,7 +36,7 @@ export interface UserSchema {
  * Virtuals
  */
 mongooseUserSchema.virtual('password')
-    .set(function (password) {
+    .set(function (password: string) {
         this._password = password;
         this.hashed_password = this.encryptPassword(password);
     })
@@ -45,12 +45,12 @@ mongooseUserSchema.virtual('password')
 /**
  * Validators for fields
  */
-mongooseUserSchema.path('username').validate(function (username) {
+mongooseUserSchema.path('username').validate(function (username: string) {
     if (this.skipValidation()) return true;
     return username.length;
 }, 'User name cannot be empty');
 
-mongooseUserSchema.path('username').validate(function (username, cb) {
+mongooseUserSchema.path('username').validate(function (username: string, cb: Function) {
     if (this.skipValidation()) cb(true);
 
     // Check only when it is a new user or when email field is modified
@@ -63,12 +63,12 @@ mongooseUserSchema.path('username').validate(function (username, cb) {
     }
 }, 'User name already exists');
 
-mongooseUserSchema.path('email').validate(function (email) {
+mongooseUserSchema.path('email').validate(function (email: string) {
     if (this.skipValidation()) return true;
     return email.length;
 }, 'Email cannot be empty');
 
-mongooseUserSchema.path('email').validate(function (email, cb) {
+mongooseUserSchema.path('email').validate(function (email: string, cb: Function) {
     if (this.skipValidation()) cb(true);
 
     // Check only when it is a new user or when email field is modified
@@ -81,7 +81,7 @@ mongooseUserSchema.path('email').validate(function (email, cb) {
     }
 }, 'Email already exists');
 
-mongooseUserSchema.path('hashed_password').validate(function (hashed_password) {
+mongooseUserSchema.path('hashed_password').validate(function (hashed_password: string) {
     if (this.skipValidation()) return true;
     return hashed_password.length && this._password.length;
 }, 'Password cannot be empty');

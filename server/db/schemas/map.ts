@@ -64,6 +64,8 @@ export interface MapProperties {
     contributors: Types.ObjectId[];
 }
 
+type KeysOfMapProperties = keyof MapProperties;
+
 export interface MapSchema extends MapProperties {
 
     toJsmap(): MapJsmap;
@@ -105,16 +107,17 @@ export interface MapSchema extends MapProperties {
 //
 //      buf.toString('base64')
 //
+//
 mongooseMapSchema.method({
 
     toJsmap: function (): MapJsmap {
 
         let self: MapDocument = this;
         let res: MapJsmap =  pick<any, MapSchema>(self,
-            ['name', 'created_on', 'width', 'height', 'tile_size']
+            ['name', 'created_on', 'width', 'height', 'tile_size'] as KeysOfMapProperties[]
         );
 
-        let partial_layers_base64 = [];
+        let partial_layers_base64: { tiles_ids: string, chipset: string }[] = [];
         let layers_base64 = [partial_layers_base64];
         let current_depth: number = 0;
 
@@ -173,7 +176,7 @@ mongooseMapSchema.path('revisions').validate(function (revisions: Array<Revision
     return revisions.length;
 }, 'Revisions cannot be empty');
 
-mongooseMapSchema.path('revisions').validate(function (revisions: Array<Revision>, cb) {
+mongooseMapSchema.path('revisions').validate(function (revisions: Array<Revision>, cb: Function) {
     if (this.isNew || this.isModified('revisions')) {
         for (let rev of revisions) {
             if (!rev.comment || !rev.comment.length) {
@@ -185,11 +188,11 @@ mongooseMapSchema.path('revisions').validate(function (revisions: Array<Revision
     cb(true);
 }, 'Each revision must contains a non-empty comment');
 
-mongooseMapSchema.path('name').validate(function (name) {
+mongooseMapSchema.path('name').validate(function (name: string) {
     return name.length;
 }, 'Name cannot be empty');
 
-mongooseMapSchema.path('name').validate(function (name, cb) {
+mongooseMapSchema.path('name').validate(function (name: string, cb: Function) {
     if (this.isNew || this.isModified('name')) {
         MapModel.find({ name: name }).exec((err, maps) => {
             cb(!err && maps.length === 0);
@@ -199,15 +202,15 @@ mongooseMapSchema.path('name').validate(function (name, cb) {
     }
 }, 'Name already exists');
 
-mongooseMapSchema.path('width').validate(function (width) {
+mongooseMapSchema.path('width').validate(function (width: number) {
     return width > 0;
 }, 'Width must be strictly positive');
 
-mongooseMapSchema.path('height').validate(function (height) {
+mongooseMapSchema.path('height').validate(function (height: number) {
     return height > 0;
 }, 'Width must be strictly positive');
 
-mongooseMapSchema.path('tile_size').validate(function (tile_size) {
+mongooseMapSchema.path('tile_size').validate(function (tile_size: number) {
     return tile_size > 0;
 }, 'Tile size must be strictly positive');
 

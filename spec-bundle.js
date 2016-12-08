@@ -4,8 +4,6 @@ Error.stackTraceLimit = Infinity;
 require('core-js/client/shim');
 require('reflect-metadata/Reflect');
 
-require('ts-helpers');
-
 require('zone.js/dist/zone');
 require('zone.js/dist/long-stack-trace-zone');
 require('zone.js/dist/proxy')

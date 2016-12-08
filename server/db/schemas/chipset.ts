@@ -42,11 +42,11 @@ mongooseChipsetSchema.method({
     }
 });
 
-mongooseChipsetSchema.path('name').validate(function (name) {
+mongooseChipsetSchema.path('name').validate(function (name: string) {
     return name.length;
 }, 'Name cannot be empty');
 
-mongooseChipsetSchema.path('name').validate(function (name, cb) {
+mongooseChipsetSchema.path('name').validate(function (name: string, cb: Function) {
     if (this.isNew || this.isModified('name')) {
         ChipsetModel.find({ name: name }).exec((err, maps) => {
             cb(!err && maps.length === 0);

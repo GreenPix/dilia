@@ -14,7 +14,7 @@ export function check() {
     }
 }
 
-function checkToken(token) {
+function checkToken(token: string) {
     let msg = `${token} was not defined:` +
     `\tAuthentication using this provider are going to fails...`;
 
