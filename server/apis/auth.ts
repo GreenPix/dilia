@@ -14,7 +14,7 @@ app.post('/api/verify', (req, res) => res.json({
 
 // Local auth
 app.post('/api/login', (req, res, next) => {
-    authenticate('local', (err, user, info) => {
+    authenticate('local', (err: any, user: any, info: any) => {
         if (err) return next(err);
         if (!user) return (unauthorized(res, 'Invalid user or password'), undefined);
         req.logIn(user, (err) => {

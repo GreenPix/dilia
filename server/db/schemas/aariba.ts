@@ -37,6 +37,8 @@ export interface AaribaScriptProperties {
     contributors: Types.ObjectId[];
 }
 
+type KeysOfAaribaScriptProperties = keyof AaribaScriptProperties;
+
 export interface AaribaScriptJsmap {
     name: string;
     created_on: Date;
@@ -60,7 +62,7 @@ mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Array
     return revisions.length;
 }, 'Revisions cannot be empty');
 
-mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Array<Revision>, cb) {
+mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Array<Revision>, cb: Function) {
     if (this.isNew || this.isModified('revisions')) {
         for (let rev of revisions) {
             if (!rev.comment || !rev.comment.length) {
@@ -72,11 +74,11 @@ mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Array
     cb(true);
 }, 'Each revision must contains a non-empty comment');
 
-mongooseAaribaScriptSchema.path('name').validate(function (name) {
+mongooseAaribaScriptSchema.path('name').validate(function (name: string) {
     return name.length;
 }, 'Name cannot be empty');
 
-mongooseAaribaScriptSchema.path('name').validate(function (name, cb) {
+mongooseAaribaScriptSchema.path('name').validate(function (name: string, cb: Function) {
     if (this.isNew || this.isModified('name')) {
         AaribaScript.find({ name: name }).exec((err, scripts) => {
             cb(!err && scripts.length === 0);
@@ -92,7 +94,7 @@ mongooseAaribaScriptSchema.method({
 
         let self: AaribaScriptSchema = this;
         let res: AaribaScriptJsmap =  _.pick<any, AaribaScriptSchema>(self,
-            ['name', 'created_on']
+            ['name', 'created_on'] as KeysOfAaribaScriptProperties[]
         );
 
         res.content = self.revisions[self.revisions.length - 1].content;
@@ -110,12 +112,18 @@ mongooseAaribaScriptSchema.method({
     getLatest: function (): any {
         let self: AaribaScriptSchema = this;
         let id = self.revisions.length - 1;
-        return _.pick(self.revisions[id], ['author', 'content', 'comment', 'date']);
+        return _.pick(
+            self.revisions[id],
+            ['author', 'content', 'comment', 'created_on'] as KeysOfAaribaScriptProperties[]
+        );
     },
 
     getRevision: function (id: number): any {
         let self: AaribaScriptSchema = this;
-        return _.pick(self.revisions[id], ['author', 'content', 'comment', 'date']);
+        return _.pick(
+            self.revisions[id],
+            ['author', 'content', 'comment', 'created_on'] as KeysOfAaribaScriptProperties[]
+        );
     },
 
     commitRevision: function (rev: Revision, cb: (err: any) => void): void {
