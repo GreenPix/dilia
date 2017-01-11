@@ -28,18 +28,18 @@ passportUse(new LocalStrategy({
         .exec((err, user) => {
             if (err) return done(err);
             let errorObject = { message: 'wrong username or password' };
-            if (!user || !user.authenticate(password)) {
+            if (!user) {
                 return done(null, false, errorObject);
-            } else {
-                user.authenticate(password)
-                    .then(res => {
-                        if (res) {
-                            done(null, user);
-                        } else {
-                            done(null, false, errorObject);
-                        }
-                    });
             }
+            user.authenticate(password)
+                .then(res => {
+                    if (res) {
+                        done(null, user);
+                    } else {
+                        done(null, false, errorObject);
+                    }
+                });
+
         });
 }));
 
