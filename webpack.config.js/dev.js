@@ -8,13 +8,13 @@ const DefinePlugin = require('webpack').DefinePlugin;
 const outputDir = path.join(path.dirname(__dirname), '/dev/public/');
 
 module.exports = webpackMerge(commonConfig, {
-    debug: true,
     devtool: 'source-map',
     devServer: {
-        inline: true,
-        colors: true,
+        compress: true,
         historyApiFallback: false,
-        contentBase: 'public/',
+        clientLogLevel: 'none',
+        noInfo: true,
+        contentBase: false,
         publicPath: '/',
         port: 8001,
         proxy: {

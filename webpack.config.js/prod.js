@@ -14,7 +14,6 @@ const DedupePlugin = require('webpack/lib/optimize/DedupePlugin');
 const outputDir = path.join(path.dirname(__dirname), '/build/public/');
 
 const config = webpackMerge(commonConfig, {
-    debug: false,
     output: {
         path: outputDir,
         filename: 'js/[name].[chunkhash].js',
@@ -22,11 +21,12 @@ const config = webpackMerge(commonConfig, {
         chunkFilename: 'js/[id].[chunkhash].chunk.js'
     },
     module: {
-        loaders: [
-            { test: /\.js$/, loader: 'string-replace', query: { search: '@license', replace: '' }},
+        rules: [
+            { test: /\.js$/, loader: 'string-replace', options: { search: '@license', replace: '' }},
         ]
     },
     plugins: [
+
         new CopyWebpackPlugin([{
             from: './node_modules/ace-builds/src-min/ace.js',
             to: 'js/ace-min.js'
@@ -79,6 +79,7 @@ if (process.argv.includes('--closure')) {
         // unused: false,
         // compress: { drop_debugger: false, dead_code: false, unused: false },
         // comments: true
+        sourceMap: true,
         beautify: false,
         mangle: { screw_ie8: true, keep_fnames: true },
         compress: { screw_ie8: true },

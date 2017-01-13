@@ -3,13 +3,10 @@ import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 
 
-let appTemplate = require<string>('./app.html');
-let appCss = require<Webpack.Scss>('./app.scss');
-
 @Component({
     selector: 'app',
-    templateUrl: appTemplate,
-    styles: [appCss.toString()],
+    templateUrl: './app.html',
+    styleUrls: [ './app.scss' ],
 })
 export class App {
     router: Router;

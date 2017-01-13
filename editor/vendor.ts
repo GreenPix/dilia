@@ -7,7 +7,6 @@ import '@angular/http';
 
 // RxJS
 import './rxjs-add';
-import 'dragula';
 
 if (IS_PRODUCTION) {
   // Production
