@@ -52,6 +52,9 @@ Vagrant.configure(2) do |config|
   #
   #     vagrant plugin install vagrant-proxyconf
   #
+  config.vm.provider :virtualbox do |vm|
+    vm.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
+  end
   if Vagrant.has_plugin?("vagrant-proxyconf")
     config.proxy.http     = ENV['HTTP_PROXY']
     config.proxy.https    = ENV['HTTPS_PROXY']
