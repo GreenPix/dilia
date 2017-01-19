@@ -5,3 +5,4 @@ typings/
 build/
 dev/
 npm-debug.log
+*.log
