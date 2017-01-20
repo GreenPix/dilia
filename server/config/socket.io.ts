@@ -166,7 +166,7 @@ export function wrap(app: Express, io: SocketIO.Server): ExpressSocketIOWrapper 
 
             // Streaming packet.
             if (packet.type === 'streaming') {
-                let apichannel = packet.apichannel
+                let apichannel = packet.apichannel;
                 let channel = input_stream_apis[apichannel];
                 if (channel) {
                     channel(packet.value, dpss[apichannel]);
