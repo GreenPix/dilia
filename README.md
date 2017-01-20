@@ -77,6 +77,18 @@ export NODE_ENV='development' && npm run server
 
 And navigate to http://localhost:8000/.
 
+Dilia includes a client that can talk to [lycan](https://github.com/GreenPix/lycan).
+When using the vagrant solution, you will end up with `lycan` running on your host
+machine and dilia on the virtual machine.
+
+In order to allow dilia to connect to lycan, you also need to start (once) a shell with:
+
+```bash
+vagrant ssh -- -R 7777:localhost:7777
+```
+
+This will forward the local port `7777` to the remote machine at port `7777`.
+
 ### Text editor setup
 
 #### Atom
