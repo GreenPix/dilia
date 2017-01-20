@@ -5,10 +5,19 @@ export enum SocketMethod {
     UNSUBSCRIBE,
 }
 
-export interface SocketPacket {
+export type SocketPacket = BroadcastPacket | StreamingPacket;
+
+export interface BroadcastPacket {
+    type: 'broadcast';
     method: SocketMethod;
     apicall: string;
     value?: any;
+}
+
+export interface StreamingPacket {
+    type: 'streaming';
+    apichannel: string;
+    value: any;
 }
 
 export declare module SocketIOClient {

@@ -15,6 +15,7 @@ const configDev: Config = {
       clientSecret: process.env.GOOGLE_SECRET,
       callbackURL: `http://localhost:${port}/api/login/google/callback`
     },
+    lycan_port: 7777,
 };
 
 const configProd: Config = {
@@ -29,6 +30,7 @@ const configProd: Config = {
       clientSecret: process.env.GOOGLE_SECRET,
       callbackURL: `${process.env.DILIA_WEBSITE}/api/login/google/callback`
     },
+    lycan_port: 7777,
 };
 
 export const development = configDev;
@@ -55,4 +57,5 @@ interface Config {
     mongodb: string;
     github: StrategySettings;
     google: StrategySettings;
+    lycan_port: number;
 }

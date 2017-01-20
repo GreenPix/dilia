@@ -100,11 +100,13 @@ export class SocketIOService {
                 this.zone.run(() => subscriber.next(value))
             );
             this.socket.emit('data', {
+                type: 'broadcast',
                 apicall: apicall,
                 method: SocketMethod.GET,
             } as SocketPacket);
             return () => {
                 this.socket.emit('data', {
+                    type: 'broadcast',
                     apicall: apicall,
                     method: SocketMethod.UNSUBSCRIBE,
                 } as SocketPacket);
@@ -114,9 +116,32 @@ export class SocketIOService {
 
     post<T>(apicall: string, data: T) {
         this.socket.emit('data', {
+            type: 'broadcast',
             apicall: apicall,
             method: SocketMethod.POST,
             value: data
         } as SocketPacket);
+    }
+
+    dualStream<I, O>(apichannel: string, input: Observable<I>): Observable<O> {
+
+        let res = new Observable<O>((subscriber: Subscriber<O>) => {
+
+            let sub = input.subscribe(input => {
+                this.socket.emit('data', {
+                    type: 'streaming',
+                    apichannel,
+                    value: input
+                } as SocketPacket);
+            });
+            this.socket.on('__streaming__' + apichannel, (value: O) => {
+                this.zone.run(() => subscriber.next(value));
+            });
+
+            return () => {
+                sub.unsubscribe();
+            };
+        });
+        return res;
     }
 }

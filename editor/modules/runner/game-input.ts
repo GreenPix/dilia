@@ -3,7 +3,7 @@ import {KeyboardLayoutDetector} from './keyboard-layout';
 import {Keys} from './keyboard-layout';
 import {MouseHandler, KeyHandler} from '../../components';
 import {LycanService} from './lycan.service';
-import {Direction} from './lycan.service';
+import {Direction} from '../../shared';
 import {Player} from './player';
 
 
