@@ -1,4 +1,4 @@
-import {error as werror} from 'winston';
+import {error as werror, info} from 'winston';
 import {connect, Socket} from 'net';
 import {config} from '../config';
 import {app} from '../config/express';
@@ -49,14 +49,16 @@ app.io().streaming<LycanCommand, DataPerSocket>('/api/lycan', (value, dps) => {
 
 }, socket => {
 
+    info("Attempting connection to client...");
+
     const lycan = connect({ port: LYCAN_PORT });
     let last_msg_received = '';
 
     lycan.on('error', (err) => {
         if ((err as any).code == 'ECONNREFUSED') {
-            console.log('Could not connect to Lycan, is it currently running?');
+            info('Could not connect to Lycan, is it currently running?');
         } else {
-            console.log('Error on the Lycan socket: ', err);
+            info('Error on the Lycan socket: ', err);
         }
     });
 
@@ -91,8 +93,8 @@ app.io().streaming<LycanCommand, DataPerSocket>('/api/lycan', (value, dps) => {
         }
     });
     lycan.on('close', () => {
-        console.log('Connection with Lycan closed');
-        console.log('Message that might be responsible from the error: '
+        info('Connection with Lycan closed');
+        info('Message that might be responsible from the error: '
             + last_msg_received
         );
     });

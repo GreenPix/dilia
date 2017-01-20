@@ -14,3 +14,6 @@ import './map';
 
 // Assets
 import './chipsets';
+
+// Lycan
+import './lycan';
