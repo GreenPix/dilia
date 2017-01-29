@@ -59,13 +59,24 @@ export interface Death {
     entity: number;
 }
 
+export const enum ErrorReason {
+    SocketClosed,
+    LycanServerNotReachable,
+}
+
+export interface Error {
+    kind: 'Error';
+    reason: ErrorReason;
+}
+
 export type LycanMessage = GameUpdate
     | Response
     | ThisIsYou
     | NewEntity
     | EntityHasQuit
     | Damage
-    | Death;
+    | Death
+    | Error;
 
 
 export interface LycanCommandAuthenticate {
@@ -85,6 +96,11 @@ export interface LycanOrderAttack {
     entity: number;
 }
 
+export interface LycanInitConnection {
+    kind: 'InitConnection';
+}
+
 export type LycanCommand = LycanCommandAuthenticate
+    | LycanInitConnection
     | LycanOrderWalk
     | LycanOrderAttack;
