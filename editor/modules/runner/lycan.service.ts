@@ -30,6 +30,16 @@ export class LycanService {
             }
         });
 
+        this.getUpdateStream()
+            .filter(val => val.kind !== 'GameUpdate')
+            .subscribe(val => console.log(val));
+    }
+
+    reinitConnection(): void {
+        this.sendRawCommand({ kind: 'InitConnection' });
+    }
+
+    authenticate() {
         let authenticate: LycanCommandAuthenticate = {
             kind: 'Authenticate',
             guid: '00000032-0000-0000-0000-000000000000',
@@ -39,9 +49,6 @@ export class LycanService {
             .filter(val => val.kind == 'ThisIsYou')
             .take(1)
             .subscribe(val => this.player.id = (val as ThisIsYou).entity);
-        this.getUpdateStream()
-            .filter(val => val.kind !== 'GameUpdate')
-            .subscribe(val => console.log(val));
         this.sendRawCommand(authenticate);
     }
 

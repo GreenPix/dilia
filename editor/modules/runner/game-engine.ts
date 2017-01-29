@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {ErrorReason} from '../../shared';
 
 import {CommandBuffer, ClearAll, FlipY} from '../../rendering/commands';
 import {SpriteProgram, TileProgram} from '../../rendering/shaders';
@@ -121,6 +122,7 @@ export class GameEngine {
 
             this.sprites = sprites;
             this.lycan.connectToLycan();
+            this.lycan.authenticate();
 
             // When connected get the entities created.
             let obs = this.world.getEntityCountChangedObservable();
@@ -139,5 +141,12 @@ export class GameEngine {
                 });
 
         });
+
+        this.lycan.getUpdateStream()
+            .filter(v => v.kind === 'Error' && v.reason === ErrorReason.SocketClosed)
+            .delay(1000)
+            .do(() => console.log('Socket closed from lycan... Network issue?'))
+            .do(() => this.lycan.reinitConnection())
+            .subscribe(() => this.lycan.authenticate());
     }
 }

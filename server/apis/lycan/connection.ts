@@ -12,7 +12,7 @@ const LYCAN_PORT = config().lycan_port;
 export class LycanConnection {
 
     private last_msg_received: string;
-    private socket: Socket = connect({ port: LYCAN_PORT });
+    private socket: Socket;
     
     constructor(private websocket: StreamingSocket) {
         this.connect();
@@ -20,8 +20,8 @@ export class LycanConnection {
 
     send(value: Partial<LycanCommand>) {
         // Treat InitConnection as special.
-        if (value.kind === 'InitConnection') {
-            if (this.socket !== undefined) {
+        if (value.kind === 'InitConnection' || !this.socket) {
+            if (this.socket === undefined) {
                 this.connect();
             }
             return;
@@ -41,7 +41,7 @@ export class LycanConnection {
 
     connect() {
         info('Attempting connection to lycan...');
-
+        this.socket = connect({ port: LYCAN_PORT });
         this.socket.on('error', (err) => {
             if ((err as any).code == 'ECONNREFUSED') {
                 info('Could not connect to Lycan, is it currently running?');
@@ -76,8 +76,11 @@ export class LycanConnection {
                 if (null !== (buf = this.socket.read(next_msg_size))) {
                     let message = buf.toString('utf-8', 0, next_msg_size);
                     let parsed = parse(message);
-                    // And forward it to the client
-                    this.websocket.send<LycanMessage>(parsed);
+
+                    if (parsed) {
+                        // And forward it to the client
+                        this.websocket.send<LycanMessage>(parsed);
+                    }
                     // Reset the size (so we read it again next iteration)
                     next_msg_size = null;
                 } else {
