@@ -68,7 +68,6 @@ export class GameEngine {
                 });
                 handle.addLayer(layer);
             }
-            // this.camera.centerOn(handle.build());
         });
         let player = this.surface.createSpriteRenderEl();
         player.loadSpriteObject([125, 125, 125, 255], builder => {
