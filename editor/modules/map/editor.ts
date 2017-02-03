@@ -55,8 +55,8 @@ export class MapEditor implements AfterViewInit, OnDestroy {
 
     openMap(map: MapStatusExtra) {
         this.map_manager.openMap(map.id, !map.locked)
-            .subscribe(map => {
-                this.state.edit(map);
+            .subscribe(opened_map => {
+                this.state.edit(opened_map);
             });
     }
 

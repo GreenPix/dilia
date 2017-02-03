@@ -1,7 +1,7 @@
 import {warn} from 'winston';
 
 export function check() {
-    if (['development', 'production', 'test'].indexOf(process.env.NODE_ENV) == -1) {
+    if (['development', 'production', 'test'].indexOf(process.env.NODE_ENV) === -1) {
         process.env.NODE_ENV = 'production';
     }
     checkToken('GOOGLE_CLIENTID');
@@ -9,7 +9,7 @@ export function check() {
     checkToken('GITHUB_CLIENTID');
     checkToken('GITHUB_SECRET');
 
-    if (!process.env.DILIA_WEBSITE && process.env.NODE_ENV == 'production') {
+    if (!process.env.DILIA_WEBSITE && process.env.NODE_ENV === 'production') {
         throw new Error('DILIA_WEBSITE is not defined (http(s?)://<hostname>)');
     }
 }

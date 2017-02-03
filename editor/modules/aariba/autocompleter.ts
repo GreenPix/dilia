@@ -3,10 +3,10 @@ import * as map from 'lodash/map';
 // TODO: This should be gathered from the server.
 let globals = {
     '$me.hp': {
-        'doc': 'Health points'
+        doc: 'Health points'
     },
     '$me.xp': {
-        'doc': 'Experience point'
+        doc: 'Experience point'
     }
 };
 

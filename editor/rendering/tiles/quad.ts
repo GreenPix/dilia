@@ -27,7 +27,7 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
     private index_buffer: IndicesBuffer;
 
     // Layers
-    private layers: Array<Layer> = [];
+    private layers: Layer[] = [];
 
     constructor(private gl: WebGLRenderingContext) {
         this.vertex_buffer = new VertexBuffer(gl)
@@ -167,7 +167,7 @@ export class TilesLayer implements TilesLayerBuilder, TilesHandle {
 }
 
 class Layer {
-    partial_layers: Array<PartialLayer> = [];
+    partial_layers: PartialLayer[] = [];
 
     constructor(
         gl: WebGLRenderingContext,

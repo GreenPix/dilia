@@ -6,8 +6,8 @@ export function genPixelsForTextureWithBorder(ts: number): Pixels {
     res.width = ts;
     res.raw = new Uint32Array(ts * ts);
 
-    let inner  = new Uint32Array((new Uint8Array([ 51, 51, 51, 200]).buffer));
-    let border = new Uint32Array((new Uint8Array([119,119,119, 200]).buffer));
+    let inner  = new Uint32Array((new Uint8Array([ 51,  51,  51, 200]).buffer));
+    let border = new Uint32Array((new Uint8Array([119, 119, 119, 200]).buffer));
 
     res.raw.fill(inner[0]);
 

@@ -137,17 +137,17 @@ export class Brush implements Command {
             this.has_changed = false;
             let model_layer = this.map.layers[active_layer];
 
-            let c: ChipsetLayer;
+            let chip: ChipsetLayer;
             let index = model_layer.raw.findIndex(c => c.chipset === this.chipset_path);
             if (index >= 0) {
-                c = model_layer.raw[index];
+                chip = model_layer.raw[index];
                 this.active_chipset = index;
             } else {
-                c = {
+                chip = {
                     chipset: this.chipset_path,
                     tiles_id: new Uint16Array(this.map.width * this.map.height),
                 };
-                model_layer.raw.push(c);
+                model_layer.raw.push(chip);
                 this.map_handle.insertChipset(active_layer, this.chipset_tex);
                 this.active_chipset = model_layer.raw.length - 1;
             }

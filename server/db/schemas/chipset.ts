@@ -32,7 +32,7 @@ export interface ChipsetSchema extends ChipsetProperties {
 }
 
 mongooseChipsetSchema.method({
-    toJsmap: function (): ChipsetJsmap {
+    toJsmap(): ChipsetJsmap {
         let self: ChipsetSchema = this;
         let into: ChipsetJsmap = {} as any;
         into.name = self.name;
@@ -42,13 +42,15 @@ mongooseChipsetSchema.method({
     }
 });
 
+// tslint:disable:only-arrow-functions
+
 mongooseChipsetSchema.path('name').validate(function (name: string) {
     return name.length;
 }, 'Name cannot be empty');
 
 mongooseChipsetSchema.path('name').validate(function (name: string, cb: Function) {
     if (this.isNew || this.isModified('name')) {
-        ChipsetModel.find({ name: name }).exec((err, maps) => {
+        ChipsetModel.find({ name }).exec((err, maps) => {
             cb(!err && maps.length === 0);
         });
     } else {

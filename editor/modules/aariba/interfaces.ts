@@ -47,7 +47,7 @@ export interface IsTokenIterator extends IsType<IsTokenIterator> {
     $row: number;
     $rowTokens: any;
     $tokenIndex: number;
-    stepBackward(): Array<string>;
+    stepBackward(): string[];
     stepForward(): string;
     getCurrentToken(): string;
     getCurrentTokenRow(): number;
@@ -60,5 +60,7 @@ export interface AceFoldMode {
     getFoldWidget(session: AceAjax.IEditSession, foldStyle: string, row: number): string;
     indentationBlock(session: AceAjax.IEditSession, row: number, col: number): AceAjax.Range;
     closingBracketBlock(session: AceAjax.IEditSession, bracket: string, row: number, column: number): AceAjax.Range;
-    openingBracketBlock(session: AceAjax.IEditSession, bracket: string, row: number, column: number, typeRe?: RegExp): AceAjax.Range;
+    openingBracketBlock(
+        session: AceAjax.IEditSession, bracket: string, row: number, column: number, typeRe?: RegExp
+    ): AceAjax.Range;
 }

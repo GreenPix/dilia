@@ -32,6 +32,7 @@ export class LycanService {
 
         this.getUpdateStream()
             .filter(val => val.kind !== 'GameUpdate')
+            // tslint:disable-next-line:no-console
             .subscribe(val => console.log(val));
     }
 
@@ -46,7 +47,7 @@ export class LycanService {
             token: '50',
         };
         this.getUpdateStream()
-            .filter(val => val.kind == 'ThisIsYou')
+            .filter(val => val.kind === 'ThisIsYou')
             .take(1)
             .subscribe(val => this.player.id = (val as ThisIsYou).entity);
         this.sendRawCommand(authenticate);
@@ -57,16 +58,16 @@ export class LycanService {
     }
 
     playerGameUpdateStream(): Observable<LycanEntityUpdate> {
-        return this.input_stream.filter(val => val.kind == 'GameUpdate')
+        return this.input_stream.filter(val => val.kind === 'GameUpdate')
             .flatMap(up => (up as GameUpdate).entities)
-            .filter(up => up.entity_id == this.player.id);
+            .filter(up => up.entity_id === this.player.id);
     }
 
     sendWalk(direction: Direction) {
         this.sendRawCommand({
             kind: 'Walk',
             entity: this.player.id,
-            direction: direction
+            direction
         });
     }
 

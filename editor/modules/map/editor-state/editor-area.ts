@@ -80,8 +80,8 @@ export class EditorArea extends Area {
             let handle = builder.setWidth(map.width)
                 .setHeight(map.height)
                 .tileSize(map.tile_size);
-            for (let i = 0; i < map.layers.length; ++i) {
-                let layer = map.layers[i].raw.map(pl => {
+            for (let l of map.layers) {
+                let layer = l.raw.map(pl => {
                     return {
                         tiles_id: pl.tiles_id,
                         chipset: chipsets[chipsets_pos[pl.chipset]]

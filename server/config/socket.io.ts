@@ -92,7 +92,7 @@ export function wrap(app: Express, io: SocketIO.Server): ExpressSocketIOWrapper 
 
     let rooms: {
         [apicall: string]: {
-            clients: Array<SocketIO.Socket>;
+            clients: SocketIO.Socket[];
             api: ApiResolved<ApiCall>;
         }
     } = {};
@@ -180,7 +180,7 @@ export function wrap(app: Express, io: SocketIO.Server): ExpressSocketIOWrapper 
     });
 
     class ApiBuilder implements SocketIOApiBuilder {
-        stream(apicall_template: string, cb: ApiCall, ...then: ApiCall[]) {
+        stream(apicall_template: string, cb: ApiCall, ..._then: ApiCall[]) {
             // TODO: Support Apicall middlewares
             router.addRoute(apicall_template, cb);
         }

@@ -27,9 +27,9 @@ const enum ImgState {
                 <div class="alert alert-danger" *ngIf="error_message !== ''">
                     <span class="control-label">{{error_message}}</span>
                 </div>
-                <upload [fileChange]="_fc" *ngIf="img_state == 0"></upload>
+                <upload [fileChange]="_fc" *ngIf="img_state === 0"></upload>
                 <div class="img-area" [ngClass]="{'uploading': uploading}">
-                    <img id={{id}} [ngClass]="{'hidden': img_state != 2 }"/>
+                    <img id={{id}} [ngClass]="{'hidden': img_state !== 2 }"/>
                     <canvas id={{id_canvas}} class="hidden absolute"></canvas>
                     <div class="upload-bar">
                         <div class="subbar">{{percentage_upload.toFixed(0) +'%'}}</div>

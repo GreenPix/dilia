@@ -31,6 +31,7 @@ export interface UserSchema {
     authenticate(password: string): Promise<boolean>;
 }
 
+// tslint:disable:only-arrow-functions
 
 /**
  * Virtuals
@@ -55,7 +56,7 @@ mongooseUserSchema.path('username').validate(function (username: string, cb: Fun
 
     // Check only when it is a new user or when email field is modified
     if (this.isNew || this.isModified('username')) {
-        User.find({ username: username }).exec((err, users) => {
+        User.find({ username }).exec((err, users) => {
             cb(!err && users.length === 0);
         });
     } else {
@@ -73,7 +74,7 @@ mongooseUserSchema.path('email').validate(function (email: string, cb: Function)
 
     // Check only when it is a new user or when email field is modified
     if (this.isNew || this.isModified('email')) {
-        User.find({ email: email }).exec(function (err, users) {
+        User.find({ email }).exec(function (err, users) {
             cb(!err && users.length === 0);
         });
     } else {
@@ -100,11 +101,11 @@ mongooseUserSchema.pre('save', function (next) {
 
 mongooseUserSchema.method({
 
-    authenticate: function (password: string): Promise<boolean> {
+    authenticate(password: string): Promise<boolean> {
         return verifyKdf(this.hashed_password, password);
     },
 
-    encryptPassword: function (password: string): Buffer {
+    encryptPassword(password: string): Buffer {
         if (!password) return undefined;
         try {
             return kdfSync(password, kdfParams);
@@ -113,7 +114,7 @@ mongooseUserSchema.method({
         }
     },
 
-    skipValidation: function(): boolean {
+    skipValidation(): boolean {
         // Validation is not required if using OAuth
         return this.provider === 'github' || this.provider === 'google';
     },
@@ -132,7 +133,7 @@ class AuthorMap {
     }
 }
 
-mongooseUserSchema.static('findAll', (authors: Types.ObjectId[], cb: (err:any, authors: AuthorMap) => void) => {
+mongooseUserSchema.static('findAll', (authors: Types.ObjectId[], cb: (err: any, authors: AuthorMap) => void) => {
 
     User.find({
         _id: {
@@ -155,5 +156,5 @@ interface UserModel {
     findAll(authors: Types.ObjectId[], cb: (err: any, authors: AuthorMap) => void): void;
 }
 
-export var User = <Model<UserDocument> & UserModel>
+export const User = <Model<UserDocument> & UserModel>
     model<UserDocument>('UserSchema', mongooseUserSchema);

@@ -5,8 +5,9 @@ export function newUniform(
     gl: WebGLRenderingContext,
     uniform_location: WebGLUniformLocation,
     uniform_info: { name: string, type: number, size: number },
-    last_used_texture_unit: number): [UniformCb, number]
-{
+    last_used_texture_unit: number
+): [UniformCb, number] {
+
     let tex_type: number;
     let type = uniform_info.type;
     let size = uniform_info.size;

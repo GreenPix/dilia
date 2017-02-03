@@ -19,10 +19,10 @@ import * as multer from 'multer';
 
 let expressApp = express();
 
-export var server = createServer(expressApp);
-export var io = socket_io(server);
-export var app = wrap(expressApp, io);
-export var upload = multer({
+export const server = createServer(expressApp);
+export const io = socket_io(server);
+export const app = wrap(expressApp, io);
+export const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
         fileSize: max_file_size,
@@ -56,15 +56,15 @@ app.use(passport.session());
 
 // Socket.io auth
 io.use(passSocketIOAuth({
-    cookieParser: cookieParser,
+    cookieParser,
     key: sessionOptions.key,
     secret: sessionOptions.secret,
     store: sessionOptions.store,
-    success: (data, accept) => {
+    success: (_data, accept) => {
         winston.info(`Successful connection to socket.io!`);
         accept();
     },
-    fail: (data, message, error, accept) => {
+    fail: (_data, message, error, accept) => {
         winston.info(`Failed connection to socket.io: ${message}`);
         if (error) {
             accept(new Error(message));
@@ -73,7 +73,7 @@ io.use(passSocketIOAuth({
 }));
 
 // Error handler
-app.use((err: any, req: Request, res: Response, next: Function) => {
+app.use((err: any, _req: Request, res: Response, _next: Function) => {
     winston.error(err);
     res.status(400);
     res.json({

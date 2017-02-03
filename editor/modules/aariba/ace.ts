@@ -19,18 +19,17 @@ let aceCss = require<string>('./ace.css');
 
 
 interface HighlightToken {
-    token: string | Array<string> | Function;
+    token: string | string[] | Function;
     regex: string | RegExp;
     next?: string;
     caseInsensitive?: boolean;
 }
 
 interface HighlightRules {
-    [index: string]: Array<HighlightToken>;
+    [index: string]: HighlightToken[];
 }
 
-class AaribaScriptHighlightRules extends TextHighlightRules
-{
+class AaribaScriptHighlightRules extends TextHighlightRules {
     $rules: HighlightRules;
 
     constructor() {
@@ -45,7 +44,7 @@ class AaribaScriptHighlightRules extends TextHighlightRules
 
         // TODO: add support for comments
         this.$rules = {
-            'start': [
+            start: [
                 { token: 'paren.lparen', regex : '[[({]' },
                 { token: 'paren.rparen', regex : '[\\])}]' },
                 { token: 'comment', regex: /\/\/.*$/ },
@@ -56,7 +55,7 @@ class AaribaScriptHighlightRules extends TextHighlightRules
                 { token: 'variable.local', regex: identRe },
                 { token: 'numeric', regex: numericRe },
             ],
-            'if_cond': [
+            if_cond: [
                 { token: 'variable.global', regex: globalIdenRe, next: 'start' },
             ],
         };
@@ -74,11 +73,11 @@ class AaribaScriptHighlightRules extends TextHighlightRules
  */
 class AaribaFoldMode extends FoldMode {
 
-    foldingStartMarker : RegExp;
-    foldingStopMarker : RegExp;
-    singleLineBlockCommentRe : RegExp;
-    tripleStarBlockCommentRe : RegExp;
-    startRegionRe : RegExp;
+    foldingStartMarker: RegExp;
+    foldingStopMarker: RegExp;
+    singleLineBlockCommentRe: RegExp;
+    tripleStarBlockCommentRe: RegExp;
+    startRegionRe: RegExp;
 
     constructor() {
         super();
@@ -106,9 +105,13 @@ class AaribaFoldMode extends FoldMode {
         return fw;
     }
 
-    getFoldWidgetRange(session: AceAjax.IEditSession, foldStyle: string, row: number, forceMultiline?: boolean)
-        : AceAjax.Range | undefined
-    {
+    getFoldWidgetRange(
+        session: AceAjax.IEditSession,
+        foldStyle: string,
+        row: number,
+        forceMultiline?: boolean
+    ): AceAjax.Range | undefined {
+
         let line = session.getLine(row);
 
         if (this.startRegionRe.test(line))
@@ -127,7 +130,7 @@ class AaribaFoldMode extends FoldMode {
             if (range && !range.isMultiLine()) {
                 if (forceMultiline) {
                     range = this.getSectionRange(session, row);
-                } else if (foldStyle != 'all')
+                } else if (foldStyle !== 'all')
                     range = undefined;
             }
 
@@ -170,7 +173,7 @@ class AaribaFoldMode extends FoldMode {
                     break;
                 } else if (subRange.isMultiLine()) {
                     row = subRange.end.row;
-                } else if (startIndent == indent) {
+                } else if (startIndent === indent) {
                     break;
                 }
             }
@@ -204,8 +207,7 @@ class AaribaFoldMode extends FoldMode {
     }
 }
 
-export class AaribaScriptTextMode extends TextMode
-{
+export class AaribaScriptTextMode extends TextMode {
 
     HighlightRules = AaribaScriptHighlightRules;
 
@@ -222,17 +224,17 @@ export class AaribaScriptTextMode extends TextMode
         let tokens = tokenizedLine.tokens;
         let endState = tokenizedLine.state;
 
-        if (tokens.length && tokens[tokens.length-1].type == 'comment') {
+        if (tokens.length && tokens[tokens.length - 1].type === 'comment') {
             return indent;
         }
 
-        if (state == 'start' || state == 'no_regex') {
+        if (state === 'start' || state === 'no_regex') {
             let match = line.match(/^.*(?:\bcase\b.*\:|[\{\(\[])\s*$/);
             if (match) {
                 indent += tab;
             }
-        } else if (state == 'doc-start') {
-            if (endState == 'start' || endState == 'no_regex') {
+        } else if (state === 'doc-start') {
+            if (endState === 'start' || endState === 'no_regex') {
                 return '';
             }
             let match = line.match(/^\s*(\/?)\*/);
@@ -261,12 +263,12 @@ export class AaribaScriptTextMode extends TextMode
         if (!match) return 0;
 
         let column = match[1].length;
-        let openBracePos = doc.findMatchingBracket({row: row, column: column});
+        let openBracePos = doc.findMatchingBracket({row, column});
 
-        if (!openBracePos || openBracePos.row == row) return 0;
+        if (!openBracePos || openBracePos.row === row) return 0;
 
         let indent = this.$getIndent(doc.getLine(openBracePos.row));
-        doc.replace(new Range(row, 0, row, column-1), indent);
+        doc.replace(new Range(row, 0, row, column - 1), indent);
     }
 
     $getIndent(line: any) {

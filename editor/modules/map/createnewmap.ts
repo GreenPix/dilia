@@ -12,7 +12,7 @@ export interface NewMap {
 
 @Component({
     selector: 'create-map-modal',
-    templateUrl: templateUrl,
+    templateUrl,
 })
 export class CreateNewMapModal {
 

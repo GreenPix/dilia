@@ -73,7 +73,7 @@ export class EditorState implements MouseHandler, KeyHandler {
     private switchToState(state: State) {
         this.state = state;
         if (this.isReady()) {
-            if (this.state == State.Palette) {
+            if (this.state === State.Palette) {
                 this.editor_area.deactivate();
                 this.palette_area.activate();
                 this.surface.setActivePipeline(this.palette_area.getScene());

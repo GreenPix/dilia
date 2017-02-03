@@ -1,6 +1,6 @@
 // TODO: remove me
 /* tslint:disable */
-import {Schema, model, Document, Types} from 'mongoose';
+import {Schema, Types} from 'mongoose';
 
 let maxlenStr = [
     30,
@@ -21,7 +21,7 @@ type Bounds = [number, number, number, number];
 //
 //    They are just a view in a chipset.
 //
-let mongooseSimpleObjectSchema = new Schema({
+export let mongooseSimpleObjectSchema = new Schema({
     name: { type: String, maxlength: maxlenStr},
     created: { type: Date, default: Date.now },
     bounds: [Number],
@@ -44,7 +44,7 @@ export interface SimpleObjectProps {
 //    so we will more likely store simply a list
 //    of tiles).
 //
-let mongooseLayerObjectSchema = new Schema({
+export let mongooseLayerObjectSchema = new Schema({
     name: { type: String, maxlength: maxlenStr },
     created: { type: Date, default: Date.now },
     width: Number,
@@ -68,7 +68,7 @@ export interface LayerObjectProps {
     tile_size: number;
     layers: Array<{
         chipset: Types.ObjectId;
-        tiles: Array<{ bounds: Bounds }>;
+        tiles: { bounds: Bounds }[];
     }>;
 }
 //
@@ -78,7 +78,7 @@ export interface LayerObjectProps {
 //    other objects (LocalLayer or Simple) and
 //    parent-child relationships are used to
 //    define the rendering order.
-let mongooseHiearchicalObject = new Schema({
+export let mongooseHiearchicalObject = new Schema({
     name: { type: String, maxlength: maxlenStr },
     created: { type: Date, default: Date.now },
     tree: [{
@@ -124,7 +124,7 @@ export interface HierarchicalObjectProps {
 // When editing an object, the editor will
 // need to know:
 //
-let mongooseObjectSchema = new Schema({
+export let mongooseObjectSchema = new Schema({
     name: { type: String, maxlength: [
         30,
         'Object name (`{VALUE}`) is too long, exceed' +

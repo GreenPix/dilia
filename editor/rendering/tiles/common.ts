@@ -28,7 +28,7 @@ export interface TilesLayerBuilder {
 
     // Requires a call to tileSize first.
     // Could be inforced with another interface.
-    addLayer(layer_per_texture: Array<ChipsetLayer>): this;
+    addLayer(layer_per_texture: ChipsetLayer[]): this;
 
     // Returns a handle to modify the data
     // later

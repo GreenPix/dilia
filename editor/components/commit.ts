@@ -76,6 +76,7 @@ export class CommitModal {
                 }, err => {
                     this.committing = false;
                     this.error_message = `Couldn't commit, cause: '${err.json().message}'`;
+                    // tslint:disable-next-line:no-console
                     console.log(err);
                 });
         }

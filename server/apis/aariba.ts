@@ -27,17 +27,17 @@ app.get('/api/aariba/', reqAuth, (req, res) => {
         let user: UserDocument = req.user;
         res.status(200);
         accessControlManager.updateLockOnResources();
-        res.json(_.reduce(scripts, (res, val) => {
+        res.json(_.reduce(scripts, (acc, val) => {
             let is_locked = accessControlManager.isUsedBySomeoneOtherThanMe({
                 kind: RK.AaribaScript,
                 me: user._id,
                 resource: val.name,
             });
-            res.push({
+            acc.push({
                 locked: is_locked,
                 name: val.name,
             });
-            return res;
+            return acc;
         }, [] as AaribaFileList));
     });
 });
@@ -51,8 +51,8 @@ app.get('/api/aariba/:name', reqAuth, (req, res) => {
         } else {
             let script_reduced = script.toJsmap();
 
-            User.findAll(script_reduced.revisions.map(r => r.author), (err, authors) => {
-                if (err) return res.status(500).json(errorToJson(err));
+            User.findAll(script_reduced.revisions.map(r => r.author), (error, authors) => {
+                if (error) return res.status(500).json(errorToJson(error));
                 (script_reduced as any).revisions = script_reduced.revisions.map(r => {
                     return {
                         author: authors.get(r.author),
@@ -74,7 +74,11 @@ app.get('/api/aariba/:name/revision/:rev', reqAuth, (req, res) => {
             notFound(res, req.user);
         } else {
             let rev = script.getRevision(req.params.rev);
-            User.findById(rev.author.toHexString(), (err, user) => {
+            User.findById(rev.author.toHexString(), (error, user) => {
+                if (error) {
+                    werror(err);
+                    notFound(res, req.user);
+                }
                 res.status(200);
                 rev.author = user.username as any;
                 res.json(rev);
@@ -123,7 +127,7 @@ app.io().stream('/api/aariba/:name/liveupdate', (req, res) => {
 
     app.emitOn(`/api/aariba/lock_status`, (client) => {
       let value: AaribaFile = {
-        name: name,
+        name,
         locked: !req.user._id.equals(client._id),
       };
       return value;
@@ -158,9 +162,9 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
                 author: user._id,
                 comment: req.body.comment,
                 content: req.body.content,
-            }, err => {
-                if (err) {
-                    badReq(res, `Couldn't save script: '${script.name}'`, errorToJson(err));
+            }, error => {
+                if (error) {
+                    badReq(res, `Couldn't save script: '${script.name}'`, errorToJson(error));
                 } else {
                     success(res, `Committed new version for '${script.name}'`);
                 }
@@ -170,7 +174,7 @@ app.post('/api/aariba/:name/commit', reqAuth, (req, res) => {
 });
 
 // Create a new script aariba
-app.post('/api/aariba/new', reqAuth, (req, res, next) =>  {
+app.post('/api/aariba/new', reqAuth, (req, res) =>  {
     let user: UserDocument = req.user;
     let properties: AaribaScriptProperties = {
         contributors: [user._id],

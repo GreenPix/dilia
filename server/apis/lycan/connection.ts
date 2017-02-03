@@ -13,7 +13,7 @@ export class LycanConnection {
 
     private last_msg_received: string;
     private socket: Socket;
-    
+
     constructor(private websocket: StreamingSocket) {
         this.connect();
     }
@@ -43,7 +43,7 @@ export class LycanConnection {
         info('Attempting connection to lycan...');
         this.socket = connect({ port: LYCAN_PORT });
         this.socket.on('error', (err) => {
-            if ((err as any).code == 'ECONNREFUSED') {
+            if ((err as any).code === 'ECONNREFUSED') {
                 info('Could not connect to Lycan, is it currently running?');
             } else {
                 info('Error on the Lycan socket: ', err);
@@ -64,6 +64,7 @@ export class LycanConnection {
                 // Parse the size first
                 if (null === next_msg_size) {
                     let buf;
+                    // tslint:disable-next-line:no-conditional-assignment
                     if (null !== (buf = this.socket.read(8))) {
                         next_msg_size = buf.readUInt32LE(0);
                     } else {
@@ -73,6 +74,7 @@ export class LycanConnection {
 
                 // Then get the actual message
                 let buf;
+                // tslint:disable-next-line:no-conditional-assignment
                 if (null !== (buf = this.socket.read(next_msg_size))) {
                     let message = buf.toString('utf-8', 0, next_msg_size);
                     let parsed = parse(message);
@@ -150,7 +152,7 @@ function parse(message: string): LycanMessage | undefined {
         return ret;
     }
 
-    console.log(`Warning: could not parse ${message}`);
+    info(`Warning: could not parse ${message}`);
 }
 
 // TODO: Missing validation of properties

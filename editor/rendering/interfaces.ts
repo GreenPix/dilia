@@ -24,7 +24,7 @@ export interface Pipeline {
 }
 
 export interface TextureGetter {
-    getTextures(): Array<WebGLTexture>;
+    getTextures(): WebGLTexture[];
 }
 
 export interface Obj2D {

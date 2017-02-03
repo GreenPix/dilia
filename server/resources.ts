@@ -16,7 +16,7 @@ export interface Resource {
 const RESOURCE_LIFETIME = 2 * 60 * 1000;
 
 class ResourceManager {
-    resources: {[kind: number]: Array<Resource>};
+    resources: {[kind: number]: Resource[]};
 
 
     constructor() {
@@ -84,7 +84,7 @@ class ResourceManager {
 
     updateLockOnResources() {
         let now = Date.now();
-        _.forEach(this.resources, (val: Resource[], key) => {
+        _.forEach(this.resources, (val: Resource[], _key) => {
             _.remove(val, res => now - res.timestamp > RESOURCE_LIFETIME);
         });
     }
@@ -94,4 +94,4 @@ class ResourceManager {
     }
 }
 
-export var accessControlManager = new ResourceManager();
+export const accessControlManager = new ResourceManager();

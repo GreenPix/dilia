@@ -14,9 +14,9 @@ app.post('/api/users', reqAdmin, logRequest('tries to add a user.'),
             }
 
             // manually login the user once successfully signed up
-            req.logIn(user, (err) => {
-                if (err) {
-                    return res.status(500).json(err);
+            req.logIn(user, (error) => {
+                if (error) {
+                    return res.status(500).json(error);
                 }
                 res.sendStatus(200);
             });

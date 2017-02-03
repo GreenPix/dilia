@@ -58,8 +58,7 @@ export class LayersPanel implements OnChanges, AfterViewInit, OnDestroy {
             setTimeout(() => {
                 this.is_visible = false;
             }, 500);
-        }
-        else if (this.is_shown !== is_shown && is_shown) {
+        } else if (this.is_shown !== is_shown && is_shown) {
             this.is_visible = true;
             this.requestLayerPreviews();
         }

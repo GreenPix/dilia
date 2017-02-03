@@ -4,7 +4,7 @@ import {VertexBuffer, BufferCb} from './buffer';
 export class Program {
 
     private program: WebGLProgram;
-    private uniforms: { [uniform_name: string] : UniformCb };
+    private uniforms: { [uniform_name: string]: UniformCb };
     private attrs_to_buffer: { [attr_name: string]: BufferCb };
 
     constructor(

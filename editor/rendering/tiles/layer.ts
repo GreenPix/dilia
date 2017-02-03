@@ -11,7 +11,7 @@ export class SelectedPartialLayerImpl implements SelectedPartialLayer {
     ) {}
 
     setTileId(x: number, y: number, tile_id: number): void {
-        let i, j;
+        let i; let j;
         i = Math.floor(y / this.tile_size);
         j = Math.floor(x / this.tile_size);
         if (i >= 0 && i < this.height && j >= 0 && j < this.width) {

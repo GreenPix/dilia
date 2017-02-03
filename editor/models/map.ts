@@ -47,7 +47,7 @@ export class SelectedChipsetLayer {
     // TODO: seems very useful in the end. It adds unneeded
     // TODO: complexity and just look Java-ish.
     setTileId(x: number, y: number, tile_id: number) {
-        let i, j;
+        let i; let j;
         i = Math.floor(y / this.tile_size);
         j = Math.floor(x / this.tile_size);
         if (i >= 0 && i < this.height && j >= 0 && j < this.width) {
@@ -122,9 +122,10 @@ export class Map implements CommitObject {
         return this.current_layer;
     }
 
-    fillChipsetsInfo(chipsets_pos: {[path: string]: number},
-                     chipsets_path: string[])
-    {
+    fillChipsetsInfo(
+        chipsets_pos: {[path: string]: number},
+        chipsets_path: string[]
+    ) {
         for (let l of this.layers) {
             for (let pl of l.raw) {
                 if (!(pl.chipset in chipsets_pos)) {
@@ -156,7 +157,7 @@ export class Map implements CommitObject {
 export class MapManager implements Committer {
 
     private current_map: number = -1;
-    private map_list: Array<Map> = [];
+    private map_list: Map[] = [];
 
     constructor(
         private http: HttpService

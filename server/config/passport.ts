@@ -23,7 +23,7 @@ passportUse(new LocalStrategy({
         passwordField: 'password'
     },
     (username, password, done) => {
-        User.findOne({ username: username })
+        User.findOne({ username })
         .select('username email hashed_password salt')
         .exec((err, user) => {
             if (err) return done(err);
@@ -49,7 +49,7 @@ passportUse(new GoogleStrategy({
         clientSecret: config.google.clientSecret,
         callbackURL: config.google.callbackURL
     },
-    (accessToken, refreshToken, profile, done) => {
+    (_accessToken, _refreshToken, profile, done) => {
         User.findOne({ 'google.id': profile.id })
         .select('username')
         .exec((err, user) => {
@@ -61,9 +61,9 @@ passportUse(new GoogleStrategy({
                     provider: 'google',
                     google: profile._json
                 });
-                user.save(function (err) {
-                    if (err) werr(err);
-                    return done(err, user);
+                user.save((error) => {
+                    if (error) werr(error);
+                    return done(error, user);
                 });
             } else {
                 return done(null, user);

@@ -52,7 +52,7 @@ abstract class BaseRenderEl implements Command, TextureGetter {
         return this.resources_not_yet_loaded === 0;
     }
 
-    abstract getTextures(): Array<WebGLTexture>;
+    abstract getTextures(): WebGLTexture[];
 
     protected abstract drawImpl(ctx: Context): void;
 }
@@ -95,7 +95,7 @@ export class GenericRenderEl extends BaseRenderEl {
         return this;
     }
 
-    getTextures(): Array<WebGLTexture> {
+    getTextures(): WebGLTexture[] {
         return values<any>(this.uniforms_values)
             .filter(val => val instanceof Texture);
     }
@@ -152,7 +152,7 @@ export class SpriteBatchRenderEl extends BaseRenderEl {
         return this;
     }
 
-    getTextures(): Array<WebGLTexture> {
+    getTextures(): WebGLTexture[] {
         return [this.sprite_batch.tex.tex_id];
     }
 
@@ -189,7 +189,7 @@ export class SpriteRenderEl extends BaseRenderEl {
         return this;
     }
 
-    getTextures(): Array<WebGLTexture> {
+    getTextures(): WebGLTexture[] {
         return [this.sprite_el.tex.tex_id];
     }
 
@@ -217,7 +217,7 @@ export class TilesRenderEl extends BaseRenderEl {
         let nb_chipset = chipset_paths.length;
         let chipset_datas = new Array(nb_chipset);
 
-        if (nb_chipset == 0) {
+        if (nb_chipset === 0) {
             cb(chipset_datas, this.tile_el);
         }
 
@@ -233,8 +233,8 @@ export class TilesRenderEl extends BaseRenderEl {
         return this.tile_el;
     }
 
-    getTextures(): Array<WebGLTexture> {
-        return [];//this.tile_el.getTextures();
+    getTextures(): WebGLTexture[] {
+        return [];
     }
 
     createSingleLayerRenderer(ref: { currentLayer(): number; }): Command {

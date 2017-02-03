@@ -15,7 +15,7 @@ import {SharedModule} from '../editor/components/shared.module';
 // Override all components
 [AaribaModule, RunnerModule, ProfileModule, MapModule, SharedModule].forEach(module => {
     let annot: NgModule = Reflect.getOwnMetadata('annotations', module)[0];
-    for (let component of (annot.declarations as Type<any>[])) {
+    for (let component of (annot.declarations as Array<Type<any>>)) {
         let comp: Component = Reflect.getOwnMetadata('annotations', component)[0];
         if (comp.templateUrl !== undefined) {
             comp.template = comp.templateUrl;

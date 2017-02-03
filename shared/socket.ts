@@ -20,7 +20,7 @@ export interface StreamingPacket {
     value: any;
 }
 
-export declare module SocketIOClient {
+export declare namespace SocketIOClient {
     interface Emitter {
         emit(event: 'data', data: SocketPacket): Emitter;
         emit(event: any, data: SocketPacket): Emitter;
