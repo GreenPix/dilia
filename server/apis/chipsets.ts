@@ -30,7 +30,7 @@ app.post('/api/chipset/upload/', reqAuth, upload.single('chipset'),
                     badReq(res, `Couldn't save chipset '${properties.name}'`,
                         errorToJson(err));
                 } else {
-                    app.emitOn('/api/chipset/new', (client) => {
+                    app.emitOn('/api/chipset/new', () => {
                       let value: ChipsetSocketNewAPI = {
                         name
                       };
@@ -45,7 +45,7 @@ app.post('/api/chipset/upload/', reqAuth, upload.single('chipset'),
 // Allocate a room to listen to chipset creations
 app.io().room('/api/chipset/new');
 
-app.get('/api/chipset/', reqAuth, (req, res) => {
+app.get('/api/chipset/', reqAuth, (_req, res) => {
     ChipsetModel.find({})
         .select('id')
         .exec((err, chipsets) => {

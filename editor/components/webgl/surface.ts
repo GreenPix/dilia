@@ -51,7 +51,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
     private mouse_handler?: MouseHandler;
     private key_handler?: KeyHandler;
     private pipeline: Pipeline = DoNothing;
-    private viewports_listeners: Array<ViewportListener> = [];
+    private viewports_listeners: ViewportListener[] = [];
 
     focus() {
         this.gl.canvas.focus();
@@ -77,7 +77,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
         if (this.pipeline === DoNothing && pipeline) {
             this.pipeline = pipeline;
             this.start();
-        } else if (pipeline){
+        } else if (pipeline) {
             this.pipeline = pipeline;
             this.viewport();
         } else {
@@ -87,7 +87,7 @@ export class WebGLSurface implements AfterViewInit, OnDestroy {
 
     addViewportListener(viewport: ViewportListener) {
         let index = this.viewports_listeners.indexOf(viewport);
-        if (index == -1) {
+        if (index === -1) {
             this.viewports_listeners.push(viewport);
             this.viewport(viewport);
         }

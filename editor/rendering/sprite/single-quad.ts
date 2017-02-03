@@ -63,6 +63,7 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         return this.pos;
     }
     getTileIdFor(x: number, y: number, tile_size: number): number {
+        // tslint:disable-next-line:one-variable-per-declaration
         let i, j, w, h;
         i = Math.floor(y / tile_size);
         j = Math.floor(x / tile_size);
@@ -76,7 +77,7 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
 
     // SpriteBuilder interface
     position(pos: [number, number]): this { this.pos = pos; return this; }
-    overlayFlag(overlay: boolean): this   { this.is_overlay = overlay; return this;}
+    overlayFlag(overlay: boolean): this { this.is_overlay = overlay; return this; }
     buildWithEntireTexture(): this {
         return this.buildFrom(
             genQuadData(0, 0, this.tex.width, this.tex.height),
@@ -87,7 +88,8 @@ export class SpriteObject implements SpriteBuilder, SpriteHandle {
         return this;
     }
     buildWithSize(width: number, height: number, tex_repeat?: boolean, scale_coord?: number): this {
-        let tex_coord_w, tex_coord_h;
+        let tex_coord_w;
+        let tex_coord_h;
         scale_coord = scale_coord || 1;
         if (tex_repeat) {
             texRepeat(this.gl, this.tex.tex_id);

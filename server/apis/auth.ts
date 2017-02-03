@@ -14,12 +14,12 @@ app.post('/api/verify', (req, res) => res.json({
 
 // Local auth
 app.post('/api/login', (req, res, next) => {
-    authenticate('local', (err: any, user: any, info: any) => {
+    authenticate('local', (err: any, user: any, _info: any) => {
         if (err) return next(err);
         if (!user) return (unauthorized(res, 'Invalid user or password'), undefined);
-        req.logIn(user, (err) => {
-            if (err) {
-                next(err);
+        req.logIn(user, (error) => {
+            if (error) {
+                next(error);
             } else {
                 res.status(200).json({});
             }
@@ -41,12 +41,12 @@ app.get('/api/auth/google', authenticate('google', {
     ]
 }), () => {});
 app.get('/api/auth/google/callback', authenticate('google'),
-    (req, res) => res.sendStatus(200)
+    (_req, res) => res.sendStatus(200)
 );
 
 
 // Github auth
 app.get('/api/auth/github', authenticate('github'), () => {});
 app.get('/auth/github/callback', authenticate('github'),
-    (req, res) => res.sendStatus(200)
+    (_req, res) => res.sendStatus(200)
 );

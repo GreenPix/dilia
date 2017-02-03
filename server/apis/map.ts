@@ -218,8 +218,8 @@ app.post('/api/maps/:id/commit', reqAuth, (req, res) => {
                 comment: commit.comment,
                 preview: intoBuffer(commit.preview),
                 layers: intoInternalFmt(commit.layers),
-            }, err => {
-                if (err) {
+            }, error => {
+                if (error) {
                     serverError(res, `Couldn't save map '${map.name}'`);
                 } else {
                     success(res, `Committed new version for '${map.name}'`);

@@ -83,32 +83,32 @@ export class GameInput implements MouseHandler, KeyHandler {
         let send_action = false;
         if (this.keyboard.isJustReleased(Actions.UP)) {
             let pos = this.actions_active.indexOf(Actions.UP);
-            if (pos != -1) {
+            if (pos !== -1) {
                 this.actions_active.splice(pos, 1);
                 send_action = true;
             }
         } else if (this.keyboard.isJustReleased(Actions.DOWN)) {
             let pos = this.actions_active.indexOf(Actions.DOWN);
-            if (pos != -1) {
+            if (pos !== -1) {
                 this.actions_active.splice(pos, 1);
                 send_action = true;
             }
         } else if (this.keyboard.isJustReleased(Actions.LEFT)) {
             let pos = this.actions_active.indexOf(Actions.LEFT);
-            if (pos != -1) {
+            if (pos !== -1) {
                 this.actions_active.splice(pos, 1);
                 send_action = true;
             }
         } else if (this.keyboard.isJustReleased(Actions.RIGHT)) {
             let pos = this.actions_active.indexOf(Actions.RIGHT);
-            if (pos != -1) {
+            if (pos !== -1) {
                 this.actions_active.splice(pos, 1);
                 send_action = true;
             }
         }
         if (send_action) {
             let last_action = this.last_action();
-            if (last_action == 0) {
+            if (last_action === 0) {
                 this.lycan.sendStopWalk();
             } else {
                 this.lycan.sendWalk(dir(last_action));
@@ -130,7 +130,7 @@ export class GameInput implements MouseHandler, KeyHandler {
 }
 
 function dir(action: Actions): Direction {
-    switch(action) {
+    switch (action) {
         case Actions.UP: return Direction.UP;
         case Actions.DOWN: return Direction.DOWN;
         case Actions.LEFT: return Direction.LEFT;

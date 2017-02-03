@@ -1,4 +1,4 @@
-export var requestAnimationFrame: (cb: Function) => void;
+export let requestAnimationFrame: (cb: Function) => void;
 
 if (IS_PRODUCTION) {
     requestAnimationFrame = (window as any).unwrapedRequestAnimationFrame.bind(window);

@@ -33,7 +33,7 @@ export class OpenMap {
     reset = () => {
         this.is_shown = false;
         this.selected_map = undefined;
-    };
+    }
 
     constructor(manager: MapService, private router: Router) {
         this.list_of_maps = manager.getMapList().map(l => l.map(m => {

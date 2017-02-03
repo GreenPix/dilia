@@ -45,7 +45,7 @@ export interface Revision {
     comment: string;
     // Specifies which ones are the 'real' layers
     // having a specific depth.
-    layers: Array<Layer>;
+    layers: Layer[];
     date?: Date;
 }
 
@@ -60,7 +60,7 @@ export interface MapProperties {
     tile_size: number;
     preview: Buffer;
     created_on?: Date;
-    revisions: Array<Revision>;
+    revisions: Revision[];
     contributors: Types.ObjectId[];
 }
 
@@ -110,14 +110,14 @@ export interface MapSchema extends MapProperties {
 //
 mongooseMapSchema.method({
 
-    toJsmap: function (): MapJsmap {
+    toJsmap(): MapJsmap {
 
         let self: MapDocument = this;
         let res: MapJsmap =  pick<any, MapSchema>(self,
             ['name', 'created_on', 'width', 'height', 'tile_size'] as KeysOfMapProperties[]
         );
 
-        let partial_layers_base64: { tiles_ids: string, chipset: string }[] = [];
+        let partial_layers_base64: Array<{ tiles_ids: string, chipset: string }> = [];
         let layers_base64 = [partial_layers_base64];
         let current_depth: number = 0;
 
@@ -147,18 +147,18 @@ mongooseMapSchema.method({
         return res;
     },
 
-    getLatest: function (): any {
+    getLatest(): any {
         let self: MapDocument = this;
         let id = self.revisions.length - 1;
         return pick(self.revisions[id], ['author', 'layers', 'comment', 'date']);
     },
 
-    getRevision: function (id: number): any {
+    getRevision(id: number): any {
         let self: MapDocument = this;
         return pick(self.revisions[id], ['author', 'layers', 'comment', 'date']);
     },
 
-    commitRevision: function (rev: RevisionWithPreview, cb: (err: any) => void): void {
+    commitRevision(rev: RevisionWithPreview, cb: (err: any) => void): void {
         let self: MapDocument = this;
         // Make sure the order is correct.
         rev.layers.sort((a, b) => a.depth - b.depth);
@@ -172,11 +172,13 @@ mongooseMapSchema.method({
     }
 });
 
-mongooseMapSchema.path('revisions').validate(function (revisions: Array<Revision>) {
+// tslint:disable:only-arrow-functions
+
+mongooseMapSchema.path('revisions').validate(function (revisions: Revision[]) {
     return revisions.length;
 }, 'Revisions cannot be empty');
 
-mongooseMapSchema.path('revisions').validate(function (revisions: Array<Revision>, cb: Function) {
+mongooseMapSchema.path('revisions').validate(function (revisions: Revision[], cb: Function) {
     if (this.isNew || this.isModified('revisions')) {
         for (let rev of revisions) {
             if (!rev.comment || !rev.comment.length) {
@@ -194,7 +196,7 @@ mongooseMapSchema.path('name').validate(function (name: string) {
 
 mongooseMapSchema.path('name').validate(function (name: string, cb: Function) {
     if (this.isNew || this.isModified('name')) {
-        MapModel.find({ name: name }).exec((err, maps) => {
+        MapModel.find({ name }).exec((err, maps) => {
             cb(!err && maps.length === 0);
         });
     } else {

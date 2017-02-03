@@ -16,10 +16,10 @@ export interface FileTab extends CommitObject {
 @Injectable()
 export class FileManager implements Committer {
 
-    private file_list: Array<FileTab> = [];
+    private file_list: FileTab[] = [];
     private current_file: number = -1;
 
-    fileList(): Array<FileTab> {
+    fileList(): FileTab[] {
         return this.file_list;
     }
 
@@ -46,7 +46,7 @@ export class FileManager implements Committer {
         let new_file: FileTab = {
             index: this.file_list.length,
             name: file.name,
-            content: content,
+            content,
             active: false,
             readonly: file.locked,
             is_new: false,
@@ -86,7 +86,7 @@ export class FileManager implements Committer {
         if (file.is_new) {
             let observable = this.http.post(`/api/aariba/new`, {
                 content: file.content,
-                comment: comment,
+                comment,
                 name: file.name,
             });
             observable.subscribe(res => {
@@ -98,7 +98,7 @@ export class FileManager implements Committer {
         }
         return this.http.post(`/api/aariba/${file.name}/commit`, {
             content: file.content,
-            comment: comment,
+            comment,
         });
     }
 

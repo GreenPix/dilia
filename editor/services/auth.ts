@@ -30,7 +30,7 @@ export class AuthService {
     }
 
     redirectUrl(): string {
-        return this.redirect_url ? this.redirect_url: 'map-editor';
+        return this.redirect_url ? this.redirect_url : 'map-editor';
     }
 
     logout(): Observable<Response> {

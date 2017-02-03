@@ -55,6 +55,7 @@ export class PaletteArea extends Area {
             .map(chip => this.chipset_service.getChipsetPath(chip))
             .switchMap(chip_path => {
                 if (this.chipset) {
+                    // tslint:disable-next-line:no-console
                     console.log(`Handle more than one chipset`);
                     return [];
                 }
@@ -69,6 +70,7 @@ export class PaletteArea extends Area {
                 return observable;
             }).subscribe(() => {
                 if (!this.chipset) {
+                    // tslint:disable-next-line:no-console
                     console.log(`No chipset found!`);
                     return;
                 }
@@ -86,6 +88,7 @@ export class PaletteArea extends Area {
                     palette,
                     brush
                 ]);
+            // tslint:disable-next-line:no-console
             }, err => console.log(`Error while loading chipsets: ${err}`));
     }
 
@@ -105,7 +108,7 @@ export class PaletteArea extends Area {
         // Prevent selection if button is not left mouse button.
         if (event.button === 0 && this.chipset) {
             let new_id = this.chipset.getTileIdFor(x, y, 16);
-            if (new_id != 0) {
+            if (new_id !== 0) {
                 this.brush.replaceWith(1, new_id, this.chipset.tex, this.chipset_name);
                 return State.Editor;
             }

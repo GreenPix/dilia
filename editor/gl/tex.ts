@@ -37,8 +37,8 @@ export function texRepeat(gl: WebGLRenderingContext, tex_id: WebGLTexture) {
 export function updateTextureFromPixels(
     gl: WebGLRenderingContext,
     tex: Texture,
-    pixels: Pixels): void
-{
+    pixels: Pixels
+): void {
     tex.width = pixels.width;
     tex.height = pixels.raw.length / pixels.width;
     gl.bindTexture(gl.TEXTURE_2D, tex.tex_id);
@@ -98,7 +98,7 @@ export class TextureLoader {
                           new Uint8Array([0, 0, 255, 255]));
             img.src = path;
 
-            let isPowerOf2 = (value: number) => (value & (value - 1)) == 0;
+            let isPowerOf2 = (value: number) => (value & (value - 1)) === 0;
 
             img.onload = () => {
                 gl.bindTexture(gl.TEXTURE_2D, tex_id);

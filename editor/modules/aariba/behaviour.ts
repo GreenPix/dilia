@@ -28,7 +28,7 @@ function initContext(editor: AceAjax.Editor) {
     let id = -1;
     if (editor.multiSelect) {
         id = editor.selection.index;
-        if (contextCache.rangeCount != editor.multiSelect.rangeCount)
+        if (contextCache.rangeCount !== editor.multiSelect.rangeCount)
             contextCache = {rangeCount: editor.multiSelect.rangeCount};
     }
     if (contextCache[id])
@@ -63,11 +63,12 @@ function on_insert_brace(
     _action: 'deletion',
     editor: AceAjax.Editor,
     session: AceAjax.IEditSession,
-    text: string): TextUpdate | undefined
-{
+    text: string
+): TextUpdate | undefined {
+
     let cursor = editor.getCursorPosition();
     let line = session.doc.getLine(cursor.row);
-    if (text == '{') {
+    if (text === '{') {
         initContext(editor);
         let selection = editor.getSelectionRange();
         let selected = session.doc.getTextRange(selection);
@@ -88,10 +89,10 @@ function on_insert_brace(
                 };
             }
         }
-    } else if (text == '}') {
+    } else if (text === '}') {
         initContext(editor);
         let rightChar = line.substring(cursor.column, cursor.column + 1);
-        if (rightChar == '}') {
+        if (rightChar === '}') {
             let matching = session.$findOpeningBracket('}', {column: cursor.column + 1, row: cursor.row});
             if (matching !== null && AaribaBehaviour.isAutoInsertedClosing(cursor, line, text)) {
                 AaribaBehaviour.popAutoInsertedClosing();
@@ -101,7 +102,7 @@ function on_insert_brace(
                 };
             }
         }
-    } else if (text == '\n' || text == '\r\n') {
+    } else if (text === '\n' || text === '\r\n') {
         initContext(editor);
         let closing = '';
         let next_indent;
@@ -111,7 +112,7 @@ function on_insert_brace(
         }
         let rightChar = line.substring(cursor.column, cursor.column + 1);
         if (rightChar === '}') {
-            let openBracePos = session.findMatchingBracket({row: cursor.row, column: cursor.column+1}, '}');
+            let openBracePos = session.findMatchingBracket({row: cursor.row, column: cursor.column + 1}, '}');
             if (!openBracePos)
                  return;
             next_indent = this.$getIndent(session.getLine(openBracePos.row));
@@ -137,14 +138,15 @@ function on_delete_brace(
     _action: string,
     editor: AceAjax.Editor,
     session: AceAjax.IEditSession,
-    range: AceAjax.Range): AceAjax.Range | undefined
-{
+    range: AceAjax.Range
+): AceAjax.Range | undefined {
+
     let selected = session.doc.getTextRange(range);
-    if (!range.isMultiLine() && selected == '{') {
+    if (!range.isMultiLine() && selected === '{') {
         initContext(editor);
         let line = session.doc.getLine(range.start.row);
         let rightChar = line.substring(range.end.column, range.end.column + 1);
-        if (rightChar == '}') {
+        if (rightChar === '}') {
             range.end.column++;
             return range;
         } else {
@@ -158,9 +160,10 @@ function on_insert_paren(
     _action: string,
     editor: AceAjax.Editor,
     session: AceAjax.IEditSession,
-    text: string): TextUpdate | undefined
-{
-    if (text == '(') {
+    text: string
+): TextUpdate | undefined {
+
+    if (text === '(') {
         initContext(editor);
         let selection = editor.getSelectionRange();
         let selected = session.doc.getTextRange(selection);
@@ -173,12 +176,12 @@ function on_insert_paren(
                 selection: [1, 1]
             };
         }
-    } else if (text == ')') {
+    } else if (text === ')') {
         initContext(editor);
         let cursor = editor.getCursorPosition();
         let line = session.doc.getLine(cursor.row);
         let rightChar = line.substring(cursor.column, cursor.column + 1);
-        if (rightChar == ')') {
+        if (rightChar === ')') {
             let matching = session.$findOpeningBracket(')', {column: cursor.column + 1, row: cursor.row});
             if (matching !== null && AaribaBehaviour.isAutoInsertedClosing(cursor, line, text)) {
                 AaribaBehaviour.popAutoInsertedClosing();
@@ -196,14 +199,15 @@ function on_delete_paren(
     _action: string,
     editor: AceAjax.Editor,
     session: AceAjax.IEditSession,
-    range: AceAjax.Range): AceAjax.Range | undefined
-{
+    range: AceAjax.Range
+): AceAjax.Range | undefined {
+
    let selected = session.doc.getTextRange(range);
-   if (!range.isMultiLine() && selected == '(') {
+   if (!range.isMultiLine() && selected === '(') {
        initContext(editor);
        let line = session.doc.getLine(range.start.row);
        let rightChar = line.substring(range.start.column + 1, range.start.column + 2);
-       if (rightChar == ')') {
+       if (rightChar === ')') {
            range.end.column++;
            return range;
        }
@@ -275,7 +279,7 @@ export class AaribaBehaviour extends Behaviour {
         return context.maybeInsertedBrackets > 0 &&
             cursor.row === context.maybeInsertedRow &&
             line.substr(cursor.column) === context.maybeInsertedLineEnd &&
-            line.substr(0, cursor.column) == context.maybeInsertedLineStart;
+            line.substr(0, cursor.column) === context.maybeInsertedLineStart;
     }
 
     static popAutoInsertedClosing() {

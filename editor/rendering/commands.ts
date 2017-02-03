@@ -80,7 +80,7 @@ export class CommandBuffer implements Command, Pipeline {
         raw: Array<Command | CommandLambda>
     ) {
         this.raw = raw.map(el => {
-            if (typeof el == 'function') {
+            if (typeof el === 'function') {
                 // TODO: Remove 'as' in next version of TypeScript
                 return {
                     execute: el as CommandLambda,

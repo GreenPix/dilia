@@ -20,8 +20,8 @@ let autocompleteScss = require<Webpack.Scss>('./autocomplete.scss');
 })
 export class AutocompleteFiles {
 
-    private file_filtered: Array<AaribaFile> = [];
-    private file_list: Array<AaribaFile> = [];
+    private file_filtered: AaribaFile[] = [];
+    private file_list: AaribaFile[] = [];
     private selected?: AaribaFile = undefined;
     private selected_index: number = -1;
     private minlength: number = 1;
@@ -44,7 +44,7 @@ export class AutocompleteFiles {
 
         this.io.get<AaribaFile>('/api/aariba/lock_status')
             .subscribe(fl => {
-                let file = filter(this.file_list, f => f.name == fl.name);
+                let file = filter(this.file_list, f => f.name === fl.name);
                 if (file.length > 0) file[0].locked = fl.locked;
             });
 
@@ -102,14 +102,11 @@ export class AutocompleteFiles {
     processKey(key: string): void {
         if (key === 'down') {
             this.selectBelow();
-        }
-        else if (key === 'up') {
+        } else if (key === 'up') {
             this.selectAbove();
-        }
-        else if (key === 'escape') {
+        } else if (key === 'escape') {
             this.clearFocus();
-        }
-        else if (key === 'enter') {
+        } else if (key === 'enter') {
             this.tryAcceptInput();
         }
     }
@@ -167,7 +164,7 @@ export class AutocompleteFiles {
     }
 
     selectBelow(): void {
-        this.selected_index = Math.min(this.file_filtered.length-1, this.selected_index + 1);
+        this.selected_index = Math.min(this.file_filtered.length - 1, this.selected_index + 1);
         this.selected = this.file_filtered[this.selected_index];
     }
 
@@ -182,6 +179,6 @@ export class AutocompleteFiles {
     }
 
     match(nameFrom: string, nameIn: string): boolean {
-        return nameIn.indexOf(nameFrom) != -1;
+        return nameIn.indexOf(nameFrom) !== -1;
     }
 }

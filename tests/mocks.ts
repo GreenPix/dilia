@@ -31,17 +31,17 @@ export const PROVIDERS = [
 
 // ace mock
 (window as any).ace = {
-    require: function(this: any) {
+    require(this: any) {
         return this;
     },
-    Behaviour: function(this: any) {
+    Behaviour(this: any) {
         this.add = () => {};
     },
-    Mode: function() {},
-    TextHighlightRules: function() {},
-    Range: function() {},
-    FoldMode: function() {},
-    TokenIterator: function() {},
-    setCompleters: function () {},
-    addCompleter: function() {},
+    Mode() {},
+    TextHighlightRules() {},
+    Range() {},
+    FoldMode() {},
+    TokenIterator() {},
+    setCompleters () {},
+    addCompleter() {},
 };

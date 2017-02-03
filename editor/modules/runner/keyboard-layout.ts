@@ -54,7 +54,7 @@ export class KeyboardLayoutDetector {
 
     ingestPressed(event: KeyboardEvent) {
         if (!isKeyValid(event)) return;
-        if (this.state == DetectionState.NONE) {
+        if (this.state === DetectionState.NONE) {
             this.keyoccurences[event.keyCode] += 1;
             this.detect();
         } else {
@@ -66,7 +66,7 @@ export class KeyboardLayoutDetector {
 
     ingestReleased(event: KeyboardEvent) {
         if (!isKeyValid(event)) return;
-        if (this.state != DetectionState.NONE) {
+        if (this.state !== DetectionState.NONE) {
             let s = this.keystate[event.keyCode];
             this.keystate[event.keyCode] =
                 ((~s & KeyState.RELEASED) << 1) | KeyState.RELEASED;
@@ -81,9 +81,9 @@ export class KeyboardLayoutDetector {
     }
 
     isPressed(action: number): boolean {
-        if (this.state == DetectionState.QWERTY) {
+        if (this.state === DetectionState.QWERTY) {
             return isPressed(this.keystate[this.actionmap_qwerty[action]]);
-        } else if (this.state == DetectionState.AZERTY) {
+        } else if (this.state === DetectionState.AZERTY) {
             return isPressed(this.keystate[this.actionmap_azerty[action]]);
         } else {
             return false;
@@ -91,11 +91,11 @@ export class KeyboardLayoutDetector {
     }
 
     isJustPressed(action: number): boolean {
-        if (this.state == DetectionState.QWERTY) {
-            return this.keystate[this.actionmap_qwerty[action]] ==
+        if (this.state === DetectionState.QWERTY) {
+            return this.keystate[this.actionmap_qwerty[action]] ===
                 KeyState.JUST_PRESSED;
-        } else if (this.state == DetectionState.AZERTY) {
-            return this.keystate[this.actionmap_azerty[action]] ==
+        } else if (this.state === DetectionState.AZERTY) {
+            return this.keystate[this.actionmap_azerty[action]] ===
                 KeyState.JUST_PRESSED;
         } else {
             return false;
@@ -103,9 +103,9 @@ export class KeyboardLayoutDetector {
     }
 
     isReleased(action: number): boolean {
-        if (this.state == DetectionState.QWERTY) {
+        if (this.state === DetectionState.QWERTY) {
             return isReleased(this.keystate[this.actionmap_qwerty[action]]);
-        } else if (this.state == DetectionState.AZERTY) {
+        } else if (this.state === DetectionState.AZERTY) {
             return isReleased(this.keystate[this.actionmap_azerty[action]]);
         } else {
             return false;
@@ -113,11 +113,11 @@ export class KeyboardLayoutDetector {
     }
 
     isJustReleased(action: number): boolean {
-        if (this.state == DetectionState.QWERTY) {
-            return this.keystate[this.actionmap_qwerty[action]] ==
+        if (this.state === DetectionState.QWERTY) {
+            return this.keystate[this.actionmap_qwerty[action]] ===
                 KeyState.JUST_RELEASED;
-        } else if (this.state == DetectionState.AZERTY) {
-            return this.keystate[this.actionmap_azerty[action]] ==
+        } else if (this.state === DetectionState.AZERTY) {
+            return this.keystate[this.actionmap_azerty[action]] ===
                 KeyState.JUST_RELEASED;
         } else {
             return false;
@@ -125,7 +125,7 @@ export class KeyboardLayoutDetector {
     }
 
     register(layout: 'qwerty' | 'azerty', action: number, key: Keys) {
-        if (layout == 'qwerty') {
+        if (layout === 'qwerty') {
             this.actionmap_qwerty[action] = key;
         } else {
             this.actionmap_azerty[action] = key;
@@ -145,18 +145,18 @@ export class KeyboardLayoutDetector {
 }
 
 function isReleased(value: KeyState): boolean {
-    return (value & KeyState.RELEASED) == KeyState.RELEASED;
+    return (value & KeyState.RELEASED) === KeyState.RELEASED;
 }
 
 function isPressed(value: KeyState): boolean {
-    return (value & KeyState.PRESSED) == KeyState.PRESSED;
+    return (value & KeyState.PRESSED) === KeyState.PRESSED;
 }
 
 function isKeyValid(event: KeyboardEvent): boolean {
-    return (event.keyCode == Keys.Z ||
-            event.keyCode == Keys.Q ||
-            event.keyCode == Keys.S ||
-            event.keyCode == Keys.D ||
-            event.keyCode == Keys.W ||
-            event.keyCode == Keys.A) && !event.repeat;
+    return (event.keyCode === Keys.Z ||
+            event.keyCode === Keys.Q ||
+            event.keyCode === Keys.S ||
+            event.keyCode === Keys.D ||
+            event.keyCode === Keys.W ||
+            event.keyCode === Keys.A) && !event.repeat;
 }

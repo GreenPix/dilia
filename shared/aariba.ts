@@ -5,4 +5,4 @@ export interface AaribaFile {
 }
 
 /// Get '/api/aariba'
-export type AaribaFileList = Array<AaribaFile>;
+export type AaribaFileList = AaribaFile[];

@@ -59,8 +59,8 @@ export class GameEngine {
             let handle = builder.setWidth(map.width)
                 .setHeight(map.height)
                 .tileSize(map.tile_size);
-            for (let i = 0; i < map.layers.length; ++i) {
-                let layer = map.layers[i].raw.map(pl => {
+            for (let l of map.layers) {
+                let layer = l.raw.map(pl => {
                     return {
                         tiles_id: pl.tiles_id,
                         chipset: chipsets[chipsets_pos[pl.chipset]]
@@ -127,16 +127,17 @@ export class GameEngine {
             let obs = this.world.getEntityCountChangedObservable();
 
             obs.debounceTime(100)
-                .subscribe(entities => {
-                    let builder = sprites.makeBuilder(entities.length);
-                    for (let entity of entities) {
+                .subscribe(new_entities => {
+                    let builder = sprites.makeBuilder(new_entities.length);
+                    for (let entity of new_entities) {
                         let {x, y} = entity.pos;
                         x = x || 0;
                         y = y || 0;
                         builder.addSprite(x, y, 16, 24, 0, 0, 1, 1);
                     }
                     builder.build();
-                    console.log(`Created ${entities.length} entities.`);
+                    // tslint:disable-next-line:no-console
+                    console.log(`Created ${new_entities.length} entities.`);
                 });
 
         });
@@ -144,6 +145,7 @@ export class GameEngine {
         this.lycan.getUpdateStream()
             .filter(v => v.kind === 'Error' && v.reason === ErrorReason.SocketClosed)
             .delay(1000)
+            // tslint:disable-next-line:no-console
             .do(() => console.log('Socket closed from lycan... Network issue?'))
             .do(() => this.lycan.reinitConnection())
             .subscribe(() => this.lycan.authenticate());

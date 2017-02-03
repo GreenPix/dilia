@@ -28,8 +28,7 @@ export class PanelState {
     activatePanel(panel: string) {
         if (panel === 'layers') {
             this.active_panel = panel;
-        }
-        else if (panel === 'options') {
+        } else if (panel === 'options') {
             this.active_panel = panel;
         } else {
             this.active_panel = '';

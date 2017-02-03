@@ -42,7 +42,7 @@ export class GameState {
                         speed: { x: 0, y: 0 },
                         id: up.entity,
                     };
-                    if (this.player_info.id == up.entity) {
+                    if (this.player_info.id === up.entity) {
                         this.player = entity;
                         this.player_info.nominal_speed = up.nominal_speed;
                     } else {
@@ -55,13 +55,14 @@ export class GameState {
                 case 'GameUpdate':
                     let player_update;
                     for (let update of up.entities) {
-                        if (update.entity_id == this.player.id) {
+                        if (update.entity_id === this.player.id) {
                             player_update = update;
                             continue;
                         }
                         let index = sortedIndexBy(
                             this.entities, {id: update.entity_id}, v => v.id
                         );
+                        // tslint:disable-next-line:no-shadowed-variable
                         let entity = this.entities[index];
                         entity.next_pos = update.position;
                         entity.nominal_speed = length2(update.speed);

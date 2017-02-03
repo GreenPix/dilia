@@ -34,8 +34,8 @@ export class RuleEditor implements AfterViewInit {
         private settings: AaribaScriptSettings,
         private http: HttpService,
         private io: SocketIOService,
-        private file_manager: FileManager)
-    {
+        private file_manager: FileManager
+    ) {
         this.text_area_width = 500;
         this.text_area_height = 400;
         this.interpreter = new AaribaInterpreter();
@@ -51,7 +51,6 @@ export class RuleEditor implements AfterViewInit {
         this.content_observable = this.io
             .get<string>(`/api/aariba/${file.name}/liveupdate`)
             .subscribe(res => {
-                console.log(res);
                 this.editor.getSession().setValue(res);
             });
     }
@@ -85,15 +84,14 @@ export class RuleEditor implements AfterViewInit {
                     let opened_file = this.file_manager.open(file, script.content, content);
                     this.setFile(opened_file);
                 });
-        }
 
         // Otherwise obtain the script content from the server
-        else {
+        } else {
             this.http.post(`/api/aariba/${file.name}/lock`)
                 .subscribe(res => {
                     if (res.status === 200) {
                         this.http.get(`/api/aariba/${file.name}`)
-                            .map(res => res.json() as any)
+                            .map(r => r.json() as any)
                             .subscribe(script => {
                                 let content = this.editor.getSession().getValue();
                                 let opened_file = this.file_manager.open(file, script.content, content);
@@ -101,6 +99,7 @@ export class RuleEditor implements AfterViewInit {
                             });
                     }
                 }, error => {
+                    // tslint:disable-next-line:no-console
                     console.log(error);
                 });
         }
@@ -149,7 +148,7 @@ export class RuleEditor implements AfterViewInit {
         this.setFile(new_file);
     }
 
-    fileList(): Array<FileTab> {
+    fileList(): FileTab[] {
         return this.file_manager.fileList();
     }
 

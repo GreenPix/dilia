@@ -13,6 +13,8 @@
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
+        "noUnusedParameters": true,
+        "noUnusedLocals": true,
         "moduleResolution": "node",
         "lib": [
             "es5",

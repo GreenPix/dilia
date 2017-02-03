@@ -11,7 +11,7 @@ export function reqAuth(req: Request, res: Response, next: Function) {
 /**
  * Require admin user middleware.
  */
-export function reqAdmin(req: Request, res: Response, next: Function) {
-    if (process.env.NODE_ENV == 'development') return next();
+export function reqAdmin(_req: Request, res: Response, next: Function) {
+    if (process.env.NODE_ENV === 'development') return next();
     res.sendStatus(401);
 }

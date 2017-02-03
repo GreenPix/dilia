@@ -33,7 +33,7 @@ export interface Revision {
 export interface AaribaScriptProperties {
     name: string;
     created_on?: Date;
-    revisions: Array<Revision>;
+    revisions: Revision[];
     contributors: Types.ObjectId[];
 }
 
@@ -58,11 +58,13 @@ export interface AaribaScriptSchema extends AaribaScriptProperties {
     commitRevision(rev: Revision, cb: (err: any) => void): void;
 }
 
-mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Array<Revision>) {
+// tslint:disable:only-arrow-functions
+
+mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Revision[]) {
     return revisions.length;
 }, 'Revisions cannot be empty');
 
-mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Array<Revision>, cb: Function) {
+mongooseAaribaScriptSchema.path('revisions').validate(function (revisions: Revision[], cb: Function) {
     if (this.isNew || this.isModified('revisions')) {
         for (let rev of revisions) {
             if (!rev.comment || !rev.comment.length) {
@@ -80,7 +82,7 @@ mongooseAaribaScriptSchema.path('name').validate(function (name: string) {
 
 mongooseAaribaScriptSchema.path('name').validate(function (name: string, cb: Function) {
     if (this.isNew || this.isModified('name')) {
-        AaribaScript.find({ name: name }).exec((err, scripts) => {
+        AaribaScript.find({ name }).exec((err, scripts) => {
             cb(!err && scripts.length === 0);
         });
     } else {
@@ -90,7 +92,7 @@ mongooseAaribaScriptSchema.path('name').validate(function (name: string, cb: Fun
 
 mongooseAaribaScriptSchema.method({
 
-    toJsmap: function (): AaribaScriptJsmap {
+    toJsmap(): AaribaScriptJsmap {
 
         let self: AaribaScriptSchema = this;
         let res: AaribaScriptJsmap =  _.pick<any, AaribaScriptSchema>(self,
@@ -109,7 +111,7 @@ mongooseAaribaScriptSchema.method({
         return res;
     },
 
-    getLatest: function (): any {
+    getLatest(): any {
         let self: AaribaScriptSchema = this;
         let id = self.revisions.length - 1;
         return _.pick(
@@ -118,7 +120,7 @@ mongooseAaribaScriptSchema.method({
         );
     },
 
-    getRevision: function (id: number): any {
+    getRevision(id: number): any {
         let self: AaribaScriptSchema = this;
         return _.pick(
             self.revisions[id],
@@ -126,7 +128,7 @@ mongooseAaribaScriptSchema.method({
         );
     },
 
-    commitRevision: function (rev: Revision, cb: (err: any) => void): void {
+    commitRevision(rev: Revision, cb: (err: any) => void): void {
         let self: AaribaScriptDocument = this;
         self.revisions.push({
             author: rev.author,

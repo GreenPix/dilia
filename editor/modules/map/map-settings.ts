@@ -9,12 +9,12 @@ let mapSettingsScss = require<Webpack.Scss>('./map-settings.scss');
     template: `
     <div style="display: flex;">
         <div class="map-settings--button selected"
-            [ngClass] = "{ 'selected': state.activePanelStr() == 'layers' }"
+            [ngClass] = "{ 'selected': state.activePanelStr() === 'layers' }"
             (click)="activatePanel('layers')">
             <span class="fa fa-cubes"></span>Layers
         </div>
         <div class="map-settings--button"
-            [ngClass] = "{ 'selected': state.activePanelStr() == 'options' }"
+            [ngClass] = "{ 'selected': state.activePanelStr() === 'options' }"
             (click)="activatePanel('options')">
             <span class="fa fa-gear"></span>Options
         </div>

@@ -8,7 +8,7 @@ import {LycanCommand} from '../../shared';
 
 // HTTP Apis
 
-app.get('/api/lycan/aariba/latest', (req, res) => {
+app.get('/api/lycan/aariba/latest', (_req, res) => {
     AaribaScript.findOne({ name: 'combat.ab' }, (err, script) => {
         if (err || !script) {
             werror(err || '');

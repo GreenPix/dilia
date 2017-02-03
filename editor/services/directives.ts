@@ -52,23 +52,23 @@ export class SelectEl {
 
     getInputElement(): HTMLInputElement {
         let el = this.getHtmlElement();
-        if (el.tagName.toLowerCase() != 'input') {
+        if (el.tagName.toLowerCase() !== 'input') {
           throw new Error('Not an input element.');
         }
-        return <HTMLInputElement>el;
+        return el as HTMLInputElement;
     }
 
     getCanvasHtmlElement(): HTMLCanvasElement {
         let el = this.getHtmlElement();
-        if (el.tagName.toLowerCase() != 'canvas') {
+        if (el.tagName.toLowerCase() !== 'canvas') {
           throw new Error('Not a canvas element.');
         }
-        return <HTMLCanvasElement>el;
+        return el as HTMLCanvasElement;
     }
 }
 
 
-export var SERVICE_DIRECTIVES = [
+export const SERVICE_DIRECTIVES = [
     AnimFadeIn,
     Tooltip,
     SelectEl

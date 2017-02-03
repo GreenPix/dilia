@@ -1,5 +1,5 @@
 
-type Res = [RegExp, Array<string>];
+type Res = [RegExp, string[]];
 
 export interface ApiParams {
     [param_name: string]: string;
@@ -12,7 +12,7 @@ export interface ApiResolved<F extends Function> {
 
 export class Router<F extends Function> {
 
-    private apicalls: Array<[RegExp, Array<string>, F]> = [];
+    private apicalls: Array<[RegExp, string[], F]> = [];
 
     addRoute(apicall_template: string, cb: F) {
         let [regex, params] = this.asRegex(apicall_template);
@@ -26,7 +26,7 @@ export class Router<F extends Function> {
         //
         let api_splitted = apicall_template.split(':');
         let regex = api_splitted[0];
-        let params: Array<string> = [];
+        let params: string[] = [];
         for (let i = 1; i < api_splitted.length; ++i) {
             let el = api_splitted[i];
             let slash_i = el.indexOf('/');
@@ -63,7 +63,7 @@ export class Router<F extends Function> {
             }
             return {
                 params: params_found,
-                cb: cb
+                cb
             };
         }
         return null;

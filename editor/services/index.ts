@@ -39,7 +39,7 @@ export class HttpService {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         return this.http.post(path, JSON.stringify(json || {}), {
-            headers: headers
+            headers
         }).do(
             res => this.injectHttpEvent(res),
             res => this.injectHttpEvent(res)
@@ -50,7 +50,7 @@ export class HttpService {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         return this.http.get(path, {
-            headers: headers,
+            headers,
             body: ''
         });
     }
@@ -61,25 +61,22 @@ export class HttpService {
                 kind: 'error',
                 message: 'Server unreachable'
             });
-        }
-        else if (res.status === 200) {
+        } else if (res.status === 200) {
             this.alert_stream.next({
                 kind: 'success',
-                message: (<any>res.json()).message
+                message: res.json().message
             });
-        }
-        else if (res.status === 400) {
+        } else if (res.status === 400) {
             let ev: any = res.json();
             this.alert_stream.next({
                 kind: 'error',
                 message: ev.message,
                 errors: ev.errors
             });
-        }
-        else {
+        } else {
             this.alert_stream.next({
                 kind: 'warning',
-                message: (<any>res.json()).message
+                message: res.json().message
             });
         }
     }
@@ -101,25 +98,25 @@ export class SocketIOService {
             );
             this.socket.emit('data', {
                 type: 'broadcast',
-                apicall: apicall,
+                apicall,
                 method: SocketMethod.GET,
             } as SocketPacket);
             return () => {
                 this.socket.emit('data', {
                     type: 'broadcast',
-                    apicall: apicall,
+                    apicall,
                     method: SocketMethod.UNSUBSCRIBE,
                 } as SocketPacket);
             };
         });
     }
 
-    post<T>(apicall: string, data: T) {
+    post<T>(apicall: string, value: T) {
         this.socket.emit('data', {
             type: 'broadcast',
-            apicall: apicall,
+            apicall,
             method: SocketMethod.POST,
-            value: data
+            value,
         } as SocketPacket);
     }
 
@@ -127,11 +124,11 @@ export class SocketIOService {
 
         let res = new Observable<O>((subscriber: Subscriber<O>) => {
 
-            let sub = input.subscribe(input => {
+            let sub = input.subscribe(value => {
                 this.socket.emit('data', {
                     type: 'streaming',
                     apichannel,
-                    value: input
+                    value
                 } as SocketPacket);
             });
             this.socket.on('__streaming__' + apichannel, (value: O) => {
