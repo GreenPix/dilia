@@ -34,15 +34,17 @@ if ! type "npm" > /dev/null; then
   node_ver=`eval node --version`
   cp -v ./mongo-express-config.js ~/.nvm/versions/node/$node_ver/lib/node_modules/mongo-express/config.js
   echo "alias mongo-express='node ~/.nvm/versions/node/'$node_ver'/lib/node_modules/mongo-express/app.js'" >> ~/.bashrc
-
+  echo "alias npm='npm --prefix ~'" >>~/.bashrc
 else
   echo "npm already installed"
 fi
 
+ln -s /vagrant/package.json ~/package.json
+
 # Does the user has already downloaded the dependencies?
 export NODE_ENV="development"
 if [ ! -d "node_modules" ]; then
-  npm install
+  npm --prefix "$HOME" install
 else
   echo "node_modules folder is already present"
 fi
@@ -51,4 +53,4 @@ echo ""
 echo "###################################"
 echo "        building the server"
 echo ""
-npm run build-server
+npm --prefix "$HOME" run build-server
